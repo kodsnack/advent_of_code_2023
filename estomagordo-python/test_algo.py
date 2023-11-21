@@ -4,10 +4,10 @@ from algo import sssp
 def test_sssp_greediness():
     def goal_function_is_100(position):
         return position == 100
-    
+
     def step_finder(graph, position):
         return graph[position]
-    
+
     graph = {
         0: ((1, 1), (2, 2)),
         1: ((100, 100),),
@@ -24,10 +24,10 @@ def test_sssp_greediness():
 def test_sssp_three_dimensional():
     def goal_function_is_100(position):
         return position == (1, 1, 1)
-    
+
     def step_finder(graph, position):
         return graph[position]
-    
+
     graph = {
         (0, 0, 0): ((1, (0, 1, 0)), (2, (1, 0, 1))),
         (0, 1, 0): ((100, (1, 1, 1)),),

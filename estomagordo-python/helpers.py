@@ -126,12 +126,12 @@ def digits(line):
 
 def chunks(l, n):
     for x in range(0, len(l), n):
-        yield(l[x:x+n])
+        yield l[x:x+n]
 
 
 def chunks_with_overlap(l, n):
     for x in range(n, len(l)+1):
-        yield(l[x-n:x])
+        yield l[x-n:x]
 
 
 def positives(line):
@@ -159,41 +159,41 @@ def rays_from_inside(grid, y, x):
 
 
 def custsort(l, comparator):
-        n = len(l)
+    n = len(l)
 
-        if n < 2:
-            return l
+    if n < 2:
+        return l
 
-        a = l[:n//2]
-        b = l[n//2:]
+    a = l[:n//2]
+    b = l[n//2:]
 
-        ll = []
+    ll = []
 
-        la = len(a)
-        lb = len(b)
-        pa = 0
-        pb = 0
-        sa = custsort(a, comparator)
-        sb = custsort(b, comparator)
+    la = len(a)
+    lb = len(b)
+    pa = 0
+    pb = 0
+    sa = custsort(a, comparator)
+    sb = custsort(b, comparator)
 
-        while pa < la and pb < lb:
-            comp = comparator(sa[pa], sb[pb])
+    while pa < la and pb < lb:
+        comp = comparator(sa[pa], sb[pb])
 
-            if comp > 0:
-                ll.append(sb[pb])
-                pb += 1
-            else:
-                ll.append(sa[pa])
-                pa += 1
-
-        while pa < la:
-            ll.append(sa[pa])
-            pa += 1
-        while pb < lb:
+        if comp > 0:
             ll.append(sb[pb])
             pb += 1
+        else:
+            ll.append(sa[pa])
+            pa += 1
 
-        return ll
+    while pa < la:
+        ll.append(sa[pa])
+        pa += 1
+    while pb < lb:
+        ll.append(sb[pb])
+        pb += 1
+
+    return ll
 
 
 def adjacent(a, b):

@@ -135,7 +135,7 @@ def test_neighs():
     x = 2
 
     neighbours = neighs(y, x)
-    
+
     assert 4 == len(neighbours)
     assert [3, 2] in neighbours
     assert [5, 2] in neighbours
@@ -148,7 +148,7 @@ def test_neighs_negative():
     x = -2
 
     neighbours = neighs(y, x)
-    
+
     assert 4 == len(neighbours)
     assert [-3, -2] in neighbours
     assert [-5, -2] in neighbours
@@ -165,7 +165,7 @@ def test_neighs_bounded_in_bounds():
     cmax = 10
 
     neighbours = neighs_bounded(y, x, rmin, rmax, cmin, cmax)
-    
+
     assert 4 == len(neighbours)
     assert [4, 6] in neighbours
     assert [6, 6] in neighbours
@@ -182,7 +182,7 @@ def test_neighs_bounded_edge():
     cmax = 10
 
     neighbours = neighs_bounded(y, x, rmin, rmax, cmin, cmax)
-    
+
     assert 3 == len(neighbours)
     assert [6, 6] in neighbours
     assert [5, 5] in neighbours
@@ -198,8 +198,8 @@ def test_neighs_bounded_corner():
     cmax = 6
 
     neighbours = neighs_bounded(y, x, rmin, rmax, cmin, cmax)
-    
-    assert 2 == len(neighbours)  
+
+    assert 2 == len(neighbours)
     assert [6, 6] in neighbours
     assert [5, 5] in neighbours
 
