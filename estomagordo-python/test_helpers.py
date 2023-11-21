@@ -309,13 +309,10 @@ def test_rays_from_inside():
 
 
 def test_custsort():
-    compreg = lambda a,b: -1 if a < b else 1
-    comprev = lambda a,b: -1 if a >= b else 1
-
     l = [5, 2, 1, 0, 9]
 
-    resreg = custsort(l, compreg)
-    resrev = custsort(l, comprev)
+    resreg = custsort(l, lambda a,b: -1 if a < b else 1)
+    resrev = custsort(l, lambda a,b: -1 if a >= b else 1)
 
     assert [0, 1, 2, 5, 9] == resreg
     assert [9, 5, 2, 1, 0] == resrev

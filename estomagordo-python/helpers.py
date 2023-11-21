@@ -5,11 +5,11 @@ from itertools import product
 
 
 def distance(a, b):
-    return sum([(a[x]-b[x])**2 for x in range(len(a))])**0.5
+    return sum(((a[x]-b[x])**2 for x in range(len(a))))**0.5
 
 
 def distance_sq(a, b):
-    return sum([(a[x]-b[x])**2 for x in range(len(a))])
+    return sum(((a[x]-b[x])**2 for x in range(len(a))))
 
 
 def ints(line):
@@ -19,7 +19,7 @@ def ints(line):
 
 
 def manhattan(a, b):
-    return sum([abs(a[x]-b[x]) for x in range(len(a))])
+    return sum((abs(a[x]-b[x]) for x in range(len(a))))
 
 
 def neighs(y, x):
@@ -98,7 +98,7 @@ def n_neighs(point):
 
     for delta in product(range(-1, 2), repeat=n):
         if any(val != 0 for val in delta):
-            yield tuple([point[i] + delta[i] for i in range(n)])
+            yield tuple((point[i] + delta[i] for i in range(n)))
 
 
 def multall(nums):
