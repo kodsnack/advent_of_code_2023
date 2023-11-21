@@ -18,7 +18,7 @@ def test_sssp_greediness():
 
     shortest_path = sssp(graph, start, goal_function_is_100, step_finder)
 
-    assert(52 == shortest_path)
+    assert 52 == shortest_path
 
 
 def test_sssp_three_dimensional():
@@ -38,4 +38,4 @@ def test_sssp_three_dimensional():
 
     shortest_path = sssp(graph, start, goal_function_is_100, step_finder)
 
-    assert(52 == shortest_path)
+    assert 52 == shortest_path

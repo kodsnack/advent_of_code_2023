@@ -8,7 +8,7 @@ def test_distance():
     d = distance(a, b)
     expected = 5
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_distance_flipped():
@@ -18,7 +18,7 @@ def test_distance_flipped():
     d = distance(a, b)
     expected = 5
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_distance_negatives():
@@ -28,7 +28,7 @@ def test_distance_negatives():
     d = distance(a, b)
     expected = 5
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_distance_3d():
@@ -38,7 +38,7 @@ def test_distance_3d():
     d = distance(a, b)
     expected = 3
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_distance_sq_2d():
@@ -48,7 +48,7 @@ def test_distance_sq_2d():
     d = distance_sq(a, b)
     expected = 25
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_distance_sq_2d_flipped():
@@ -58,7 +58,7 @@ def test_distance_sq_2d_flipped():
     d = distance_sq(a, b)
     expected = 25
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_distance_sq_2d_negatives():
@@ -68,7 +68,7 @@ def test_distance_sq_2d_negatives():
     d = distance_sq(a, b)
     expected = 25
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_distance_sq_3d():
@@ -78,7 +78,7 @@ def test_distance_sq_3d():
     d = distance_sq(a, b)
     expected = 9
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_ints():
@@ -87,7 +87,7 @@ def test_ints():
     nums = ints(s)
     expected = [-43, 8, 7, 9, 85, -2]
 
-    assert(expected == nums)
+    assert expected == nums
 
 
 def test_manhattan():
@@ -97,7 +97,7 @@ def test_manhattan():
     d = manhattan(a, b)
     expected = 10
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_manhattan_flipped():
@@ -107,7 +107,7 @@ def test_manhattan_flipped():
     d = manhattan(a, b)
     expected = 10
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_manhattan_same():
@@ -117,7 +117,7 @@ def test_manhattan_same():
     d = manhattan(a, b)
     expected = 0
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_manhattan_3d():
@@ -127,7 +127,7 @@ def test_manhattan_3d():
     d = manhattan(a, b)
     expected = 14
 
-    assert(expected == d)
+    assert expected == d
 
 
 def test_neighs():
@@ -136,11 +136,11 @@ def test_neighs():
 
     neighbours = neighs(y, x)
     
-    assert(4 == len(neighbours))
-    assert([3, 2] in neighbours)
-    assert([5, 2] in neighbours)
-    assert([4, 1] in neighbours)
-    assert([4, 3] in neighbours)
+    assert 4 == len(neighbours)
+    assert [3, 2] in neighbours
+    assert [5, 2] in neighbours
+    assert [4, 1] in neighbours
+    assert [4, 3] in neighbours
 
 
 def test_neighs_negative():
@@ -149,11 +149,11 @@ def test_neighs_negative():
 
     neighbours = neighs(y, x)
     
-    assert(4 == len(neighbours))
-    assert([-3, -2] in neighbours)
-    assert([-5, -2] in neighbours)
-    assert([-4, -1] in neighbours)
-    assert([-4, -3] in neighbours)
+    assert 4 == len(neighbours)
+    assert [-3, -2] in neighbours
+    assert [-5, -2] in neighbours
+    assert [-4, -1] in neighbours
+    assert [-4, -3] in neighbours
 
 
 def test_neighs_bounded_in_bounds():
@@ -166,11 +166,11 @@ def test_neighs_bounded_in_bounds():
 
     neighbours = neighs_bounded(y, x, rmin, rmax, cmin, cmax)
     
-    assert(4 == len(neighbours))
-    assert([4, 6] in neighbours)
-    assert([6, 6] in neighbours)
-    assert([5, 5] in neighbours)
-    assert([5, 7] in neighbours)
+    assert 4 == len(neighbours)
+    assert [4, 6] in neighbours
+    assert [6, 6] in neighbours
+    assert [5, 5] in neighbours
+    assert [5, 7] in neighbours
 
 
 def test_neighs_bounded_edge():
@@ -183,10 +183,10 @@ def test_neighs_bounded_edge():
 
     neighbours = neighs_bounded(y, x, rmin, rmax, cmin, cmax)
     
-    assert(3 == len(neighbours))    
-    assert([6, 6] in neighbours)
-    assert([5, 5] in neighbours)
-    assert([5, 7] in neighbours)
+    assert 3 == len(neighbours)
+    assert [6, 6] in neighbours
+    assert [5, 5] in neighbours
+    assert [5, 7] in neighbours
 
 
 def test_neighs_bounded_corner():
@@ -199,9 +199,9 @@ def test_neighs_bounded_corner():
 
     neighbours = neighs_bounded(y, x, rmin, rmax, cmin, cmax)
     
-    assert(2 == len(neighbours))    
-    assert([6, 6] in neighbours)
-    assert([5, 5] in neighbours)  
+    assert 2 == len(neighbours)  
+    assert [6, 6] in neighbours
+    assert [5, 5] in neighbours
 
 
 def test_columns():
@@ -209,16 +209,16 @@ def test_columns():
 
     cols = columns(matrix)
 
-    assert([1, 4, 7] == cols[0])
-    assert([2, 5, 8] == cols[1])
-    assert([3, 6, 9] == cols[2])
+    assert [1, 4, 7] == cols[0]
+    assert [2, 5, 8] == cols[1]
+    assert [3, 6, 9] == cols[2]
 
     non_square_matrix = [[1, 2], [3, 4], [5, 6]]
 
     non_square_cols = columns(non_square_matrix)
 
-    assert([1, 3, 5] == non_square_cols[0])
-    assert([2, 4, 6] == non_square_cols[1])
+    assert [1, 3, 5] == non_square_cols[0]
+    assert [2, 4, 6] == non_square_cols[1]
 
 
 def test_digits():
@@ -226,7 +226,7 @@ def test_digits():
 
     result = digits(s)
 
-    assert([8,9,3,6,9,8,2] == result)
+    assert [8,9,3,6,9,8,2] == result
 
 
 def test_chunks():
@@ -235,8 +235,8 @@ def test_chunks():
     twochunks = list(chunks(l, 2))
     threechunks = list(chunks(l, 3))
 
-    assert([[1, 2], [7, 10], [12, 2]] == twochunks)
-    assert([[1, 2, 7], [10, 12, 2]] == threechunks)
+    assert [[1, 2], [7, 10], [12, 2]] == twochunks
+    assert [[1, 2, 7], [10, 12, 2]] == threechunks
 
 
 def test_chunks_with_overlap():
@@ -245,8 +245,8 @@ def test_chunks_with_overlap():
     twochunks = list(chunks_with_overlap(l, 2))
     threechunks = list(chunks_with_overlap(l, 3))
 
-    assert([[1, 2], [2, 7], [7, 10], [10, 12], [12, 2]] == twochunks)
-    assert([[1, 2, 7], [2, 7, 10], [7, 10, 12], [10, 12, 2]] == threechunks)
+    assert [[1, 2], [2, 7], [7, 10], [10, 12], [12, 2]] == twochunks
+    assert [[1, 2, 7], [2, 7, 10], [7, 10, 12], [10, 12, 2]] == threechunks
 
 
 def test_nums():
@@ -255,7 +255,7 @@ def test_nums():
     nums = positives(s)
     expected = [43, 8, 7, 9, 85, 2]
 
-    assert(expected == nums)
+    assert expected == nums
 
 
 def test_rays():
@@ -277,10 +277,10 @@ def test_rays():
 
     raysfrom = rays(grid, y, x)
 
-    assert(n in raysfrom)
-    assert(s in raysfrom)
-    assert(w in raysfrom)
-    assert(e in raysfrom)
+    assert n in raysfrom
+    assert s in raysfrom
+    assert w in raysfrom
+    assert e in raysfrom
 
 
 def test_rays_from_inside():
@@ -302,10 +302,10 @@ def test_rays_from_inside():
 
     raysfrom = rays_from_inside(grid, y, x)
 
-    assert(n in raysfrom)
-    assert(s in raysfrom)
-    assert(w in raysfrom)
-    assert(e in raysfrom)
+    assert n in raysfrom
+    assert s in raysfrom
+    assert w in raysfrom
+    assert e in raysfrom
 
 
 def test_custsort():
@@ -317,8 +317,8 @@ def test_custsort():
     resreg = custsort(l, compreg)
     resrev = custsort(l, comprev)
 
-    assert([0, 1, 2, 5, 9] == resreg)
-    assert([9, 5, 2, 1, 0] == resrev)
+    assert [0, 1, 2, 5, 9] == resreg
+    assert [9, 5, 2, 1, 0] == resrev
 
 
 def test_adjacent():
@@ -336,16 +336,16 @@ def test_adjacent():
     three_d_c = [1, 1, 3]
     three_d_d = [0, 1, 0]
 
-    assert(not adjacent(one_d_a, one_d_a))
-    assert(adjacent(one_d_a, one_d_b))
-    assert(not adjacent(one_d_a, one_d_c))
+    assert not adjacent(one_d_a, one_d_a)
+    assert adjacent(one_d_a, one_d_b)
+    assert not adjacent(one_d_a, one_d_c)
 
-    assert(not adjacent(two_d_a, two_d_a))
-    assert(adjacent(two_d_a, two_d_b))
-    assert(adjacent(two_d_a, two_d_c))
-    assert(not adjacent(two_d_a, two_d_d))
+    assert not adjacent(two_d_a, two_d_a)
+    assert adjacent(two_d_a, two_d_b)
+    assert adjacent(two_d_a, two_d_c)
+    assert not adjacent(two_d_a, two_d_d)
 
-    assert(not adjacent(three_d_a, three_d_a))
-    assert(adjacent(three_d_a, three_d_b))
-    assert(not adjacent(three_d_a, three_d_c))
-    assert(not adjacent(three_d_a, three_d_d))
+    assert not adjacent(three_d_a, three_d_a)
+    assert adjacent(three_d_a, three_d_b)
+    assert not adjacent(three_d_a, three_d_c)
+    assert not adjacent(three_d_a, three_d_d)
