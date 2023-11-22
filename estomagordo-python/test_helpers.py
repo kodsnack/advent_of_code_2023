@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, custsort, adjacent
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent
 
 
 def test_distance():
@@ -306,16 +306,6 @@ def test_rays_from_inside():
     assert s in raysfrom
     assert w in raysfrom
     assert e in raysfrom
-
-
-def test_custsort():
-    l = [5, 2, 1, 0, 9]
-
-    resreg = custsort(l, lambda a,b: -1 if a < b else 1)
-    resrev = custsort(l, lambda a,b: -1 if a >= b else 1)
-
-    assert [0, 1, 2, 5, 9] == resreg
-    assert [9, 5, 2, 1, 0] == resrev
 
 
 def test_adjacent():

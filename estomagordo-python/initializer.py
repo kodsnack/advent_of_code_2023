@@ -5,7 +5,9 @@ program_file = lambda day: f"""from collections import Counter, defaultdict, deq
 from functools import cache, reduce
 from heapq import heapify, heappop, heappush
 from itertools import combinations, permutations, product
-from helpers import adjacent, chunks, chunks_with_overlap, columns, custsort, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, positives, rays, rays_from_inside
+
+from algo import custsort, sssp
+from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, positives, rays, rays_from_inside
 
 
 def solve_a(lines):

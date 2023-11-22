@@ -1,4 +1,4 @@
-from algo import sssp
+from algo import custsort, sssp
 
 
 def test_sssp_greediness():
@@ -39,3 +39,13 @@ def test_sssp_three_dimensional():
     shortest_path = sssp(graph, start, goal_function_is_100, step_finder)
 
     assert 52 == shortest_path
+
+
+def test_custsort():
+    l = [5, 2, 1, 0, 9]
+
+    resreg = custsort(l, lambda a,b: -1 if a < b else 1)
+    resrev = custsort(l, lambda a,b: -1 if a >= b else 1)
+
+    assert [0, 1, 2, 5, 9] == resreg
+    assert [9, 5, 2, 1, 0] == resrev
