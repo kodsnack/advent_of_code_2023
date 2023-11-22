@@ -4,12 +4,16 @@ from functools import reduce
 from itertools import product
 
 
-def distance(a, b):
-    return sum(((a[x]-b[x])**2 for x in range(len(a))))**0.5
+def diffs(a, b):
+    return (p[0] - p[1] for p in zip(a, b))
 
 
 def distance_sq(a, b):
-    return sum(((a[x]-b[x])**2 for x in range(len(a))))
+    return sum(d**2 for d in diffs(a, b))
+
+
+def distance(a, b):
+    return distance_sq(a, b)**0.5
 
 
 def ints(line):
@@ -19,7 +23,7 @@ def ints(line):
 
 
 def manhattan(a, b):
-    return sum((abs(a[x]-b[x]) for x in range(len(a))))
+    return sum(abs(d) for d in diffs(a, b))
 
 
 def neighs(y, x):
