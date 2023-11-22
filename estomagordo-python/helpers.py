@@ -72,12 +72,12 @@ def multall(nums):
 
 
 def hexneighs(r, c):
-    neighs = { (r, c+1), (r, c-1) }
+    neighs = { (r, c+1), (r, c-1), (r-1, c), (r+1, c) }
 
     if r % 2:
-        neighs |= { (r+1, c-1), (r+1, c), (r-1, c-1), (r-1, c) }
+        neighs |= { (r+1, c-1), (r-1, c-1) }
     else:
-        neighs |= { (r+1, c), (r+1, c+1), (r-1, c+1), (r-1, c) }
+        neighs |= { (r+1, c+1), (r-1, c+1) }
 
     return neighs
 
