@@ -249,7 +249,7 @@ def test_chunks_with_overlap():
     assert [[1, 2, 7], [2, 7, 10], [7, 10, 12], [10, 12, 2]] == threechunks
 
 
-def test_nums():
+def test_positives():
     s = 'What they-43 were 8 saying was <albeit 7> (9) mi85ninte and -2'
 
     nums = positives(s)
@@ -267,13 +267,13 @@ def test_rays():
         [3, 5, 3, 9, 0]
     ]
 
-    y = 1
+    y = 2
     x = 2
 
-    n = [3]
-    s = [3, 5, 3]
-    w = [2, 5]
-    e = [1, 2]
+    n = [3, 5]
+    s = [5, 3]
+    w = [6, 5]
+    e = [3, 2]
 
     raysfrom = rays(grid, y, x)
 
@@ -292,13 +292,13 @@ def test_rays_from_inside():
         [3, 5, 3, 9, 0]
     ]
 
-    y = 1
+    y = 2
     x = 2
 
-    n = [3]
-    s = [3, 5, 3]
-    w = [5, 2]
-    e = [1, 2]
+    n = [5, 3]
+    s = [5, 3]
+    w = [5, 6]
+    e = [3, 2]
 
     raysfrom = rays_from_inside(grid, y, x)
 

@@ -123,4 +123,4 @@ def rays_from_inside(grid, y, x):
 
 
 def adjacent(a, b):
-    return sum(abs(a[x]-b[x]) for x in range(len(a))) == 1
+    return manhattan(a, b) == 1
