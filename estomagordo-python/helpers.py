@@ -31,53 +31,15 @@ def neighs(y, x):
 
 
 def neighs_bounded(y, x, rmin, rmax, cmin, cmax):
-    neighs = []
-
-    if y > rmin:
-        neighs.append([y-1, x])
-
-    if y < rmax:
-        neighs.append([y+1, x])
-
-    if x > cmin:
-        neighs.append([y, x-1])
-
-    if x < cmax:
-        neighs.append([y, x+1])
-
-    return neighs
+    return [n for n in neighs(y, x) if rmin <= n[0] <= rmax and cmin <= n[1] <= cmax]
 
 
 def eight_neighs(y, x):
-    return [[y-1, x-1], [y-1,x], [y-1, x+1], [y+1,x-1], [y+1,x], [y,x-1], [y+1,x+1], [y,x+1]]
+    return [[y+dy, x+dx] for dy in range(-1, 2) for dx in range(-1, 2)]
 
 
 def eight_neighs_bounded(y, x, rmin, rmax, cmin, cmax):
-    neighs = []
-
-    up = y > rmin
-    down = y < rmax
-    left = x > cmin
-    right = x < cmax
-
-    if up:
-        neighs.append([y-1, x])
-        if left:
-            neighs.append([y-1, x-1])
-        if right:
-            neighs.append([y-1,x+1])
-    if down:
-        neighs.append([y+1, x])
-        if left:
-            neighs.append([y+1, x-1])
-        if right:
-            neighs.append([y+1,x+1])
-    if left:
-        neighs.append([y, x-1])
-    if right:
-        neighs.append([y, x+1])
-
-    return neighs
+    return [n for n in eight_neighs(y, x) if rmin <= n[0] <= rmax and cmin <= n[1] <= cmax]
 
 
 def grouped_lines(lines):
@@ -139,9 +101,7 @@ def chunks_with_overlap(l, n):
 
 
 def positives(line):
-    pattern = re.compile(r'\d+')
-
-    return [int(val) for val in re.findall(pattern, line) if val]
+    return list(map(abs, ints(line)))
 
 
 def rays(grid, y, x):
