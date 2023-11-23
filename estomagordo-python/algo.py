@@ -1,5 +1,6 @@
 from heapq import heappop, heappush
 
+
 def sssp(graph, start, goal_function, step_finder):
     seen = set()
     frontier = [(0, start)]
@@ -58,3 +59,27 @@ def custsort(l, comparator):
         pb += 1
 
     return ll
+
+
+def a_star(graph, start, step_finder, heuristic):
+    seen = set()
+    frontier = [(heuristic(graph, start), 0, start)]
+
+    while True:
+        best_possible, steps, state = heappop(frontier)
+
+        if state in seen:
+            continue
+
+        seen.add(state)
+
+        if best_possible == steps:
+            return state
+        
+        for next_state in step_finder(graph, state):
+            if next_state in seen:
+                continue
+
+            h = heuristic(graph, next_state)
+
+            heappush(frontier, (h + steps + 1, steps + 1, next_state))
