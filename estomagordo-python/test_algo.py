@@ -3,7 +3,7 @@ from algo import a_star, custsort, sssp
 
 def test_sssp_greediness():
     def goal_function_is_100(position):
-        return position.label == 100
+        return position == 100
 
     def step_finder(graph, position):
         return graph[position]
@@ -18,12 +18,12 @@ def test_sssp_greediness():
 
     shortest_path = sssp(graph, start, goal_function_is_100, step_finder)
 
-    assert 52 == shortest_path.cost
+    assert 52 == shortest_path
 
 
 def test_sssp_three_dimensional():
     def goal_function_is_100(position):
-        return position.label == (1, 1, 1)
+        return position == (1, 1, 1)
 
     def step_finder(graph, position):
         return graph[position]
@@ -38,7 +38,7 @@ def test_sssp_three_dimensional():
 
     shortest_path = sssp(graph, start, goal_function_is_100, step_finder)
 
-    assert 52 == shortest_path.cost
+    assert 52 == shortest_path
 
 
 def test_custsort():

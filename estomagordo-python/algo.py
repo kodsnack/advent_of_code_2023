@@ -1,24 +1,22 @@
 from heapq import heappop, heappush
 
-from graph import Node
-
 
 def sssp(graph, start, goal_function, step_finder):
     seen = set()
-    frontier = [(0, Node(start))]
+    frontier = [(0, start)]
 
     while True:
-        steps, node = heappop(frontier)
+        steps, position = heappop(frontier)
 
-        if node in seen:
+        if position in seen:
             continue
 
-        seen.add(node)
+        seen.add(position)
 
-        if goal_function(node):
-            return node.generate_path()
+        if goal_function(position):
+            return steps
 
-        for cost, next_step in step_finder(graph, node):
+        for cost, next_step in step_finder(graph, position):
             if next_step in seen:
                 continue
 
