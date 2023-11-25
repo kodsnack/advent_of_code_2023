@@ -1,9 +1,11 @@
 from heapq import heappop, heappush
 
+from graph import Node, Path
+
 
 def sssp(graph, start, goal_function, step_finder):
     seen = set()
-    frontier = [(0, start)]
+    frontier = [(0, Node(start))]
 
     while True:
         steps, position = heappop(frontier)
