@@ -1,4 +1,4 @@
-from algo import custsort, sssp
+from algo import a_star, custsort, sssp
 
 
 def test_sssp_greediness():
@@ -49,3 +49,32 @@ def test_custsort():
 
     assert [0, 1, 2, 5, 9] == resreg
     assert [9, 5, 2, 1, 0] == resrev
+
+
+def test_a_star():
+    graph = {
+        'abc': ['bac', 'acb'],
+        'acb': ['cab', 'abc'],
+        'bac': ['abc', 'bca'],
+        'bca': ['cba', 'bac'],
+        'cab': ['acb', 'cba'],
+        'cba': ['bca', 'cab'],
+    }
+
+    start = 'cba'
+    goal = 'abc'
+
+    optimal = 3
+
+    def step_finder(graph, state):
+        return graph[state]
+    
+    def heuristic(graph, state, goal):
+        def distance_for(element):
+            return abs(state.index(element) - goal.index(element))
+        
+        return (sum(distance_for(element) for element in state) + 1) // 2
+    
+    result = a_star(graph, start, goal, step_finder, heuristic)
+
+    assert(optimal == result)

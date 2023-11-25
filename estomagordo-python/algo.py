@@ -61,9 +61,9 @@ def custsort(l, comparator):
     return ll
 
 
-def a_star(graph, start, step_finder, heuristic):
+def a_star(graph, start, goal, step_finder, heuristic):
     seen = set()
-    frontier = [(heuristic(graph, start), 0, start)]
+    frontier = [(heuristic(graph, start, goal), 0, start)]
 
     while True:
         best_possible, steps, state = heappop(frontier)
@@ -74,12 +74,12 @@ def a_star(graph, start, step_finder, heuristic):
         seen.add(state)
 
         if best_possible == steps:
-            return state
+            return steps
         
         for next_state in step_finder(graph, state):
             if next_state in seen:
                 continue
 
-            h = heuristic(graph, next_state)
+            h = heuristic(graph, next_state, goal)
 
             heappush(frontier, (h + steps + 1, steps + 1, next_state))
