@@ -1,4 +1,23 @@
+from dataclasses import dataclass
 from heapq import heappop, heappush
+
+
+@dataclass
+class SearchResult:
+    path: list[object]
+    cost: int
+    end_state: object
+    path_length: int
+
+
+def unroll(node, previous):
+    path = []
+
+    while node in previous:
+        path.append(node)
+        node = previous[node]
+
+    return path[::-1]
 
 
 def sssp(graph, start, goal_function, step_finder):
@@ -14,7 +33,8 @@ def sssp(graph, start, goal_function, step_finder):
         previous[position] = prev
 
         if goal_function(position):
-            return steps
+            path = unroll(position, previous)
+            return SearchResult(path, steps, position, len(path))
 
         for cost, next_step in step_finder(graph, position):
             if next_step in previous:
@@ -74,7 +94,8 @@ def a_star(graph, start, goal, step_finder, heuristic):
         previous[state] = prev
 
         if best_possible == steps:
-            return steps
+            path = unroll(state, previous)
+            return SearchResult(path, steps, state, len(path))
         
         for next_state in step_finder(graph, state):
             if next_state in previous:
