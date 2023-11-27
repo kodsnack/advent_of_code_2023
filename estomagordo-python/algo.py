@@ -2,25 +2,25 @@ from heapq import heappop, heappush
 
 
 def sssp(graph, start, goal_function, step_finder):
-    seen = set()
-    frontier = [(0, start)]
+    previous = {}
+    frontier = [(0, start, None)]
 
     while True:
-        steps, position = heappop(frontier)
+        steps, position, prev = heappop(frontier)
 
-        if position in seen:
+        if position in previous:
             continue
 
-        seen.add(position)
+        previous[position] = prev
 
         if goal_function(position):
             return steps
 
         for cost, next_step in step_finder(graph, position):
-            if next_step in seen:
+            if next_step in previous:
                 continue
 
-            heappush(frontier, (steps+cost, next_step))
+            heappush(frontier, (steps+cost, next_step, position))
 
 
 def custsort(l, comparator):
@@ -62,24 +62,24 @@ def custsort(l, comparator):
 
 
 def a_star(graph, start, goal, step_finder, heuristic):
-    seen = set()
-    frontier = [(heuristic(graph, start, goal), 0, start)]
+    previous = {}
+    frontier = [(heuristic(graph, start, goal), 0, start, None)]
 
     while True:
-        best_possible, steps, state = heappop(frontier)
+        best_possible, steps, state, prev = heappop(frontier)
 
-        if state in seen:
+        if state in previous:
             continue
 
-        seen.add(state)
+        previous[state] = prev
 
         if best_possible == steps:
             return steps
         
         for next_state in step_finder(graph, state):
-            if next_state in seen:
+            if next_state in previous:
                 continue
 
             h = heuristic(graph, next_state, goal)
 
-            heappush(frontier, (h + steps + 1, steps + 1, next_state))
+            heappush(frontier, (h + steps + 1, steps + 1, next_state, state))
