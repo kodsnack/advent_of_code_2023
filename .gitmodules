@@ -1,0 +1,3 @@
+[submodule "advent-of-code"]
+	path = advent-of-code
+	url = git@github.com:emilpriver/advent-of-code.git
