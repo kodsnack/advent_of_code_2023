@@ -1,0 +1,3 @@
+[submodule "emilpriver-ocaml"]
+	path = emilpriver-ocaml
+	url = git@github.com:emilpriver/advent-of-code.git
