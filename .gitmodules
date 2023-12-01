@@ -16,3 +16,6 @@
 [submodule "simon-nystrom-elixir"]
 	path = simon-nystrom-elixir
 	url = git@github.com:simon-nystrom/adventofcode-2023.git
+[submodule "yxhuvud-crystal"]
+	path = yxhuvud-crystal
+	url = https://github.com/yxhuvud/aoc23
