@@ -10,3 +10,6 @@
 [submodule "johan1a-scala"]
 	path = johan1a-scala
 	url = https://github.com/johan1a/advent-of-code-2023.git
+[submodule "albert-arvidsson-polyglot"]
+	path = albert-arvidsson-polyglot
+	url = git@github.com:scmx/advent-of-code-polyglot.git
