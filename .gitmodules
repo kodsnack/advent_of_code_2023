@@ -4,3 +4,6 @@
 [submodule "digimatic-cpp"]
 	path = digimatic-cpp
 	url = git@github.com:digimatic/advent_of_code_2023.git
+[submodule "pin2t-kotlin"]
+	path = pin2t-kotlin
+	url = https://github.com/pin2t/aoc2023
