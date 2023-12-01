@@ -19,3 +19,6 @@
 [submodule "yxhuvud-crystal"]
 	path = yxhuvud-crystal
 	url = https://github.com/yxhuvud/aoc23
+[submodule "kv-geijer-zote"]
+	path = kv-geijer-zote
+	url = git@github.com:KvGeijer/advent-of-zote-2023.git
