@@ -12,43 +12,33 @@ def solve_a(lines):
 
 
 def solve_b(lines):
-    i = [ints(c) for c in lines]
+    written = [
+        'zero',
+        'one',
+        'two',
+        'three',
+        'four',
+        'five',
+        'six',
+        'seven',
+        'eight',
+        'nine',
+    ]
+    
+    def evaluate_pos(line, pos):
+        if line[pos].isdigit():
+            return int(line[pos])
+        
+        for i, w in enumerate(written):
+            if pos + len(w) <= len(line) and line[pos:pos+len(w)] == w and i > 0:
+                return i
+            
+    def evaluate_line(line):
+        digits = [evaluate_pos(line, pos) for pos in range(len(line)) if evaluate_pos(line, pos)]
 
-    s = 0
+        return 10 * digits[0] + digits[-1]
 
-    # for j in i:
-    #     s += 10 * j[0] + j[-1]
-
-    for line in lines:
-        digs = []
-        linlen = len(line)
-
-        for i, c in enumerate(line):
-            if c.isdigit():
-                digs.append(int(c))
-            else:
-                if i + 3 <= linlen and line[i:i+3] == 'one':
-                    digs.append(1)
-                if i + 3 <= linlen and line[i:i+3] == 'two':
-                    digs.append(2)
-                if i + 3 <= linlen and line[i:i+3] == 'six':
-                    digs.append(6)
-                if i + 4 <= linlen and line[i:i+4] == 'four':
-                    digs.append(4)
-                if i + 4 <= linlen and line[i:i+4] == 'five':
-                    digs.append(5)
-                if i + 4 <= linlen and line[i:i+4] == 'nine':
-                    digs.append(9)
-                if i + 5 <= linlen and line[i:i+5] == 'three':
-                    digs.append(3)
-                if i + 5 <= linlen and line[i:i+5] == 'seven':
-                    digs.append(7)
-                if i + 5 <= linlen and line[i:i+5] == 'eight':
-                    digs.append(8)                    
-
-        s += 10 * digs[0] + digs[-1]
-
-    return s
+    return sum(evaluate_line(line) for line in lines)
 
 
 def main():
@@ -64,5 +54,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# 55372
