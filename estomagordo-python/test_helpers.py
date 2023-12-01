@@ -229,6 +229,14 @@ def test_digits():
     assert [8,9,3,6,9,8,2] == result
 
 
+def test_digits_with_other_characters():
+    s = ' 8sg9!369;;82'
+
+    result = digits(s)
+
+    assert [8,9,3,6,9,8,2] == result
+
+
 def test_chunks():
     l = [1, 2, 7, 10, 12, 2]
 

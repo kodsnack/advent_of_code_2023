@@ -87,7 +87,9 @@ def columns(matrix):
 
 
 def digits(line):
-    return list(map(int, list(line.rstrip())))
+    pattern = re.compile(r'\d?')
+
+    return [int(val) for val in re.findall(pattern, line) if val]
 
 
 def chunks(l, n):

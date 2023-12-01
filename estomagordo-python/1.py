@@ -8,24 +8,7 @@ from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, dist
 
 
 def solve_a(lines):
-    i = [ints(c) for c in lines]
-
-    s = 0
-
-    # for j in i:
-    #     s += 10 * j[0] + j[-1]
-
-    for line in lines:
-        digs = []
-
-        for c in line:
-            if c.isdigit():
-                digs.append(int(c))
-
-        if digs:
-            s += 10 * digs[0] + digs[-1]
-
-    return s
+    return sum(10 * digits(line)[0] + digits(line)[-1] for line in lines)
 
 
 def solve_b(lines):
@@ -61,9 +44,7 @@ def solve_b(lines):
                 if i + 5 <= linlen and line[i:i+5] == 'seven':
                     digs.append(7)
                 if i + 5 <= linlen and line[i:i+5] == 'eight':
-                    digs.append(8)            
-
-        print(digs)
+                    digs.append(8)                    
 
         s += 10 * digs[0] + digs[-1]
 
