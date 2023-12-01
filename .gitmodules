@@ -14,5 +14,5 @@
 	path = albert-arvidsson-polyglot
 	url = git@github.com:scmx/advent-of-code-polyglot.git
 [submodule "simon-nystrom-elixir"]
-  path = simon-nystrom-elixir
-  url = git@github.com:simon-nystrom/adventofcode-2023.git
+	path = simon-nystrom-elixir
+	url = git@github.com:simon-nystrom/adventofcode-2023.git
