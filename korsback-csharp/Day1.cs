@@ -2,7 +2,7 @@ namespace aoc2023
 {
     public class Day1
     {
-        public static void Day1a()
+        public static void A()
         {
             var input = Utils.GetData(1);
             int sum = 0;
@@ -18,7 +18,7 @@ namespace aoc2023
             Console.WriteLine(sum);
         }
 
-        public static void Day1b()
+        public static void B()
         {
             var textRepresentations = new List<KeyValuePair<string, int>>()
             {
