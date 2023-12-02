@@ -28,15 +28,15 @@ def solve_a(lines):
             for i, part in enumerate(parts):
                 if part.isdigit():
                     num = int(part)
-                    colour = parts[i+1]
+                    colour = parts[i+1].rstrip(',;')
 
-                    if colour in ['red','red,','red;']:
+                    if colour == 'red':
                         if num > maxred:
                             possible = False
-                    if colour in ['blue','blue,','blue;']:
+                    if colour == 'blue':
                         if num > maxblue:
                             possible = False
-                    if colour in ['green','green,','green;']:
+                    if colour == 'green':
                         if num > maxgreen:
                             possible = False
 
@@ -51,7 +51,6 @@ def solve_b(lines):
 
     for line in lines:
         game = line.split(':')
-        id = ints(game[0])[0]
         red = 0
         blue = 0
         green = 0
@@ -64,16 +63,16 @@ def solve_b(lines):
             for i, part in enumerate(parts):
                 if part.isdigit():
                     num = int(part)
-                    colour = parts[i+1]
+                    colour = parts[i+1].rstrip(',;')
 
-                    if colour in ['red','red,','red;']:
+                    if colour == 'red':
                         red = max(red, num)
-                    if colour in ['blue','blue,','blue;']:
+                    if colour == 'blue':
                         blue = max(blue, num)
-                    if colour in ['green','green,','green;']:
+                    if colour == 'green':
                         green = max(green, num)
 
-        count += red*blue*green
+        count += red * blue * green
 
     return count
 
