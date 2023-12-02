@@ -1,3 +1,27 @@
 [submodule "emilpriver-ocaml"]
 	path = emilpriver-ocaml
 	url = git@github.com:emilpriver/advent-of-code.git
+[submodule "digimatic-cpp"]
+	path = digimatic-cpp
+	url = git@github.com:digimatic/advent_of_code_2023.git
+[submodule "pin2t-kotlin"]
+	path = pin2t-kotlin
+	url = https://github.com/pin2t/aoc2023
+[submodule "johan1a-scala"]
+	path = johan1a-scala
+	url = https://github.com/johan1a/advent-of-code-2023.git
+[submodule "albert-arvidsson-polyglot"]
+	path = albert-arvidsson-polyglot
+	url = git@github.com:scmx/advent-of-code-polyglot.git
+[submodule "simon-nystrom-elixir"]
+	path = simon-nystrom-elixir
+	url = git@github.com:simon-nystrom/adventofcode-2023.git
+[submodule "yxhuvud-crystal"]
+	path = yxhuvud-crystal
+	url = https://github.com/yxhuvud/aoc23
+[submodule "kv-geijer-zote"]
+	path = kv-geijer-zote
+	url = git@github.com:KvGeijer/advent-of-zote-2023.git
+[submodule "ygge-java"]
+	path = ygge-java
+	url = git@github.com:ygge/adventofcode2023.git
