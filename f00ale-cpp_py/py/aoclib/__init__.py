@@ -4,7 +4,7 @@ import sys
 
 def readdata():
     name = os.path.basename(sys.argv[0]).split('.')[0]
-    with open(f'data/{name}.txt') as fp:
+    with open(f'{os.path.dirname(os.path.abspath(__file__))}/../../data/{name}.txt') as fp:
         return fp.readlines()
 
 def readans():
@@ -12,7 +12,7 @@ def readans():
     name = name.replace('p','a')
     ret = None
     try:
-        with open(f'data/{name}.txt') as fp:
+        with open(f'{os.path.dirname(os.path.abspath(__file__))}/../../data/{name}.txt') as fp:
             lines = fp.readlines()
             ret = lines[0].strip(), lines[1].strip()
     except:
