@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs
 
 
 def test_distance():
@@ -344,3 +344,33 @@ def test_adjacent():
     assert adjacent(three_d_a, three_d_b)
     assert not adjacent(three_d_a, three_d_c)
     assert not adjacent(three_d_a, three_d_d)
+
+
+def test_neighbours_does_not_include_self():
+    y = 0
+    x = 0
+    z = 0
+    r = 0
+    c = 0
+    point = (x, y, z)
+
+    neighs_neighs = neighs(y, x)
+    neighs_bounded_neighs = neighs_bounded(y, x, -10, 10, -10, 10)
+    eight_neighs_neighs = eight_neighs(y, x)
+    eight_neighs_bounded_neighs = eight_neighs_bounded(y, x, -10, 10, -10, 10)
+    hexneighs_neighs = hexneighs(r, c)
+    n_neighs_neighs = tuple(n_neighs(point))
+
+    assert 4 == len(neighs_neighs)
+    assert 4 == len(neighs_bounded_neighs)
+    assert 8 == len(eight_neighs_neighs)
+    assert 8 == len(eight_neighs_bounded_neighs)
+    assert 6 == len(hexneighs_neighs)
+    assert 26 == len(n_neighs_neighs)
+
+    assert (y, x) not in neighs_neighs
+    assert (y, x) not in neighs_bounded_neighs
+    assert (y, x) not in eight_neighs_neighs
+    assert (y, x) not in eight_neighs_bounded_neighs
+    assert (y, x) not in hexneighs_neighs
+    assert (y, x) not in n_neighs_neighs
