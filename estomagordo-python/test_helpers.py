@@ -372,5 +372,5 @@ def test_neighbours_does_not_include_self():
     assert (y, x) not in neighs_bounded_neighs
     assert (y, x) not in eight_neighs_neighs
     assert (y, x) not in eight_neighs_bounded_neighs
-    assert (y, x) not in hexneighs_neighs
-    assert (y, x) not in n_neighs_neighs
+    assert (r, c) not in hexneighs_neighs
+    assert point not in n_neighs_neighs
