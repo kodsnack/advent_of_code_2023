@@ -35,7 +35,7 @@ def neighs_bounded(y, x, rmin, rmax, cmin, cmax):
 
 
 def eight_neighs(y, x):
-    return [[y+dy, x+dx] for dy in range(-1, 2) for dx in range(-1, 2)]
+    return [[y+dy, x+dx] for dy in range(-1, 2) for dx in range(-1, 2) if dy != 0 or dx != 0]
 
 
 def eight_neighs_bounded(y, x, rmin, rmax, cmin, cmax):
