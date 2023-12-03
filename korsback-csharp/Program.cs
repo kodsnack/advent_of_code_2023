@@ -6,3 +6,8 @@ using aoc2023;
 
 //Day2.A();
 //Day2.B();
+
+//Day3.A();
+//Day3.B();
+
+Console.ReadKey();
