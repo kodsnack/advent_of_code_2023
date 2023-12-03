@@ -5,16 +5,16 @@ def parse(inp):
     d = dict()
     numbers = list()
     symbols = dict()
-    current_number = (0, list())
+    current_number = (0, set())
     for ridx, row in enumerate(inp.splitlines()):
         for cidx, c in enumerate(row + "."):
             if c.isdigit():
                 current_number = (current_number[0] * 10 + int(c),
-                                  current_number[1] + [(ridx, cidx)])
+                                  current_number[1] | {(ridx, cidx)})
             else:
                 if current_number[0] != 0:
                     numbers.append(current_number)
-                    current_number = (0, list())
+                    current_number = (0, set())
                 if c != ".":
                     symbols[(ridx, cidx)] = c
     return numbers, symbols
@@ -29,6 +29,7 @@ def is_part_number(number_positions, symbol_positions):
                     result = True
     return result
 
+
 def part1(inp):
     numbers, symbols = parse(inp)
     symbol_positions = {pos for pos in symbols}
@@ -37,15 +38,12 @@ def part1(inp):
 
 def numbers_connected_to(numbers, symbol_position):
     result = list()
+    symbol_environ = set()
+    for delta_r in range(-1, 2):
+        for delta_c in range(-1, 2):
+            symbol_environ.add((symbol_position[0] + delta_r, symbol_position[1] + delta_c))
     for number, number_positions in numbers:
-        connected = False
-        for number_position in number_positions:
-            for delta_r in range(-1, 2):
-                for delta_c in range(-1, 2):
-                    r, c = number_position[0] + delta_r, number_position[1] + delta_c
-                    if (r, c) == symbol_position:
-                        connected = True
-        if connected:
+        if len(set(number_positions) & symbol_environ) > 0:
             result.append(number)
     return result
 
