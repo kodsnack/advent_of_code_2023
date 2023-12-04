@@ -28,3 +28,6 @@
 [submodule "albertdahlin-elm"]
 	path = albertdahlin-elm
 	url = https://github.com/albertdahlin/elm-advent-of-code.git
+[submodule "digimatic-rust"]
+	path = digimatic-rust
+	url = https://github.com/digimatic/advent_of_code_2023_rust.git
