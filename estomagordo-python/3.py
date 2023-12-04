@@ -7,12 +7,12 @@ from algo import a_star, custsort, sssp
 from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, positives, rays, rays_from_inside
 
 
-def solve_a(lines):
-    numbers = {}
-    symbols = set()
-
+def parse(lines):
     h = len(lines)
     w = len(lines[0])
+
+    numbers = {}
+    symbols = {}
     currnum = ''
 
     for y in range(h):
@@ -40,7 +40,13 @@ def solve_a(lines):
             if c == '.':
                 continue            
 
-            symbols.add((y, x))
+            symbols[(y, x)] = c
+
+    return numbers, symbols
+
+
+def solve_a(lines):
+    numbers, symbols = parse(lines)
 
     total = 0
 
@@ -55,44 +61,13 @@ def solve_a(lines):
         if isadjacent:
             total += number
 
-        # if number < 10:print(number, isadjacent, y, x)
-
     return total
 
 
 
 def solve_b(lines):
-    numbers = {}
-    gears = set()
-
-    h = len(lines)
-    w = len(lines[0])
-    currnum = ''
-
-    for y in range(h):
-        for x in range(w):
-            c = lines[y][x]
-
-            if c.isdigit():
-                currnum += c
-                continue
-
-            if currnum:
-                numlen = len(currnum)
-                l = []
-
-                fx = w if x == 0 else x
-                fy = y-1 if x == 0 else y
-
-                for dx in range(fx-numlen, fx):
-                    l.append((fy, dx))
-
-                numbers[tuple(l)] = int(currnum)
-
-                currnum = ''
-
-            if c == '*':
-                gears.add((y, x))
+    numbers, symbols = parse(lines)
+    gears = [k for k, v in symbols.items() if v == '*']
 
     total = 0
 
