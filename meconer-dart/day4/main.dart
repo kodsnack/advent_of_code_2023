@@ -61,9 +61,5 @@ int calcResultP2(String input) {
       counts[cardNo + 1 + i] += counts[cardNo];
     }
   }
-  int sum = 0;
-  for (final count in counts) {
-    sum += count;
-  }
-  return sum;
+  return counts.reduce((v, e) => v + e);
 }
