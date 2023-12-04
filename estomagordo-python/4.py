@@ -30,11 +30,8 @@ def solve_b(lines):
         c = cards[i]
         w = wins[i]
 
-        for x in range(i+1, i+1+w):
-            if x < n:
-                cards[x] += c
-            else:
-                break
+        for x in range(i+1, min(i+1+w, n)):            
+            cards[x] += c
             
     return sum(cards)
 
