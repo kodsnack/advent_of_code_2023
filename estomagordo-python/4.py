@@ -1,7 +1,4 @@
-from os import path
-from sys import argv
-
-program_file = lambda day: f"""from collections import Counter, defaultdict, deque
+from collections import Counter, defaultdict, deque
 from functools import cache, reduce
 from heapq import heapify, heappop, heappush
 from itertools import combinations, permutations, product
@@ -11,25 +8,38 @@ from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, dist
 
 
 def parse(lines):
-    return None
-    
+    for line in lines:
+        a, b = line.split('|')
+
+        winners = set(ints(a.split(':')[1]))
+        mine = set(ints(b))
+
+        yield len(winners&mine)
+
 
 def solve_a(lines):
-    data = parse(lines)
-
-    return None
+    return sum(int(2**(w-1))for w in parse(lines))
 
 
 def solve_b(lines):
-    data = parse(lines)
+    n = len(lines)
+    cards = [1 for _ in range(n)]
+    wins = list(parse(lines))
+        
+    for i in range(n):
+        c = cards[i]
+        w = wins[i]
 
-    return None
+        for x in range(i+1, min(i+1+w, n)):            
+            cards[x] += c
+            
+    return sum(cards)
 
 
 def main():
     lines = []
 
-    with open('{day}.txt') as f:
+    with open('4.txt') as f:
         for line in f.readlines():
             lines.append(line)
             
@@ -39,17 +49,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-"""
-
-if __name__ == '__main__':
-    day = argv[1]
-    
-    program = f'{day}.py'
-    inp = f'{day}.txt'
-
-    if not path.isfile(program):
-        with open(program, 'w') as g:
-            g.write(program_file(day))
-    if not path.isfile(inp):
-        with open(inp, 'w') as g:
-            g.write('')
