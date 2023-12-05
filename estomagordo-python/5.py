@@ -64,44 +64,75 @@ def solve_a(lines):
 
 def solve_b(lines):
     seedranges, conversions = parse(lines)
-
+    
     level = 0
-    thislevel = []
-    nextlevel = []
+    ranges = []
 
     for i in range(0, len(seedranges), 2):
         start, length = seedranges[i:i+2]
+        ranges.append([start, start+length-1])
 
-        for s in range(start, start+length):
-            thislevel.append(s)
+    while level < 7:        
+        candidates = []
 
-    while level < 7:
-        print(level, len(thislevel))
-
-        for l in thislevel:
-            found = False
+        for start, end in ranges:
+            prevend = -1
 
             for sourcestart, sourceend, deststart, destend in conversions[level]:
-                if sourcestart <= l <= sourceend:
-                    diff = l-sourcestart
-                    nextlevel.append(deststart+diff)
-                    found = True
+                gapstart = max(start, prevend+1)
+                gapend = min(end, sourcestart-1)
+
+                if gapend >= gapstart:
+                    candidates.append((gapstart, gapend))
+
+                overlapstart = max(start, sourcestart)
+                overlapend = min(end, sourceend)
+
+                if overlapend >= overlapstart:
+                    diff = overlapstart-sourcestart
+                    length = overlapend-overlapstart+1
+                    candidates.append((deststart+diff, deststart+diff+length-1))
+
+                prevend = sourceend
+
+            postgapstart = max(prevend+1, start)
+            
+            if end >= postgapstart:
+                candidates.append((postgapstart, end))
+        
+        ranges = []
+        for candstart, candend in candidates:
+            tempranges = list(ranges)
+
+            for i, r in enumerate(tempranges):
+                tempstart, tempend = r
+                overlapstart = max(candstart, tempstart)
+                overlapend = min(candend, tempend)
+
+                if overlapend < overlapstart:
+                    continue
+
+                if overlapstart == candstart and overlapend == candend:
+                    candend = candstart-1
                     break
 
-            if not found:
-                nextlevel.append(l)
+                newstart = min(candstart, tempstart)
+                newend = max(candend, tempend)
 
-        level += 1        
-        thislevel = nextlevel
-        nextlevel = []
+                tempranges[i] = [newstart, newend]
+                
+                candend = candstart-1
+                break
+                
+            if candend >= candstart:
+                tempranges.append([candstart, candend])
+                tempranges.sort()
 
-    return min(thislevel)
-    
-    chunks = []
+            ranges = tempranges
 
-    for i in range(0, len(seedranges), 2):
-        start, length = seedranges[i:i+2]
-        chunks.append((0, start, start+length-1, start, length))
+        level += 1
+
+    return min(r[0] for r in ranges)
     
     bestgoal = 10**100 
     maxlevel = 0
