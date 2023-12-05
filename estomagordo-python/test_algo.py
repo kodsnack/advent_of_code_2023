@@ -1,4 +1,4 @@
-from algo import a_star, custsort, sssp
+from algo import a_star, custsort, merge_ranges, sssp
 
 
 def test_sssp_greediness():
@@ -84,3 +84,23 @@ def test_a_star():
     assert optimal == result.cost
     assert 'abc' == result.end_state
     assert 4 == result.path_length
+
+
+def test_merge_ranges():
+    a = [-4, 10]
+    b = [7, 15]
+    c = [8, 9]
+    d = [14, 14]
+    e = [19, 29]
+    f = [34, 40]
+    g = [31, 34]
+    h = [50, 60]
+    i = [45, 55]
+    j = [68, 80]
+    k = [78, 84]
+
+    ranges = [a, b, c, d, e, f, g, h, i, j, k]
+
+    expected = [[-4, 15], [19, 29], [31, 40], [45, 60], [68, 84]]
+
+    assert expected == merge_ranges(ranges)

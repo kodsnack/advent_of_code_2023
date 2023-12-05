@@ -3,7 +3,7 @@ from functools import cache, reduce
 from heapq import heapify, heappop, heappush
 from itertools import combinations, permutations, product
 
-from algo import a_star, custsort, sssp
+from algo import a_star, custsort, merge_ranges, sssp
 from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, positives, rays, rays_from_inside
 
 
@@ -100,91 +100,11 @@ def solve_b(lines):
             if end >= postgapstart:
                 candidates.append((postgapstart, end))
         
-        ranges = []
-        for candstart, candend in candidates:
-            tempranges = list(ranges)
-
-            for i, r in enumerate(tempranges):
-                tempstart, tempend = r
-                overlapstart = max(candstart, tempstart)
-                overlapend = min(candend, tempend)
-
-                if overlapend < overlapstart:
-                    continue
-
-                if overlapstart == candstart and overlapend == candend:
-                    candend = candstart-1
-                    break
-
-                newstart = min(candstart, tempstart)
-                newend = max(candend, tempend)
-
-                tempranges[i] = [newstart, newend]
-                
-                candend = candstart-1
-                break
-                
-            if candend >= candstart:
-                tempranges.append([candstart, candend])
-                tempranges.sort()
-
-            ranges = tempranges
+        ranges = merge_ranges(candidates)
 
         level += 1
 
     return min(r[0] for r in ranges)
-    
-    bestgoal = 10**100 
-    maxlevel = 0
-    passes = 0
-
-    while chunks:
-        level, start, end, origstart, length = chunks.pop()
-        passes += 1
-        maxlevel = max(maxlevel, level)
-        if passes % 10000000 == 0:
-            print(passes, len(chunks), level, maxlevel, bestgoal)
-        if level == 7:
-            if start < bestgoal:
-                bestgoal = start
-                print('goal', start)
-            continue
-
-        if start < conversions[level][0][0]:
-            lastbefore = min(conversions[level][0][0]-1, end)
-            diff = lastbefore-start
-
-            chunks.append((level+1, start, lastbefore, origstart, diff+1))
-
-        for sourcestart, sourceend, deststart, destend in conversions[level]:
-            overlapstart = max(start, sourcestart)
-            overlapend = min(end, sourceend)
-            diff = overlapend-overlapstart
-
-            if overlapstart <= overlapend:
-                fromdiff = overlapstart-start
-                todiff = overlapstart-sourcestart
-
-                chunks.append((level+1, deststart+todiff, deststart+todiff+diff, origstart+fromdiff, diff+1))
-
-        prevend = conversions[level][0][1]
-
-        for sourcestart, sourceend, deststart, destend in conversions[level][1:]:
-            gapstart = max(prevend+1, start)
-            gapend = min(sourcestart-1, end)
-
-            if gapstart <= gapend:
-                gapdiff = gapstart-start
-                chunks.append((level+1, gapstart, gapend, gapdiff, gapend-gapstart+1))
-
-        if end > conversions[level][-1][1]:
-            firstafter = max(conversions[level][-1][1]+1, start)
-            diff = end-firstafter
-
-            chunks.append((level+1, firstafter, end, origstart+diff, diff+1))
-
-
-    return bestgoal
 
 
 def main():
