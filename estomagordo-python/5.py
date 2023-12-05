@@ -197,10 +197,8 @@ def main():
     print(solve_a(lines))
     print(solve_b(lines))
 
+    return (solve_a(lines), solve_b(lines))
+
 
 if __name__ == '__main__':
-    main()
-
-# 601583464 too high
-# 130185120 too high
-# 25134997 too high
+    print(main())
