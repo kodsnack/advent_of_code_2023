@@ -65,12 +65,44 @@ def solve_a(lines):
 def solve_b(lines):
     seedranges, conversions = parse(lines)
 
+    level = 0
+    thislevel = []
+    nextlevel = []
+
+    for i in range(0, len(seedranges), 2):
+        start, length = seedranges[i:i+2]
+
+        for s in range(start, start+length):
+            thislevel.append(s)
+
+    while level < 7:
+        print(level, len(thislevel))
+
+        for l in thislevel:
+            found = False
+
+            for sourcestart, sourceend, deststart, destend in conversions[level]:
+                if sourcestart <= l <= sourceend:
+                    diff = l-sourcestart
+                    nextlevel.append(deststart+diff)
+                    found = True
+                    break
+
+            if not found:
+                nextlevel.append(l)
+
+        level += 1        
+        thislevel = nextlevel
+        nextlevel = []
+
+    return min(thislevel)
+    
     chunks = []
 
     for i in range(0, len(seedranges), 2):
         start, length = seedranges[i:i+2]
         chunks.append((0, start, start+length-1, start, length))
-
+    
     bestgoal = 10**100 
     maxlevel = 0
     passes = 0
