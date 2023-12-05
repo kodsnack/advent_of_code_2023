@@ -1,3 +1,4 @@
 aoc_session.txt
 __pycache__/
 venv/
+*.txt
