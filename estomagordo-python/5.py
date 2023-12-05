@@ -10,18 +10,6 @@ from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, dist
 def parse(lines):
     groups = grouped_lines(lines)
 
-    # seeds = set()
-    # seed_to_soil = {}
-    # soil_to_fertilizer = {}
-    # fertilizer_to_water = {}
-    # water_to_light = {}
-    # light_to_temperature = {}
-    # temperature_to_humidity = {}
-    # humidity_to_location = {}
-
-    # for s in ints(groups[0]):
-    #     seeds.add(s)
-
     seeds = ints(groups[0][0])
     conversions = []
 
@@ -30,14 +18,13 @@ def parse(lines):
 
         for row in group[1:]:
             deststart, sourcestart, length = map(int, row.split())
-            rules.append((sourcestart, sourcestart+length-1, deststart, deststart+length-1))
+            rules.append((sourcestart, sourcestart+length-1, deststart))
 
         rules.sort()
 
         conversions.append(rules)
 
     return seeds, conversions
-
     
 
 def solve_a(lines):
@@ -50,7 +37,7 @@ def solve_a(lines):
 
         for conversion in conversions:
 
-            for sourcestart, sourceend, deststart, destend in conversion:
+            for sourcestart, sourceend, deststart in conversion:
                 if sourcestart <= val <= sourceend:
                     diff = val-sourcestart
                     val = deststart+diff
@@ -78,7 +65,7 @@ def solve_b(lines):
         for start, end in ranges:
             prevend = -1
 
-            for sourcestart, sourceend, deststart, destend in conversions[level]:
+            for sourcestart, sourceend, deststart in conversions[level]:
                 gapstart = max(start, prevend+1)
                 gapend = min(end, sourcestart-1)
 
