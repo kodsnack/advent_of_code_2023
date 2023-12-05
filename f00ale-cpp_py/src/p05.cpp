@@ -48,7 +48,6 @@ std::tuple<std::string, std::string> p05(const std::string &input) {
 
     }
 
-
     ans1 = std::numeric_limits<int64_t>::max();
     ans2 = std::numeric_limits<int64_t>::max();
 
@@ -56,51 +55,53 @@ std::tuple<std::string, std::string> p05(const std::string &input) {
         std::sort(m.begin(), m.end(), [](const auto & m1, const auto & m2) { return std::get<1>(m1) < std::get<1>(m2); });
     }
 
-//    for(auto s : seeds) std::cout << s << ' '; std::cout << '\n';
-//    for(auto & m : maps) {
-//        for(auto [d,s,l] : m) std::cout << d << ' ' << s << ' ' << l << '\n';
-//        std::cout << '\n';
-//    }
-
-    for(auto seed : seeds) {
-            for (auto &m: maps) {
-                for (auto [dest, src, len]: m) {
-                    if (seed >= src && seed < src + len) {
-                        seed = dest + seed - src;
-                        break;
-                    }
-                }
+    decltype(maps) newmap;
+    for(auto & m: maps) {
+        int64_t last = 0;
+        newmap.emplace_back();
+        for(auto [d,s,l] : m) {
+            if(last < s) {
+                newmap.back().emplace_back(last,last,s-last);
             }
-            if (seed < ans1) ans1 = seed;
+            newmap.back().emplace_back(d,s,l);
+            last = s+l;
+        }
+        newmap.back().emplace_back(last,last,std::numeric_limits<int64_t>::max()-last);
     }
 
-    for(int i = 0; i < seeds.size(); i+=2) {
-        std::vector<std::tuple<int64_t, int64_t>> pairs;
-        pairs.emplace_back(seeds[i], seeds[i+1]); //??
-        for(const auto & m : maps) {
-            std::vector<std::tuple<int64_t, int64_t>> newpairs;
-            for(auto [seedstart, seedlen] : pairs) {
-                for(auto [dest, src, len] : m) {
-                    auto overlap = [](int64_t min1, int64_t max1, int64_t min2, int64_t max2) {
-                        return std::max(int64_t(0), std::min(max1, max2) - std::max(min1,min2));
-                    };
-                    auto ol = overlap(seedstart, seedstart+seedlen, src, src+len);
-                    if(ol) {
-                        if(seedstart >= src) newpairs.emplace_back(dest+seedstart-src, ol);
-                        else newpairs.emplace_back(dest+src-seedstart, ol);
+    maps.swap(newmap);
+
+    for(auto p : {1, 2}) {
+        for (decltype(seeds)::size_type i = 0; i < seeds.size(); i += p) {
+            std::vector<std::tuple<int64_t, int64_t>> pairs;
+            pairs.emplace_back(seeds[i], (p == 1 ? 1 : seeds[i + 1])); //??
+            for (const auto &m: maps) {
+                std::vector<std::tuple<int64_t, int64_t>> newpairs;
+                for (auto [seedstart, seedlen]: pairs) {
+                    if(seedlen <= 0) break;
+                    for (auto [dest, src, len]: m) {
+                        auto overlap = [](int64_t min1, int64_t max1, int64_t min2, int64_t max2) {
+                            return std::max(int64_t(0), std::min(max1, max2) - std::max(min1, min2));
+                        };
+                        auto ol = overlap(seedstart, seedstart + seedlen, src, src + len);
+                        if (ol) {
+                            int64_t newstart = 0;
+                            if (seedstart > src) newstart = dest + seedstart - src;
+                            else newstart = dest + src - seedstart;
+                            newpairs.emplace_back(newstart, ol);
+                        }
+                        seedlen -= ol;
+                        seedstart+=ol;
                     }
                 }
+                pairs.swap(newpairs);
             }
-            pairs.swap(newpairs);
-//            for(auto [s,l] : pairs) {
-//                std::cout << s << ' ' << l << '\n';
-//            }
-        }
-        for(auto[seed, l] : pairs) {
-            if(seed < ans2) ans2 = seed;
+            for (auto [seed, l]: pairs) {
+                auto &ans = (p == 1 ? ans1 : ans2);
+                if (seed < ans) ans = seed;
+            }
         }
     }
-
 
     return {std::to_string(ans1), std::to_string(ans2)};
 }
