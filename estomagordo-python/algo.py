@@ -104,3 +104,38 @@ def a_star(graph, start, goal, step_finder, heuristic):
             h = heuristic(graph, next_state, goal)
 
             heappush(frontier, (h + steps + 1, steps + 1, next_state, state))
+
+
+def merge_ranges(ranges):
+    result = []
+    
+    for rangstart, rangend in ranges:
+        tempranges = list(result)
+
+        for i, r in enumerate(tempranges):
+            tempstart, tempend = r
+            overlapstart = max(rangstart, tempstart)
+            overlapend = min(rangend, tempend)
+
+            if overlapend < overlapstart:
+                continue
+
+            if overlapstart == rangstart and overlapend == rangend:
+                rangend = rangstart-1
+                break
+
+            newstart = min(rangstart, tempstart)
+            newend = max(rangend, tempend)
+
+            tempranges[i] = [newstart, newend]
+            
+            rangend = rangstart-1
+            break
+            
+        if rangend >= rangstart:
+            tempranges.append([rangstart, rangend])
+            tempranges.sort()
+
+        result = tempranges
+
+    return result
