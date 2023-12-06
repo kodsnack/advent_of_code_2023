@@ -34,3 +34,6 @@
 [submodule "jofafrazze-csharp"]
 	path = jofafrazze-csharp
 	url = https://github.com/jofafrazze/advent_of_code_2023.git
+[submodule "ingo-rust"]
+	path = ingo-rust
+	url = https://github.com/ingomancer/AoC2023.git
