@@ -5,6 +5,7 @@ program_file = lambda day: f"""from collections import Counter, defaultdict, deq
 from functools import cache, reduce
 from heapq import heapify, heappop, heappush
 from itertools import combinations, permutations, product
+from math import ceil, comb, factorial, gcd, isclose, lcm
 
 from algo import a_star, custsort, merge_ranges, sssp
 from constants import EPSILON
