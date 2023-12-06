@@ -37,3 +37,6 @@
 [submodule "ingo-rust"]
 	path = ingo-rust
 	url = https://github.com/ingomancer/AoC2023.git
+[submodule "mlogic1-cpp"]
+	path = mlogic1-cpp
+	url = https://github.com/mlogic1/advent-of-code-2023.git
