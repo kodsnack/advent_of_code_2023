@@ -12,48 +12,24 @@ def parse(lines):
     distances = ints(lines[1])
 
     return times, distances
+
+
+def ways(time, distance):
+    return sum(x * (time - x) > distance for x in range(1, time))
     
 
 def solve_a(lines):
     times, distances = parse(lines)
 
-    total = 1
-    n = len(times)
-
-    for i in range(n):
-        t = times[i]
-        d = distances[i]
-
-        ways = 0
-
-        for x in range(1, t):
-            remaining = t-x
-            went = x*remaining
-
-            if went > d:
-                ways += 1
-
-        total *= ways
-
-    return total
+    return multall(ways(t, d) for t, d in zip(times, distances))
 
 
 def solve_b(lines):
-    times, distances = parse(lines)
+    time = int(''.join(str(t) for t in ints(lines[0])))
+    distance = int(''.join(str(d) for d in ints(lines[1])))
 
-    time = int(''.join(str(t) for t in times))
-    distance = int(''.join(str(d) for d in distances))
+    return ways(time, distance)
 
-    ways = 0
-
-    for x in range(1, time):
-        remaining = time-x
-        went = x*remaining
-
-        if went > distance:
-            ways += 1
-
-    return ways
 
 def main():
     lines = []
