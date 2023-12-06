@@ -12,9 +12,16 @@ Future<void> main(List<String> args) async {
   final resultP1 = calcResultP1(input);
   print(resultP1);
 
+  Stopwatch stopwatch = Stopwatch();
+  stopwatch.start();
   print('Part 2:');
   final resultP2 = calcResultP2(input);
   print(resultP2);
+  stopwatch.stop();
+  int mikros = stopwatch.elapsedMicroseconds;
+  int millis = mikros ~/ 1000;
+  mikros %= 1000;
+  print('Time : $millis,$mikros ms');
 }
 
 int calcResultP1(String input) {
@@ -71,7 +78,7 @@ int calcResultP2(String input) {
   int minLocationNo = veryLargeNumber;
   for (int rNo = 0; rNo < ranges.length; rNo++) {
     if (ranges[rNo].start < minLocationNo) {
-      print('$rNo : ${ranges[rNo].start}');
+      // print('$rNo : ${ranges[rNo].start}');
       minLocationNo = ranges[rNo].start;
     }
   }
