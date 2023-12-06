@@ -8,38 +8,33 @@ from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, dist
 
 
 def parse(lines):
-    for line in lines:
-        a, b = line.split('|')
+    times = ints(lines[0])
+    distances = ints(lines[1])
 
-        winners = set(ints(a.split(':')[1]))
-        mine = set(ints(b))
+    return times, distances
 
-        yield len(winners&mine)
 
+def ways(time, distance):
+    return sum(x * (time - x) > distance for x in range(1, time))
+    
 
 def solve_a(lines):
-    return sum(int(2**(w-1))for w in parse(lines))
+    times, distances = parse(lines)
+
+    return multall(ways(t, d) for t, d in zip(times, distances))
 
 
 def solve_b(lines):
-    n = len(lines)
-    cards = [1 for _ in range(n)]
-    wins = list(parse(lines))
-        
-    for i in range(n):
-        c = cards[i]
-        w = wins[i]
+    time = int(''.join(str(t) for t in ints(lines[0])))
+    distance = int(''.join(str(d) for d in ints(lines[1])))
 
-        for x in range(i+1, min(i+1+w, n)):            
-            cards[x] += c
-            
-    return sum(cards)
+    return ways(time, distance)
 
 
 def main():
     lines = []
 
-    with open('4.txt') as f:
+    with open('6.txt') as f:
         for line in f.readlines():
             lines.append(line)
             
