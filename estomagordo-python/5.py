@@ -45,7 +45,6 @@ def solve_a(lines):
 
         locations.append(val)
 
-    print(locations)
     return min(locations)
 
 
