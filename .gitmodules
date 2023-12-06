@@ -31,3 +31,6 @@
 [submodule "digimatic-rust"]
 	path = digimatic-rust
 	url = https://github.com/digimatic/advent_of_code_2023_rust.git
+[submodule "jofafrazze-csharp"]
+	path = jofafrazze-csharp
+	url = https://github.com/jofafrazze/advent_of_code_2023.git
