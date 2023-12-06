@@ -13,4 +13,8 @@ using aoc2023;
 //Day4.A();
 //Day4.B();
 
+//Day5.A();
+
+//Day6.A();
+Day6.B();
 Console.ReadKey();
