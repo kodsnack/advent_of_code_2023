@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 from heapq import heappop, heappush
+from itertools import combinations
+
+from helpers import overlap
 
 
 @dataclass
@@ -107,35 +110,17 @@ def a_star(graph, start, goal, step_finder, heuristic):
 
 
 def merge_ranges(ranges):
-    result = []
-    
-    for rangstart, rangend in ranges:
-        tempranges = list(result)
+    while True:
+        found = False
 
-        for i, r in enumerate(tempranges):
-            tempstart, tempend = r
-            overlapstart = max(rangstart, tempstart)
-            overlapend = min(rangend, tempend)
+        for i, j in combinations(range(len(ranges)), 2):
+            a, b = ranges[i], ranges[j]
 
-            if overlapend < overlapstart:
-                continue
-
-            if overlapstart == rangstart and overlapend == rangend:
-                rangend = rangstart-1
+            if overlap(a, b):
+                merged = [min(a[0], b[0]), max(a[1], b[1])]
+                ranges = ranges[:i] + [merged] + ranges[i+1:j] + ranges[j+1:]
+                found = True
                 break
 
-            newstart = min(rangstart, tempstart)
-            newend = max(rangend, tempend)
-
-            tempranges[i] = [newstart, newend]
-            
-            rangend = rangstart-1
-            break
-            
-        if rangend >= rangstart:
-            tempranges.append([rangstart, rangend])
-            tempranges.sort()
-
-        result = tempranges
-
-    return result
+        if not found:
+            return ranges
