@@ -126,3 +126,7 @@ def rays_from_inside(grid, y, x):
 
 def adjacent(a, b):
     return manhattan(a, b) == 1
+
+
+def overlap(a, b):
+    return b[0] <= a[0] <= b[1] or b[0] <= a[1] <= b[1] or a[0] <= b[0] <= a[1] or a[0] <= b[1] <= a[1]

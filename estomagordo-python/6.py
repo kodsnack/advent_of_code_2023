@@ -4,6 +4,7 @@ from heapq import heapify, heappop, heappush
 from itertools import combinations, permutations, product
 
 from algo import a_star, custsort, sssp
+from constants import EPSILON
 from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, positives, rays, rays_from_inside
 
 
@@ -15,7 +16,13 @@ def parse(lines):
 
 
 def ways(time, distance):
-    return sum(x * (time - x) > distance for x in range(1, time))
+    halfway = time / 2.0
+    root_distance = (time**2 / 4.0 - distance)**0.5
+
+    a = int(halfway - root_distance + EPSILON)
+    b = int(halfway + root_distance - EPSILON)
+
+    return b - a
     
 
 def solve_a(lines):
