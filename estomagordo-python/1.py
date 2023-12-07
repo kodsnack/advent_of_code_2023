@@ -48,9 +48,8 @@ def main():
         for line in f.readlines():
             lines.append(line)
             
-    print(solve_a(lines))
-    print(solve_b(lines))
+    return (solve_a(lines), solve_b(lines))
 
 
 if __name__ == '__main__':
-    main()
+    print(main())

@@ -10,11 +10,19 @@ from algo import a_star, custsort, sssp
 from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, positives, rays, rays_from_inside
 
 
+def parse(lines):
+    return None
+    
+
 def solve_a(lines):
+    data = parse(lines)
+
     return None
 
 
 def solve_b(lines):
+    data = parse(lines)
+
     return None
 
 
@@ -25,12 +33,11 @@ def main():
         for line in f.readlines():
             lines.append(line)
             
-    print(solve_a(lines))
-    print(solve_b(lines))
+    return (solve_a(lines), solve_b(lines))
 
 
 if __name__ == '__main__':
-    main()
+    print(main())
 """
 
 if __name__ == '__main__':
