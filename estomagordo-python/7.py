@@ -10,65 +10,44 @@ from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, dist
 
 
 def cardvalue(card):
-    if card.isdigit():
-        return int(card)
-    
-    if card == 'T':
-        return 10
-    if card == 'J':
-        return 11
-    if card == 'Q':
-        return 12
-    if card == 'K':
-        return 13
-    return 14
+    match card:
+        case 'T':
+            return 10
+        case 'J':
+            return 11
+        case 'Q':
+            return 12
+        case 'K':
+            return 13
+        case 'A':
+            return 14
+        case _:
+            return int(card)
 
 
-def cardvalue_b(card):
-    if card.isdigit():
-        return int(card)
-    
-    if card == 'T':
-        return 10
-    if card == 'J':
-        return 1
-    if card == 'Q':
-        return 12
-    if card == 'K':
-        return 13
-    return 14
+def score_hand(cards):
+    c = Counter(cards)
+
+    match len(c):
+        case 1:
+            return 6
+        case 2:
+            return 4 + any(v == 4 for v in c.values())
+        case 3:
+            return 2 + any(v == 3 for v in c.values())
+        case 4:
+            return 1
+        case 5:
+            return 0
 
 
 def hand(cards):
-    c = Counter(cards)
-    
-    if len(c) == 1:
-        return 6
-    
-    if len(c) == 5:
-        return 0
-    
-    if len(c) == 4:
-        return 1
-    
-    if len(c) == 2:
-        if any(v == 4 for v in c.values()):
-            return 5
-        return 4
-    
-    if any(v == 3 for v in c.values()):
-        return 3
-    
-    return 2
-
-
-def hand_b(cards):
-    best = hand(cards)
+    best = score_hand(cards)
 
     jpositions = []
     
     for i, c in enumerate(cards):
-        if c == 'J':
+        if c == '1':
             jpositions.append(i)
 
     for selections in product('23456789TQKA', repeat=len(jpositions)):
@@ -77,7 +56,7 @@ def hand_b(cards):
         for i, selection in enumerate(selections):
             dcards[jpositions[i]] = selection
 
-        best = max(best, hand(dcards))
+        best = max(best, score_hand(dcards))
 
     return best
 
@@ -93,39 +72,17 @@ def parse(lines):
 
     return sorted(hands)
 
-    
-def parse_b(lines):
-    hands = []
-
-    for line in lines:
-        cards, bid = line.split()
-        strength = hand_b(cards)
-        values = [cardvalue_b(card) for card in cards]
-        hands.append((strength, values, int(bid), cards))
-
-    return sorted(hands)
-
 
 def solve_a(lines):
     hands = parse(lines)
 
-    score = 0
-
-    for i in range(len(hands)):
-        score += (i+1) * hands[i][2]
-
-    return score
+    return sum((i+1) * hands[i][2] for i in range(len(hands)))
 
 
 def solve_b(lines):
-    hands = parse_b(lines)
+    hands = parse([line.replace('J', '1') for line in lines])
 
-    score = 0
-
-    for i in range(len(hands)):
-        score += (i+1) * hands[i][2]
-
-    return score
+    return sum((i+1) * hands[i][2] for i in range(len(hands)))
 
 
 def main():
