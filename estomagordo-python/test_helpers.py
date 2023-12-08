@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap
 
 
 def test_distance():
@@ -374,3 +374,35 @@ def test_neighbours_does_not_include_self():
     assert (y, x) not in eight_neighs_bounded_neighs
     assert (r, c) not in hexneighs_neighs
     assert point not in n_neighs_neighs
+
+
+def test_overlap():
+    touching_begin_a = [1, 3]
+    touching_begin_b = [3, 10]
+
+    assert overlap(touching_begin_a, touching_begin_b)
+
+    semicovered_a = [2, 7]
+    semicovered_b = [5, 0]
+
+    assert overlap(semicovered_a, semicovered_b)
+
+    touching_end_a = [7, 11]
+    touching_end_b = [11, 16]
+
+    assert overlap(touching_end_a, touching_end_b)
+
+    first_contained_a = [4, 9]
+    first_contained_b = [2, 20]
+
+    assert overlap(first_contained_a, first_contained_b)
+
+    second_contained_a = [19, 28]
+    second_contained_b = [21, 23]
+
+    assert overlap(second_contained_a, second_contained_b)
+
+    non_overlapping_a = [13, 20]
+    non_overlapping_b = [33, 40]
+
+    assert not overlap(non_overlapping_a, non_overlapping_b)
