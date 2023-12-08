@@ -27,7 +27,6 @@ def parse(lines):
     
 
 def solve_a(lines):
-    return 1
     inst, graph = parse(lines)
 
     node = 'AAA'
@@ -48,69 +47,27 @@ def solve_b(lines):
     inst, graph = parse(lines)
 
     nodes = [[node, node] for node in graph.keys() if node[-1] == 'A']
-    firsttook = {}
-    diff = {}
+    cyclen = {}    
     steps = 0
-    pos = 0
-    # znodes = [node for node in graph.keys() if node[-1] == 'Z']
+    pos = 0    
 
-    while any(node[0][-1] != 'Z' for node in nodes):
-        if len(diff) == len(nodes):
-            print(lcm(*list(val for val in diff.values())))
+    while True:
+        if len(cyclen) == len(nodes):
+            return lcm(*list(val for val in cyclen.values()))
+        
         move = inst[pos % len(inst)]
 
         for i, nodepair in enumerate(nodes):
             node, orignode = nodepair
 
             if node[-1] == 'Z':
-                if orignode not in firsttook:
-                    print('first')
-                    print(firsttook)
-                    print()
-                    print(diff)
-                    firsttook[orignode] = steps
-                elif orignode not in diff:
-                    diff[orignode] = steps - firsttook[orignode]
-                    print('second')
-                    print(firsttook)
-                    print()
-                    print(diff)
+                if orignode not in cyclen:                    
+                    cyclen[orignode] = steps
 
             nodes[i] = [graph[node][0 if move == 'L' else 1], orignode]
         
         steps += 1
         pos += 1
-
-
-    return steps
-
-
-    print(anodes, znodes)
-    anodesteps = []
-    
-    n = len(anodes)
-
-    for anode in anodes:
-        znodesfound = set()
-        zsteps = []
-        steps = 0
-        pos = 0
-        node = anode
-
-        while len(znodesfound) < n:
-            if node in znodes and node not in znodesfound:
-                print(anode, node)
-                znodesfound.add(node)
-                zsteps.append(steps)
-
-            move = inst[pos % len(inst)]
-            node = graph[node][0 if move == 'L' else 1]
-            steps += 1
-            pos += 1
-
-        anodesteps.append(zsteps)
-
-    return anodesteps
 
 
 def main():
