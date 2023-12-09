@@ -13,6 +13,7 @@ def parse(lines):
 
     numbers = {}
     symbols = {}
+    numbers_found = 0
     currnum = ''
 
     for y in range(h):
@@ -25,16 +26,14 @@ def parse(lines):
 
             if currnum:
                 numlen = len(currnum)
-                l = []
 
                 fx = w if x == 0 else x
                 fy = y-1 if x == 0 else y
 
                 for dx in range(fx-numlen, fx):
-                    l.append((fy, dx))
+                    numbers[(fy, dx)] = (int(currnum), numbers_found)
 
-                numbers[tuple(l)] = int(currnum)
-
+                numbers_found += 1
                 currnum = ''
 
             if c == '.':
@@ -48,21 +47,19 @@ def parse(lines):
 def solve_a(lines):
     numbers, symbols = parse(lines)
 
+    found = set()
     total = 0
 
-    for cells, number in numbers.items():
-        isadjacent = False
+    for y, x in symbols.keys():
+        for ny, nx in eight_neighs(y, x):
+            if (ny, nx) in numbers:
+                val, i = numbers[(ny, nx)]
 
-        for y, x in cells:
-            for ny, nx in eight_neighs(y, x):
-                if (ny, nx) in symbols:
-                    isadjacent = True
-
-        if isadjacent:
-            total += number
+                if i not in found:
+                    found.add(i)
+                    total += val
 
     return total
-
 
 
 def solve_b(lines):
@@ -72,21 +69,14 @@ def solve_b(lines):
     total = 0
 
     for y, x in gears:
-        nums = []
+        nums = set()
 
-        for cells, number in numbers.items():
-            isadjacent = False
-
-            for cy, cx in cells:
-                for ny, nx in eight_neighs(cy, cx):
-                    if (ny, nx) == (y, x):
-                        isadjacent = True
-
-            if isadjacent:
-                nums.append(number)
+        for ny, nx in eight_neighs(y, x):
+            if (ny, nx) in numbers:
+                nums.add(numbers[(ny, nx)])
 
         if len(nums) == 2:
-            total += nums[0] * nums[1]
+            total += multall(num[0] for num in nums)
 
     return total
 

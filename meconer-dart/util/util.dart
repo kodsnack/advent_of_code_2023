@@ -72,3 +72,8 @@ int findGcd(int n1, int n2) {
   }
   return larger;
 }
+
+void printToFile(String fileName, List<String> lines) async {
+  File file = File(fileName);
+  await file.writeAsString(lines.join('\n'));
+}
