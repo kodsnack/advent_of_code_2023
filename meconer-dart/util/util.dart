@@ -20,6 +20,15 @@ bool isAlpha(String? s) {
   return _alpha.hasMatch(s);
 }
 
+bool isPrime(int n) {
+  for (var i = 2; i <= n / i; ++i) {
+    if (n % i == 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
 // From Wikipedia, Heaps algorithm
 List<List<int>> getPermutations(List<int> startList) {
   List<List<int>> perms = [];
