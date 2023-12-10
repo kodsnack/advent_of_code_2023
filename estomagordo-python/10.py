@@ -92,7 +92,7 @@ def is_inside(lines, path, y, x):
         return False    
     
     crossings = 0
-    last_corner = ' '
+    last_corner = ''
 
     for rx in range(x):
         c = lines[y][rx]
@@ -104,8 +104,6 @@ def is_inside(lines, path, y, x):
                 if last_corner == 'L' and c == '7' or last_corner == 'F' and c == 'J':
                     crossings += 1
                 last_corner = c
-        else:
-            last_corner = ' '
 
     return crossings % 2
 
