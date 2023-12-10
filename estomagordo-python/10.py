@@ -118,7 +118,8 @@ def solve_b(lines):
             if c in '-J7':
                 newrow.append(['-', -1, -1])
             else:
-                newrow.append([c, y, x])
+                newrow.append(['.', -1, -1])
+            newrow.append((c, y, x))
 
         newrow.append(['.', -1, -1])
         
@@ -127,12 +128,12 @@ def solve_b(lines):
     h = len(fullgraph)
     w = len(fullgraph[0])
 
-    for y, row in enumerate(fullgraph):
-        for x, tile in enumerate(row):
-            if x > 0 and fullgraph[y][x-1][0] == '-' and y < h-1 and fullgraph[y+1][x][0] == '|':
-                fullgraph[y][x][0] = '7'
-            if x > 0 and fullgraph[y][x-1][0] == '-' and y > 0 and fullgraph[y-1][x][0] == '|':
-                fullgraph[y][x][0] = 'J'
+    # for y, row in enumerate(fullgraph):
+    #     for x, tile in enumerate(row):
+    #         if x > 0 and fullgraph[y][x-1][0] == '-' and y < h-1 and fullgraph[y+1][x][0] == '|':
+    #             fullgraph[y][x][0] = '7'
+    #         if x > 0 and fullgraph[y][x-1][0] == '-' and y > 0 and fullgraph[y-1][x][0] == '|':
+    #             fullgraph[y][x][0] = 'J'
     
     for y, row in enumerate(fullgraph):
         print(''.join(r[0] for r in row))  
@@ -208,15 +209,15 @@ def solve_b(lines):
                 if cangoright and (y, x+1) not in seen:
                     frontier.append((steps+1, y, x+1))
 
-    print()
+    # print()
     
-    for y in range(origh):
-        row = []
+    # for y in range(origh):
+    #     row = []
 
-        for x in range(origw):
-            row.append('*' if (y, x) in loopseen else '.')
+    #     for x in range(origw):
+    #         row.append('*' if (y, x) in loopseen else '.')
 
-        print(row)
+    #     print(row)
     
     frontier = []
 
@@ -251,6 +252,27 @@ def solve_b(lines):
                 continue
 
             frontier.append((ny, nx))
+
+    print()
+    count = 0
+    
+    for y in range(origh):
+        row = []
+
+        for x in range(origw):
+            if (y, x) in loopseen:
+                # row.append(lines[y][x])
+                row.append('.')
+            elif (y, x) in genuine_outside:
+                # row.append('O')
+                row.append('.')
+            else:
+                row.append('I')
+                count += 1
+
+        print(''.join(row))
+    
+    print(count)
 
     return origh * origw - len(loopseen) - len(genuine_outside)
 
