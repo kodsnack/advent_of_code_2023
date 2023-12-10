@@ -130,3 +130,9 @@ def adjacent(a, b):
 
 def overlap(a, b):
     return b[0] <= a[0] <= b[1] or b[0] <= a[1] <= b[1] or a[0] <= b[0] <= a[1] or a[0] <= b[1] <= a[1]
+
+
+def words(line):
+    pattern = re.compile(r'[a-zA-Z]+')
+
+    return [word for word in re.findall(pattern, line)]

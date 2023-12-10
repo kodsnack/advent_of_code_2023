@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap, words
 
 
 def test_distance():
@@ -406,3 +406,9 @@ def test_overlap():
     non_overlapping_b = [33, 40]
 
     assert not overlap(non_overlapping_a, non_overlapping_b)
+
+
+def test_words():
+    line = 'A hh Fh2;j majkjags  36 u,u'
+
+    assert ['A', 'hh', 'Fh', 'j', 'majkjags', 'u', 'u'] == words(line)
