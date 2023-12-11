@@ -128,10 +128,6 @@ def adjacent(a, b):
     return manhattan(a, b) == 1
 
 
-def overlap(a, b):
-    return b[0] <= a[0] <= b[1] or b[0] <= a[1] <= b[1] or a[0] <= b[0] <= a[1] or a[0] <= b[1] <= a[1]
-
-
 def words(line):
     pattern = re.compile(r'[a-zA-Z]+')
 
@@ -143,6 +139,10 @@ def between(point, a, b, strictly_different=True):
         return a < point < b or b < point < a
     
     return a <= point <= b or b <= point <= a
+
+
+def overlap(a, b):
+    return between(a[0], *b, False) or between(a[1], *b, False) or between(b[0], *a, False) or between(b[1], *a, False)
 
 
 def dimensions(grid):
