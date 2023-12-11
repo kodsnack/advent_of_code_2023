@@ -11,12 +11,12 @@ from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, dist
 
 def solve(lines, spacing):
     galaxies = set()
-    empty_cols = set()
-    empty_rows = set()
+    empty_cols = []
+    empty_rows = []
 
     for y in range(len(lines)):
         if set(lines[y]) == {'.'}:
-            empty_rows.add(y)
+            empty_rows.append(y)
 
         for x in range(len(lines[0])):
             if lines[y][x] == '#':
@@ -24,36 +24,16 @@ def solve(lines, spacing):
 
     for x, col in enumerate(columns(lines)):
         if set(col) == {'.'}:
-            empty_cols.add(x)
+            empty_cols.append(x)
 
-    total = 0
+    def distance(a, b):
+        expanded_rows = sum(a[0] < row < b[0] or b[0] < row < a[0] for row in empty_rows)
+        expanded_cols = sum(a[1] < col < b[1] or b[1] < col < a[1] for col in empty_cols)
+        base_distance = manhattan(a, b)
 
-    for gy, gx in galaxies:
-        found = {(gy, gx)}
-        seen = set()
-        frontier = [(0, gy, gx)]
-
-        while len(found) < len(galaxies):
-            steps, y, x = heappop(frontier)
-
-            if (y, x) in seen:
-                continue
-
-            if (y, x) in galaxies:
-                found.add((y, x))
-                total += steps
-
-            seen.add((y, x))
-
-            for ny, nx in neighs_bounded(y, x, 0, len(lines)-1, 0, len(lines[0])-1):
-                if (ny, nx) in seen:
-                    continue
-
-                cost = 1 + spacing * (ny in empty_rows) + spacing * (nx in empty_cols)
-
-                heappush(frontier, (steps+cost, ny, nx))
-
-    return total // 2
+        return base_distance + (expanded_rows + expanded_cols) * spacing
+    
+    return sum(distance(a, b) for a, b in combinations(galaxies, 2))
     
 
 def solve_a(lines):
