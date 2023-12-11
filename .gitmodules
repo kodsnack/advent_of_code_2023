@@ -40,9 +40,6 @@
 [submodule "mlogic1-cpp"]
 	path = mlogic1-cpp
 	url = https://github.com/mlogic1/advent-of-code-2023.git
-[submodule "carl-westerlund-python"]
-	path = carl-westerlund-python
-	url = https://github.com/carl-westerlund/advent_of_code_2023.git
 [submodule "emlun-rust"]
 	path = emlun-rust
 	url = https://github.com/emlun/adventofcode-2023.git
