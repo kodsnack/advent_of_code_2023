@@ -143,3 +143,7 @@ def between(point, a, b, strictly_different=True):
         return a < point < b or b < point < a
     
     return a <= point <= b or b <= point <= a
+
+
+def dimensions(grid):
+    return len(grid), len(grid[0])
