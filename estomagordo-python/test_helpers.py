@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap, words, between, dimensions
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap, words, between, dimensions, sum_of_differences
 
 
 def test_distance():
@@ -429,3 +429,9 @@ def test_dimensions():
     assert (1, 1) == dimensions(grid_1_x_1)
     assert (2, 3) == dimensions(grid_2_x_3)
     assert (3, 2) == dimensions(grid_3_x_2)
+
+
+def test_sum_of_differences():
+    l = [-3, 0, 4, 4, 9]
+
+    assert 56 == sum_of_differences(l)
