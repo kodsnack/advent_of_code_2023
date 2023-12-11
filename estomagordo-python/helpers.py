@@ -150,13 +150,4 @@ def dimensions(grid):
 
 
 def sum_of_differences(l):
-    n = len(l)
-    total = 0
-
-    for i, val in enumerate(l):
-        if i == 0:
-            continue
-
-        total += (val - l[i-1]) * (n - i) * i
-
-    return total
+    return sum((l[i] - l[i-1]) * (len(l) - i) * i for i in range(1, len(l)))
