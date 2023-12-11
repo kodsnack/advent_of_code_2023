@@ -29,7 +29,7 @@ fn part2(input :&str, expansion :usize) -> i64 {
 
     for i in 0..stars.len() {
         let (x, y) = stars[i];
-        let mut ax = ;
+        let mut ax = 0;
         let mut ay = 0;
         for he in &horizontal_expansions {
             if y > *he {
