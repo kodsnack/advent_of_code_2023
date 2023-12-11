@@ -41,24 +41,15 @@ def score_hand(cards):
             return 0
 
 
-def hand(cards):
+def hand(cards):    
     best = score_hand(cards)
 
-    jpositions = []
+    if best == 6 or '1' not in cards:
+        return best
     
-    for i, c in enumerate(cards):
-        if c == '1':
-            jpositions.append(i)
+    most_common_non_joker = Counter(card for card in cards if card != '1').most_common(1)[0][0]    
 
-    for selections in product('23456789TQKA', repeat=len(jpositions)):
-        dcards = list(cards)
-
-        for i, selection in enumerate(selections):
-            dcards[jpositions[i]] = selection
-
-        best = max(best, score_hand(dcards))
-
-    return best
+    return score_hand(cards.replace('1', most_common_non_joker))
 
 
 def parse(lines):
