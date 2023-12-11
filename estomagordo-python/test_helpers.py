@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap, words
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap, words, between
 
 
 def test_distance():
@@ -412,3 +412,10 @@ def test_words():
     line = 'A hh Fh2;j majkjags  36 u,u'
 
     assert ['A', 'hh', 'Fh', 'j', 'majkjags', 'u', 'u'] == words(line)
+
+
+def test_between():
+    assert between(10, 5, 15)
+    assert between(10, 15, 5)
+    assert not between(5, 5, 10)
+    assert between(5, 5, 15, False)

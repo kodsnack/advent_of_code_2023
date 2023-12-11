@@ -136,3 +136,10 @@ def words(line):
     pattern = re.compile(r'[a-zA-Z]+')
 
     return [word for word in re.findall(pattern, line)]
+
+
+def between(point, a, b, strictly_different=True):
+    if strictly_different:
+        return a < point < b or b < point < a
+    
+    return a <= point <= b or b <= point <= a

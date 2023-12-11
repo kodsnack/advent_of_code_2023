@@ -6,16 +6,18 @@ from math import ceil, comb, factorial, gcd, isclose, lcm
 
 from algo import a_star, custsort, merge_ranges, sssp
 from constants import EPSILON
-from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
+from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
 
 
 def solve(lines, spacing):
+    empty = {'.'}
+
     galaxies = set()
     empty_cols = []
     empty_rows = []
 
     for y in range(len(lines)):
-        if set(lines[y]) == {'.'}:
+        if set(lines[y]) == empty:
             empty_rows.append(y)
 
         for x in range(len(lines[0])):
@@ -23,12 +25,12 @@ def solve(lines, spacing):
                 galaxies.add((y, x))
 
     for x, col in enumerate(columns(lines)):
-        if set(col) == {'.'}:
+        if set(col) == empty:
             empty_cols.append(x)
 
     def distance(a, b):
-        expanded_rows = sum(a[0] < row < b[0] or b[0] < row < a[0] for row in empty_rows)
-        expanded_cols = sum(a[1] < col < b[1] or b[1] < col < a[1] for col in empty_cols)
+        expanded_rows = sum(between(row, a[0], b[0]) for row in empty_rows)
+        expanded_cols = sum(between(col, a[1], b[1]) for col in empty_cols)
         base_distance = manhattan(a, b)
 
         return base_distance + (expanded_rows + expanded_cols) * spacing
