@@ -20,9 +20,9 @@ def solve(lines, spacing):
 
             if galaxy_count == 0:
                 empty += 1
-            else:
-                for _ in range(galaxy_count):
-                    l.append(i + empty * spacing)
+                
+            for _ in range(galaxy_count):
+                l.append(i + empty * spacing)
 
         return l
 
