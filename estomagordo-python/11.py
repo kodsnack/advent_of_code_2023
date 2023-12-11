@@ -1,3 +1,4 @@
+from bisect import bisect, bisect_left, bisect_right
 from collections import Counter, defaultdict, deque
 from functools import cache, reduce
 from heapq import heapify, heappop, heappush
@@ -31,8 +32,18 @@ def solve(lines, spacing):
             empty_cols.append(x)
 
     def distance(a, b):
-        expanded_rows = sum(between(row, a[0], b[0]) for row in empty_rows)
-        expanded_cols = sum(between(col, a[1], b[1]) for col in empty_cols)
+        ymin = min(a[0], b[0])
+        ymax = max(a[0], b[0])
+        xmin = min(a[1], b[1])
+        xmax = max(a[1], b[1])
+
+        first_row = bisect_left(empty_rows, ymin)
+        last_row = bisect_left(empty_rows, ymax)
+        first_col = bisect_left(empty_cols, xmin)
+        last_col = bisect_left(empty_cols, xmax)
+
+        expanded_rows = last_row - first_row
+        expanded_cols = last_col - first_col
         base_distance = manhattan(a, b)
 
         return base_distance + (expanded_rows + expanded_cols) * spacing
