@@ -91,21 +91,7 @@ def is_inside(lines, path, y, x):
     if (y, x) in path:
         return False    
     
-    crossings = 0
-    last_corner = ''
-
-    for rx in range(x):
-        c = lines[y][rx]
-
-        if (y, rx) in path:
-            if c == '|':
-                crossings += 1
-            elif c in 'FLJ7':
-                if last_corner == 'L' and c == '7' or last_corner == 'F' and c == 'J':
-                    crossings += 1
-                last_corner = c
-
-    return crossings % 2
+    return sum(lines[y][lx] in 'LJ|' and (y, lx) in path for lx in range(x)) % 2
 
 
 def solve_b(lines):    
