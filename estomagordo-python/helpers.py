@@ -147,3 +147,16 @@ def overlap(a, b):
 
 def dimensions(grid):
     return len(grid), len(grid[0])
+
+
+def sum_of_differences(l):
+    n = len(l)
+    total = 0
+
+    for i, val in enumerate(l):
+        if i == 0:
+            continue
+
+        total += (val - l[i-1]) * (n - i) * i
+
+    return total

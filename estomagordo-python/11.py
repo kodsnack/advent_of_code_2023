@@ -7,48 +7,37 @@ from math import ceil, comb, factorial, gcd, isclose, lcm
 
 from algo import a_star, custsort, merge_ranges, sssp
 from constants import EPSILON
-from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
+from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, sum_of_differences, words
 
 
 def solve(lines, spacing):
-    empty = {'.'}
-
-    h, w = dimensions(lines)
-
-    galaxies = set()
-    empty_cols = []
-    empty_rows = []
+    h, w = dimensions(lines)    
+    empty_rows = 0
+    empty_cols = 0
+    ys = []
+    xs = []
 
     for y in range(h):
-        if set(lines[y]) == empty:
-            empty_rows.append(y)
+        galaxy_count = lines[y].count('#')
 
-        for x in range(w):
-            if lines[y][x] == '#':
-                galaxies.add((y, x))
+        if galaxy_count == 0:
+            empty_rows += 1
+        else:
+            for _ in range(galaxy_count):
+                ys.append(y + empty_rows * spacing)
 
-    for x, col in enumerate(columns(lines)):
-        if set(col) == empty:
-            empty_cols.append(x)
-
-    def distance(a, b):
-        ymin = min(a[0], b[0])
-        ymax = max(a[0], b[0])
-        xmin = min(a[1], b[1])
-        xmax = max(a[1], b[1])
-
-        first_row = bisect_left(empty_rows, ymin)
-        last_row = bisect_left(empty_rows, ymax)
-        first_col = bisect_left(empty_cols, xmin)
-        last_col = bisect_left(empty_cols, xmax)
-
-        expanded_rows = last_row - first_row
-        expanded_cols = last_col - first_col
-        base_distance = manhattan(a, b)
-
-        return base_distance + (expanded_rows + expanded_cols) * spacing
+    cols = columns(lines)
     
-    return sum(distance(a, b) for a, b in combinations(galaxies, 2))
+    for x in range(w):
+        galaxy_count = cols[x].count('#')
+
+        if galaxy_count == 0:
+            empty_cols += 1
+        else:
+            for _ in range(galaxy_count):
+                xs.append(x + empty_cols * spacing)
+
+    return sum_of_differences(ys) + sum_of_differences(xs)
     
 
 def solve_a(lines):
