@@ -10,9 +10,12 @@ Future<void> main(List<String> args) async {
   final resultP1 = calcResultP1(input);
   print(resultP1);
 
+  Stopwatch sw = Stopwatch();
+  sw.start();
   print('Part 2:');
   final resultP2 = calcResultP2(input);
   print(resultP2);
+  print('${sw.elapsedMicroseconds} us');
 }
 
 int calcResultP1(String input) {
@@ -46,21 +49,15 @@ int calcResultP2(String input) {
     cycleLengths.add(findDistToZ(nodes[nodeNo], nodeMap, instructions));
   }
 
-  int n = 1;
-  bool ready = false;
-  while (!ready) {
-    int total = n * cycleLengths[0];
-    ready = true;
-    for (int i = 1; i < nodes.length; i++) {
-      int rem = total % cycleLengths[i];
-      if (rem != 0) {
-        ready = false;
-        break;
-      }
+  int interval = cycleLengths[0];
+  int count = interval;
+  for (int nodeIdx = 1; nodeIdx < nodes.length; nodeIdx++) {
+    while (count % cycleLengths[nodeIdx] != 0) {
+      count += interval;
     }
-    n++;
+    interval = count;
   }
-  return (n - 1) * cycleLengths[0];
+  return count;
 }
 
 int findDistToZ(String node, Map<String, Map<String, String>> nodeMap,

@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap, words, between, dimensions, sum_of_differences
 
 
 def test_distance():
@@ -406,3 +406,32 @@ def test_overlap():
     non_overlapping_b = [33, 40]
 
     assert not overlap(non_overlapping_a, non_overlapping_b)
+
+
+def test_words():
+    line = 'A hh Fh2;j majkjags  36 u,u'
+
+    assert ['A', 'hh', 'Fh', 'j', 'majkjags', 'u', 'u'] == words(line)
+
+
+def test_between():
+    assert between(10, 5, 15)
+    assert between(10, 15, 5)
+    assert not between(5, 5, 10)
+    assert between(5, 5, 15, False)
+
+
+def test_dimensions():
+    grid_1_x_1 = [[1]]
+    grid_2_x_3 = [[1,2,3],[4,5,6]]
+    grid_3_x_2 = [[1,2],[3,4],[5,6]]
+
+    assert (1, 1) == dimensions(grid_1_x_1)
+    assert (2, 3) == dimensions(grid_2_x_3)
+    assert (3, 2) == dimensions(grid_3_x_2)
+
+
+def test_sum_of_differences():
+    l = [-3, 0, 4, 4, 9]
+
+    assert 56 == sum_of_differences(l)
