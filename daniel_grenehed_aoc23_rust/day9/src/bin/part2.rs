@@ -5,12 +5,8 @@ fn part2(input :&str) -> i32 {
         vects.push(line.split(' ').map(|n| n.parse::<i32>()).flatten().collect());
         let mut i = 0;
         // create tables
-        while vects.last().unwrap().iter().fold(0, |a,n| a+n.abs()) != 0 {
-            let mut vec :Vec<i32> = Vec::new();
-            for n in 0..vects[i].len()-1 {
-                vec.push(vects[i][n+1]-vects[i][n]);
-            }
-            vects.push(vec);
+        while vects.last().unwrap().iter().any(|n| *n != 0) {
+            vects.push(vects[i].windows(2).map(|v| v[1]-v[0]).collect::<Vec<i32>>());
             i += 1;
         }
         i -= 1;
