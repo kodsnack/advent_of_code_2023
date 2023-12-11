@@ -11,31 +11,25 @@ from helpers import adjacent, between, chunks, chunks_with_overlap, columns, dig
 
 
 def solve(lines, spacing):
-    h, w = dimensions(lines)    
-    empty_rows = 0
-    empty_cols = 0
-    ys = []
-    xs = []
+    def list_by_dimension(grid, limit):
+        empty = 0
+        l = []
 
-    for y in range(h):
-        galaxy_count = lines[y].count('#')
+        for i in range(limit):
+            galaxy_count = grid[i].count('#')
 
-        if galaxy_count == 0:
-            empty_rows += 1
-        else:
-            for _ in range(galaxy_count):
-                ys.append(y + empty_rows * spacing)
+            if galaxy_count == 0:
+                empty += 1
+            else:
+                for _ in range(galaxy_count):
+                    l.append(i + empty * spacing)
 
-    cols = columns(lines)
+        return l
+
+    h, w = dimensions(lines)
     
-    for x in range(w):
-        galaxy_count = cols[x].count('#')
-
-        if galaxy_count == 0:
-            empty_cols += 1
-        else:
-            for _ in range(galaxy_count):
-                xs.append(x + empty_cols * spacing)
+    ys = list_by_dimension(lines, h)
+    xs = list_by_dimension(columns(lines), w)
 
     return sum_of_differences(ys) + sum_of_differences(xs)
     
