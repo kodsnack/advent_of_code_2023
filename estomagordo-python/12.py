@@ -1,3 +1,5 @@
+import re
+
 from bisect import bisect, bisect_left, bisect_right
 from collections import Counter, defaultdict, deque
 from functools import cache, reduce
@@ -35,7 +37,6 @@ def solve_row(springs, config):
             return True        
         
         start = interpret(partial.split('?')[0])
-
 
         goallen = len(goal)
         startlen = len(start)
@@ -92,6 +93,52 @@ def solve_a(lines):
     return total
 
 
+def nusolve(s, c):
+    goal = ints(c)
+    parts = [p for p in re.split(r'\.+', s) if p]
+    seen = {}
+
+    def solve(partpos, goalpos):
+        if partpos == len(parts):
+            return goalpos == len(goal)
+        
+        part = parts[partpos]
+
+        minimal = part.count('#')
+        extras = part.count('?')
+
+        if goalpos == len(goal):
+            if minimal > 0:
+                return 0
+            
+            return solve(partpos+1, goalpos)        
+        
+        if (partpos, goalpos) in seen:
+            return seen[(partpos, goalpos)]
+        
+        poss = 0
+        cumsum = 0
+
+        for x in range(len(goal) - goalpos):
+            cumsum += goal[goalpos + x]
+
+            if cumsum > minimal + extras:
+                break
+
+            ways = solve_row(part, ','.join(str(g) for g in goal[goalpos:goalpos+x+1]))
+
+            poss += ways * solve(partpos+1, goalpos+x+1)
+
+        if minimal == 0:
+            poss += solve(partpos+1, goalpos)
+        
+        seen[(partpos, goalpos)] = poss
+
+        return poss
+
+    return solve(0, 0)
+
+
 def solve_b(lines):
     # return -1
     data = parse(lines)
@@ -110,7 +157,7 @@ def solve_b(lines):
         s1 = ''.join(s)[:-1]
         c1 = ''.join(c)[:-1]
         
-        score = solve_row(s1, c1)        
+        score = nusolve(s1, c1)        
 
         total += score
 
