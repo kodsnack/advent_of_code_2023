@@ -112,9 +112,20 @@ def solvesimple(springs, num):
     return last-first == num-1
 
 
-def nurowsolve(springs, config):    
-    con = ints(config)
-    periods = len(con) - 1
+def nurowsolve(springs, con):    
+    # con = ints(config)
+    # periods = len(con) - 1
+
+    if not con:
+        return '#' not in springs
+
+    ways = 0
+
+    for i, c in enumerate(springs):
+        if i >= con[0]:
+            ways += nurowsolve(springs[i+1:], con[1:])
+
+    return ways
 
     if periods == 0:
         return solvesimple(springs, con[0])
@@ -140,7 +151,7 @@ def nurowsolve(springs, config):
 
     return total
 
-nurowsolve('###????', '3,1')
+
 def nusolve(s, c):
     goal = ints(c)
     parts = [p for p in re.split(r'\.+', s) if p]
@@ -173,7 +184,8 @@ def nusolve(s, c):
             if cumsum > minimal + extras:
                 break
 
-            ways = nurowsolve(part, ','.join(str(g) for g in goal[goalpos:goalpos+x+1]))
+            # ways = nurowsolve(part, ','.join(str(g) for g in goal[goalpos:goalpos+x+1]))
+            ways = nurowsolve(part, goal[goalpos:goalpos+x+1])
 
             poss += ways * solve(partpos+1, goalpos+x+1)
 
@@ -186,6 +198,48 @@ def nusolve(s, c):
 
     return solve(0, 0)
 
+
+def megasolve(s, c, took):
+    if c and c[0] < 0:
+        return 0
+    
+    if not s:
+        return c == [0]
+    
+    first = s[0]
+    rest = s[1:]
+    taking = [c[0]-1] + c[1:]    
+    
+    if c[0]:
+        if took:
+            if first == '.':
+                return 0
+            
+            return megasolve(rest, taking, True)
+        
+        return megasolve(rest, taking, True) + megasolve(rest, c, False)
+    
+    if first == '#':
+        return 0    
+    
+    if first == '.':
+        return megasolve(rest, c[1:], False)
+    
+    if took:
+        return megasolve(rest, c[1:], False)
+    
+    ways = megasolve(rest, c[1:], False)
+
+    if len(c) > 1:
+        ways += megasolve(rest, [c[1]-1] + c[2:], True)
+
+    return ways
+
+
+mss = '???.###'
+msc = [1,1,3]
+
+print(megasolve(mss, msc, False))
 
 def solve_b(lines):
     # return -1
@@ -205,7 +259,8 @@ def solve_b(lines):
         s1 = ''.join(s)[:-1]
         c1 = ''.join(c)[:-1]
         
-        score = nusolve(s1, c1)        
+        # score = nusolve(s1, c1)        
+        score = megasolve(s1, ints(c1), False)
 
         total += score
 
