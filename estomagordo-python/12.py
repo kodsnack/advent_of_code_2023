@@ -15,7 +15,7 @@ from helpers import adjacent, between, chunks, chunks_with_overlap, columns, dig
 def parse(lines):
     return [line.split() for line in lines]
     
-
+@cache
 def solve_row(springs, config):
     n = len(springs)
     goal = ints(config)
@@ -93,6 +93,54 @@ def solve_a(lines):
     return total
 
 
+def solvesimple(springs, num):
+    if num > len(springs):
+        return 0
+    
+    first = -1
+    last = -1
+
+    for i, c in enumerate(springs):
+        if c == '#':
+            if first == -1:
+                first = i
+            last = i
+
+    if first == -1:
+        return len(springs) - num + 1
+    
+    return last-first == num-1
+
+
+def nurowsolve(springs, config):    
+    con = ints(config)
+    periods = len(con) - 1
+
+    if periods == 0:
+        return solvesimple(springs, con[0])
+
+    questindices = [i for i in range(len(springs)) if springs[i] == '?']
+    total = 0
+
+    for c in combinations(questindices, periods):
+        breaks = list(c)
+        parts = [springs[:breaks[0]]]
+
+        for i in range(1, periods):
+            parts.append(springs[breaks[i-1]:breaks[i]])
+
+        parts.append(springs[breaks[-1]:])
+
+        ways = 1
+
+        for i in range(periods):
+            ways *= solvesimple(parts[i], con[i])
+
+        total += ways
+
+    return total
+
+
 def nusolve(s, c):
     goal = ints(c)
     parts = [p for p in re.split(r'\.+', s) if p]
@@ -125,7 +173,7 @@ def nusolve(s, c):
             if cumsum > minimal + extras:
                 break
 
-            ways = solve_row(part, ','.join(str(g) for g in goal[goalpos:goalpos+x+1]))
+            ways = nurowsolve(part, ','.join(str(g) for g in goal[goalpos:goalpos+x+1]))
 
             poss += ways * solve(partpos+1, goalpos+x+1)
 
