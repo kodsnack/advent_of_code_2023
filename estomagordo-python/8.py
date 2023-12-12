@@ -6,7 +6,7 @@ from math import ceil, comb, factorial, gcd, isclose, lcm
 
 from algo import a_star, custsort, merge_ranges, sssp
 from constants import EPSILON
-from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside
+from helpers import adjacent, chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
 
 
 def parse(lines):
@@ -15,12 +15,7 @@ def parse(lines):
     graph = {}
 
     for line in lines[2:]:
-        parts = line.split()
-
-        start = parts[0]
-        l = parts[2][1:-1]
-        r = parts[3][:-1]
-
+        start, l, r = words(line)
         graph[start] = (l, r)
 
     return inst, graph
