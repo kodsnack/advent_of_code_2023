@@ -201,16 +201,23 @@ def nusolve(s, c):
 
 def megasolve(s, c, took):
     if c and c[0] < 0:
-        return 0
+        return 0    
     
     if not s:
         return c == [0]
     
     first = s[0]
     rest = s[1:]
-    taking = [c[0]-1] + c[1:]    
+
+    if not c:
+        if first == '#':
+            return 0
+
+        return megasolve(rest, c, False)    
     
     if c[0]:
+        taking = [c[0]-1] + c[1:]
+
         if took:
             if first == '.':
                 return 0
