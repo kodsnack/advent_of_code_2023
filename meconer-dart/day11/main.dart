@@ -12,10 +12,12 @@ Future<void> main(List<String> args) async {
   print('Part 1:');
   final resultP1 = calcResultP1(input);
   print(resultP1);
-
+  Stopwatch sw = Stopwatch();
+  sw.start();
   print('Part 2:');
   final resultP2 = calcResultP2(input);
   print(resultP2);
+  print('${sw.elapsedMicroseconds} us');
 }
 
 int calcResultP1(String input) {
