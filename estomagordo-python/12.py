@@ -199,54 +199,97 @@ def nusolve(s, c):
     return solve(0, 0)
 
 
-def megasolve(s, c, took):
-    if c and c[0] < 0:
-        return 0    
-    
-    if not s:
-        return c == [0]
-    
-    first = s[0]
-    rest = s[1:]
-
-    if not c:
-        if first == '#':
-            return 0
-
-        return megasolve(rest, c, False)    
-    
-    if c[0]:
-        taking = [c[0]-1] + c[1:]
-
-        if took:
-            if first == '.':
-                return 0
-            
-            return megasolve(rest, taking, True)
+def megasolve(springs, goal):
+    @cache
+    def inner_solve(springpos, goalpos, remaining, prev):
+        if springpos == len(springs):
+            return goalpos == len(goal)
         
-        return megasolve(rest, taking, True) + megasolve(rest, c, False)
-    
-    if first == '#':
-        return 0    
-    
-    if first == '.':
-        return megasolve(rest, c[1:], False)
-    
-    if took:
-        return megasolve(rest, c[1:], False)
-    
-    ways = megasolve(rest, c[1:], False)
+        match springs[springpos]:
+            case '.':
+                if prev and remaining > 0:
+                    return 0
+                
+                if remaining == 0:
+                    rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
 
-    if len(c) > 1:
-        ways += megasolve(rest, [c[1]-1] + c[2:], True)
+                    return inner_solve(springpos+1, goalpos+1, rem, False)
+                
+                return inner_solve(springpos+1, goalpos, remaining, False)
+            case '#':                
+                if remaining == 0:
+                    return 0                    
+                
+                return inner_solve(springpos+1, goalpos, remaining-1, True)
+            case _:
+                if prev:
+                    if remaining == 0:
+                        rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
 
-    return ways
+                        return inner_solve(springpos+1, goalpos+1, rem, False)
+                    
+                    return inner_solve(springpos+1, goalpos, remaining-1, True)
+
+                if remaining == 0:
+                    rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
+
+                    return inner_solve(springpos+1, goalpos+1, rem, False)
+                
+                return inner_solve(springpos+1, goalpos, remaining-1, True) + inner_solve(springpos+1, goalpos, remaining, False)
+                
+    return inner_solve(0, 0, goal[0], False)
+
+        
+        
+
+        
+    # if c and c[0] < 0:
+    #     return 0    
+    
+    # if not s:
+    #     return c == [0]
+    
+    # first = s[0]
+    # rest = s[1:]
+
+    # if not c:
+    #     if first == '#':
+    #         return 0
+
+    #     return megasolve(rest, c, False)    
+    
+    # if c[0]:
+    #     taking = [c[0]-1] + c[1:]
+
+    #     if took:
+    #         if first == '.':
+    #             return 0
+            
+    #         return megasolve(rest, taking, True)
+        
+    #     return megasolve(rest, taking, True) + megasolve(rest, c, False)
+    
+    # if first == '#':
+    #     return 0    
+    
+    # if first == '.':
+    #     return megasolve(rest, c[1:], False)
+    
+    # if took:
+    #     return megasolve(rest, c[1:], False)
+    
+    # ways = megasolve(rest, c[1:], False)
+
+    # if len(c) > 1:
+    #     ways += megasolve(rest, [c[1]-1] + c[2:], True)
+
+    # return ways
 
 
 mss = '???.###'
 msc = [1,1,3]
 
-print(megasolve(mss, msc, False))
+print(megasolve(mss, msc))
 
 def solve_b(lines):
     # return -1
@@ -267,7 +310,7 @@ def solve_b(lines):
         c1 = ''.join(c)[:-1]
         
         # score = nusolve(s1, c1)        
-        score = megasolve(s1, ints(c1), False)
+        score = megasolve(s1, ints(c1))
 
         total += score
 
