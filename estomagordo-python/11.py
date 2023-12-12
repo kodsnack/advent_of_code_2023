@@ -11,18 +11,18 @@ from helpers import adjacent, between, chunks, chunks_with_overlap, columns, dig
 
 
 def solve(lines, spacing):
-    def list_by_dimension(grid, limit):
+    def list_by_dimension(sequence, limit):
         empty = 0
         l = []
 
         for i in range(limit):
-            galaxy_count = grid[i].count('#')
+            galaxy_count = sequence[i].count('#')
 
             if galaxy_count == 0:
                 empty += 1
-            else:
-                for _ in range(galaxy_count):
-                    l.append(i + empty * spacing)
+
+            for _ in range(galaxy_count):
+                l.append(i + empty * spacing)
 
         return l
 
