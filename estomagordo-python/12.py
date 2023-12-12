@@ -25,18 +25,29 @@ def solve_row(springs, config):
 
         return partlens 
     
-    def possible(partial):
-        tot = sum(partial)
+    def possible(partial):        
+        tot = partial.count('#')
 
         if tot > m:
             return False
         
-        x = min(len(partial), len(goal))
+        if '?' not in partial:
+            return True        
+        
+        start = interpret(partial.split('?')[0])
 
-        for i in range(x):
-            if partial[i] > goal[i]:
+
+        goallen = len(goal)
+        startlen = len(start)
+
+        if startlen > goallen:
+            return False        
+        
+        for i in range(startlen-1):
+            if goal[i] != start[i]:
+                # print('oops', partial, start, goal)
                 return False
-            
+
         return True
         
 
@@ -57,9 +68,9 @@ def solve_row(springs, config):
 
             ways = 0
 
-            if possible(interpret(a)):
+            if possible(a):
                 ways += solve(pos+1, a)
-            if possible(interpret(b)):
+            if possible(b):
                 ways += solve(pos+1, b)
                 
             return ways
@@ -69,18 +80,20 @@ def solve_row(springs, config):
     return solve(0, str(springs))
 
 
-def solve_a(lines):    
+def solve_a(lines):
+    return -1  
     data = parse(lines)
     total = 0
 
     for springs, config in data:
         total += solve_row(springs, config)
+        print(springs, config, total)
 
     return total
 
 
 def solve_b(lines):
-    return -1
+    # return -1
     data = parse(lines)
     total = 0
 
@@ -94,12 +107,14 @@ def solve_b(lines):
             s.append(springs + '?')
             c.append(config + ',')        
 
-        s1 = ''.join(s[:-1])
-        c1 = ''.join(c[:-1])
+        s1 = ''.join(s)[:-1]
+        c1 = ''.join(c)[:-1]
+        
+        score = solve_row(s1, c1)        
 
-        print(i, len(data), springs, config, s1, c1)
+        total += score
 
-        total += solve_row(s1, c1)
+        print(i, len(data), score, total)
 
     return total
 
