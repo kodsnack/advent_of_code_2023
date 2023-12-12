@@ -42,8 +42,7 @@ def solve_line(springs, goal):
                 return skip + take
                 
     return inner_solve(0, 0, goal[0])
-print(solve_line('.??..??...?##.', [1, 1, 3]))
-a = 2
+
 
 def solve_a(lines):
     data = parse(lines)
