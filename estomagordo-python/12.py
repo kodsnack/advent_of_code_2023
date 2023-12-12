@@ -203,7 +203,7 @@ def megasolve(springs, goal):
     @cache
     def inner_solve(springpos, goalpos, remaining, prev):
         if springpos == len(springs):
-            return goalpos == len(goal)
+            return int(goalpos == len(goal) or (goalpos == len(goal) - 1 and remaining == 0))
         
         match springs[springpos]:
             case '.':
@@ -288,8 +288,12 @@ def megasolve(springs, goal):
 
 mss = '???.###'
 msc = [1,1,3]
+mss = '?'
+msc = [1]
 
 print(megasolve(mss, msc))
+
+a = 2
 
 def solve_b(lines):
     # return -1
