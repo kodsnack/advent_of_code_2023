@@ -14,6 +14,48 @@ from helpers import adjacent, between, chunks, chunks_with_overlap, columns, dig
 
 def parse(lines):
     return [line.split() for line in lines]
+
+
+def megasolve(springs, goal):
+    @cache
+    def inner_solve(springpos, goalpos, remaining, prev):
+        if springpos == len(springs):
+            return int(goalpos >= len(goal) or (goalpos == len(goal) - 1 and remaining == 0))
+        
+        match springs[springpos]:
+            case '.':
+                if prev and remaining > 0:
+                    return 0
+                
+                if remaining == 0:
+                    rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
+
+                    return inner_solve(springpos+1, goalpos+1, rem, False)
+                
+                return inner_solve(springpos+1, goalpos, remaining, False)
+            case '#':                
+                if remaining == 0:
+                    return 0                    
+                
+                return inner_solve(springpos+1, goalpos, remaining-1, True)
+            case _:
+                if prev:
+                    if remaining == 0:
+                        rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
+
+                        return inner_solve(springpos+1, goalpos+1, rem, False)
+                    
+                    return inner_solve(springpos+1, goalpos, remaining-1, True)
+
+                if remaining == 0:
+                    rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
+
+                    return inner_solve(springpos+1, goalpos+1, rem, False)
+                
+                return inner_solve(springpos+1, goalpos, remaining-1, True) + inner_solve(springpos+1, goalpos, remaining, False)
+                
+    return inner_solve(0, 0, goal[0], False)
+
     
 @cache
 def solve_row(springs, config):
@@ -82,13 +124,14 @@ def solve_row(springs, config):
 
 
 def solve_a(lines):
-    return -1  
+    # return -1  
     data = parse(lines)
     total = 0
 
     for springs, config in data:
-        total += solve_row(springs, config)
-        print(springs, config, total)
+        val = megasolve(springs, ints(config))
+        total += val
+        print(springs, config, val, total)
 
     return total
 
@@ -198,50 +241,6 @@ def nusolve(s, c):
 
     return solve(0, 0)
 
-
-def megasolve(springs, goal):
-    @cache
-    def inner_solve(springpos, goalpos, remaining, prev):
-        if springpos == len(springs):
-            return int(goalpos == len(goal) or (goalpos == len(goal) - 1 and remaining == 0))
-        
-        match springs[springpos]:
-            case '.':
-                if prev and remaining > 0:
-                    return 0
-                
-                if remaining == 0:
-                    rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
-
-                    return inner_solve(springpos+1, goalpos+1, rem, False)
-                
-                return inner_solve(springpos+1, goalpos, remaining, False)
-            case '#':                
-                if remaining == 0:
-                    return 0                    
-                
-                return inner_solve(springpos+1, goalpos, remaining-1, True)
-            case _:
-                if prev:
-                    if remaining == 0:
-                        rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
-
-                        return inner_solve(springpos+1, goalpos+1, rem, False)
-                    
-                    return inner_solve(springpos+1, goalpos, remaining-1, True)
-
-                if remaining == 0:
-                    rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
-
-                    return inner_solve(springpos+1, goalpos+1, rem, False)
-                
-                return inner_solve(springpos+1, goalpos, remaining-1, True) + inner_solve(springpos+1, goalpos, remaining, False)
-                
-    return inner_solve(0, 0, goal[0], False)
-
-        
-        
-
         
     # if c and c[0] < 0:
     #     return 0    
@@ -286,12 +285,12 @@ def megasolve(springs, goal):
     # return ways
 
 
-mss = '???.###'
+mss = '.??..??...?##.'
 msc = [1,1,3]
-mss = '?'
-msc = [1]
+# mss = '?'
+# msc = [1]
 
-print(megasolve(mss, msc))
+# print(megasolve(mss, msc))
 
 a = 2
 
