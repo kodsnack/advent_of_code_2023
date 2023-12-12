@@ -35,7 +35,7 @@ def solve_line(springs, goal):
                 return skip
             case '#':                
                 return take
-            case _:
+            case '?':
                 return skip + take
                 
     return solve(0, 0, goal[0])
