@@ -140,7 +140,7 @@ def nurowsolve(springs, config):
 
     return total
 
-
+nurowsolve('###????', '3,1')
 def nusolve(s, c):
     goal = ints(c)
     parts = [p for p in re.split(r'\.+', s) if p]
