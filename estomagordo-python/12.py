@@ -16,44 +16,34 @@ def parse(lines):
 
 def solve_line(springs, goal):
     @cache
-    def inner_solve(springpos, goalpos, remaining, prev):
+    def inner_solve(springpos, goalpos, remaining):        
         if springpos == len(springs):
-            return int(goalpos >= len(goal) or (goalpos == len(goal) - 1 and remaining == 0))
+            return remaining == 0 and goalpos == len(goal) - 1
+
+        take = 0
+        if remaining:
+            take = inner_solve(springpos + 1, goalpos, remaining - 1)
+        
+        skip = 0        
+        if remaining == goal[goalpos]:
+            skip = inner_solve(springpos + 1, goalpos, remaining)
+        elif remaining == 0:
+            if goalpos < len(goal) - 1:
+                skip = inner_solve(springpos + 1, goalpos + 1, goal[goalpos + 1])
+            else:
+                skip = inner_solve(springpos + 1, goalpos, remaining)
         
         match springs[springpos]:
             case '.':
-                if prev and remaining > 0:
-                    return 0
-                
-                if remaining == 0:
-                    rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
-
-                    return inner_solve(springpos+1, goalpos+1, rem, False)
-                
-                return inner_solve(springpos+1, goalpos, remaining, False)
+                return skip
             case '#':                
-                if remaining == 0:
-                    return 0                    
-                
-                return inner_solve(springpos+1, goalpos, remaining-1, True)
+                return take
             case _:
-                if prev:
-                    if remaining == 0:
-                        rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
-
-                        return inner_solve(springpos+1, goalpos+1, rem, False)
-                    
-                    return inner_solve(springpos+1, goalpos, remaining-1, True)
-
-                if remaining == 0:
-                    rem =  goal[goalpos+1] if goalpos < len(goal) - 1 else 0
-
-                    return inner_solve(springpos+1, goalpos+1, rem, False)
+                return skip + take
                 
-                return inner_solve(springpos+1, goalpos, remaining-1, True) + inner_solve(springpos+1, goalpos, remaining, False)
-                
-    return inner_solve(0, 0, goal[0], False)
-
+    return inner_solve(0, 0, goal[0])
+print(solve_line('.??..??...?##.', [1, 1, 3]))
+a = 2
 
 def solve_a(lines):
     data = parse(lines)
