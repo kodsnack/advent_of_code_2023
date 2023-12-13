@@ -14,28 +14,21 @@ def parse(lines):
     return grouped_lines(lines)
 
 
-def score_pattern(pattern, orig_score=-1):
-    cols = columns(pattern)
-
-    for i, col in enumerate(cols[:-1]):
-        if col == cols[i+1]:
-            could = True
-            for j in range(1, i+1):
-                if i + j + 1 < len(cols) and cols[i-j] != cols[i+j+1]:
-                    could = False
-            if could and orig_score != i+1:
-                return i + 1
-        
+def score_rows(pattern, orig_score=-1):        
     for i, row in enumerate(pattern[:-1]):
         if row == pattern[i+1]:
             could = True
             for j in range(1, i+1):
                 if i + j + 1 < len(pattern) and pattern[i-j] != pattern[i+j+1]:
                     could = False
-            if could and orig_score != 100 * (i+1):
-                return 100 * (i + 1)
+            if could and orig_score != i + 1:
+                return i + 1
         
-    return - 10**10
+    return -10**10    
+
+
+def score_pattern(pattern, orig_score=-1):
+    return max(100 * score_rows(pattern, orig_score / 100), score_rows(columns(pattern), orig_score))
     
 
 def solve_a(lines):
@@ -49,31 +42,26 @@ def solve_b(lines):
 
     total = 0
 
-    for i, pattern in enumerate(patterns):
+    for pattern in patterns:
         l = [list(line) for line in pattern]
         orig_score = score_pattern(pattern)
+        replacement = { '.': '#', '#': '.'}
+        h, w = dimensions(l)
         done = False
 
-        for y in range(len(l)):
+        for y, x in product(range(h), range(w)):
             if done:
                 break
-            for x in range(len(l[0])):
-                if l[y][x] == '.':
-                    l[y][x] = '#'
-                    score = score_pattern(l, orig_score)
-                    if score > 0:
-                        total += score
-                        done = True
-                        break
-                    l[y][x] = '.'
-                else:
-                    l[y][x] = '.'
-                    score = score_pattern(l, orig_score)
-                    if score > 0:
-                        total += score
-                        done = True
-                        break
-                    l[y][x] = '#'
+
+            l[y][x] = replacement[l[y][x]]
+
+            score = score_pattern(l, orig_score)
+            
+            if score > 0:
+                total += score
+                done = True
+
+            l[y][x] = replacement[l[y][x]]
 
     return total
 
