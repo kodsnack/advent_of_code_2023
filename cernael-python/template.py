@@ -5,5 +5,5 @@ if __name__ == '__main__':
     lines = []
     with open('£.txt') as f:
         for line in f.readlines():
-            lines.append(line)
+            lines.append(line.strip())
     print(solve(lines))
