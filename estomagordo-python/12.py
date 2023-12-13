@@ -16,33 +16,30 @@ def parse(lines):
 
 def solve_line(springs, goal):
     @cache
-    def inner_solve(springpos, goalpos, remaining):        
+    def solve(springpos, goalpos, remaining):        
         if springpos == len(springs):
             return remaining == 0 and goalpos == len(goal) - 1
-
-        take = 0
-        if remaining:
-            take = inner_solve(springpos + 1, goalpos, remaining - 1)
         
-        skip = 0        
-        if remaining == goal[goalpos]:
-            skip = inner_solve(springpos + 1, goalpos, remaining)
-        elif remaining == 0:
-            if goalpos < len(goal) - 1:
-                skip = inner_solve(springpos + 1, goalpos + 1, goal[goalpos + 1])
-            else:
-                skip = inner_solve(springpos + 1, goalpos, remaining)
+        if remaining == 0 and goalpos == len(goal) - 1:
+            return not any(c == '#' for c in springs[springpos:])
+
+        take = 0 if not remaining else solve(springpos + 1, goalpos, remaining - 1)
+
+        skip = \
+            solve(springpos + 1, goalpos, remaining) if remaining == goal[goalpos] \
+            else solve(springpos + 1, goalpos + 1, goal[goalpos + 1]) if not remaining \
+            else 0
         
         match springs[springpos]:
             case '.':
                 return skip
             case '#':                
                 return take
-            case _:
+            case '?':
                 return skip + take
                 
-    return inner_solve(0, 0, goal[0])
-
+    return solve(0, 0, goal[0])
+    
 
 def solve_a(lines):
     data = parse(lines)
@@ -54,9 +51,9 @@ def solve_b(lines):
     data = parse(lines)
 
     expand_springs = lambda springs: '?'.join(springs for _ in range(5))
-    expand_config = lambda config: ints(config) * 5
+    expand_goal = lambda goal: ints(goal) * 5
 
-    return sum(solve_line(expand_springs(d[0]), expand_config(d[1])) for d in data)
+    return sum(solve_line(expand_springs(d[0]), expand_goal(d[1])) for d in data)
 
 
 def main():
