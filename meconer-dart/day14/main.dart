@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../util/util.dart';
 
 // const String inputFile = 'day14/example.txt';
@@ -54,8 +56,7 @@ int calcResultP2(String input) {
 
   int noOfCycles = 1000;
   Map<String, List<int>> existing = {};
-  Map<String, int> loadOnNorthBeam = {};
-  for (var cycleNo = 0; cycleNo < noOfCycles; cycleNo++) {
+  for (var rollCycleNo = 0; rollCycleNo < noOfCycles; rollCycleNo++) {
     rollNorth(grid);
     rollWest(grid);
     rollSouth(grid);
@@ -63,21 +64,13 @@ int calcResultP2(String input) {
     // printGrid(grid);
     String hash = getHash(grid);
     if (existing.containsKey(hash)) {
-      existing[hash]!.add(cycleNo);
-      int load = calculateValue(grid);
-      // if (loadOnNorthBeam.containsKey(hash)) {
-      //   if (load != loadOnNorthBeam[hash]) {
-      //     print('Should be equal?');
-      //   }
-      // } else {
-      //   loadOnNorthBeam[hash] = load;
-      // }
+      existing[hash]!.add(rollCycleNo);
+      if (existing[hash]!.length > 5) {
+        int cycleLength = existing[hash]![5] - existing[hash]![4];
+        if ((999999999 - rollCycleNo) % cycleLength == 0) break;
+      }
     } else {
-      existing[hash] = [cycleNo];
-    }
-    if (cycleNo == 180) {
-      // return loadOnNorthBeam[hash]!;
-      return calculateValue(grid);
+      existing[hash] = [rollCycleNo];
     }
   }
 
@@ -88,7 +81,6 @@ int calcResultP2(String input) {
 String getHash(List<List<String>> grid) {
   String hash = '';
   for (int i = 0; i < grid.length; i++) {
-    // Count O:s in each row
     hash += grid[i].join();
   }
   return hash;
