@@ -99,13 +99,8 @@ def slide(grid, direction=(-1, 0)):
 
 def score(grid):
     h, w = dimensions(grid)
-    s = 0
 
-    for y, x in product(range(h), range(w)):
-        if grid[y][x] == 'O':
-            s += h-y
-
-    return s
+    return sum(0 if grid[y][x] != 'O' else h-y for y, x in product(range(h), range(w)))
 
 
 def solve_a(lines):
@@ -123,24 +118,25 @@ def solve_b(lines):
     cycle_scores[score(grid)].append(0)
 
     shifts = [(-1, 0), (0, -1), (1, 0), (0, 1)]
-    maxshifts = 2000
+    totcycles = 1000000000
+    
+    i = 1
 
-    for i in range(maxshifts):
+    while True:
         for shift in shifts:
             grid = slide(grid, shift)
 
-        cycle_scores[score(grid)].append(i+1)
+        s = score(grid)
+        
+        cycle_scores[s].append(i)
 
-    totcycles = 1000000000
+        if len(cycle_scores[s]) > 3:
+            diff = i - cycle_scores[s][-2]
 
-    for v in cycle_scores.values():
-        if len(v) > 5:
-            cyclen = v[4] - v[3]
+            if (totcycles - i) % diff == 0:
+                return s
 
-            for k, v in cycle_scores.items():
-                for i in v[4:]:
-                    if (totcycles - i) % cyclen == 0:
-                        return k
+        i += 1
 
 
 def main():
