@@ -35,8 +35,6 @@ def slide(grid, direction=(-1, 0)):
                 my += dy
                 mx += dx
 
-        return grid
-
     if direction == (1, 0):
         for y in range(h-1, -1, -1):
             for x in range(w):
@@ -54,8 +52,6 @@ def slide(grid, direction=(-1, 0)):
 
                     my += dy
                     mx += dx
-
-        return grid
     
     if direction == (0, -1):
         for y in range(h):
@@ -74,27 +70,24 @@ def slide(grid, direction=(-1, 0)):
 
                     my += dy
                     mx += dx
-
-        return grid
     
-    for y in range(h):
-        for x in range(w-1, -1, -1):
-            c = grid[y][x]
+    if direction == (0, 1):
+        for y in range(h):
+            for x in range(w-1, -1, -1):
+                c = grid[y][x]
 
-            if c != 'O':
-                continue
+                if c != 'O':
+                    continue
 
-            my = y
-            mx = x
+                my = y
+                mx = x
 
-            while 0 <= my+dy < h and 0 <= mx+dx < w and grid[my+dy][mx+dx] == '.':
-                grid[my+dy][mx+dx] = 'O'
-                grid[my][mx] = '.'
+                while 0 <= my+dy < h and 0 <= mx+dx < w and grid[my+dy][mx+dx] == '.':
+                    grid[my+dy][mx+dx] = 'O'
+                    grid[my][mx] = '.'
 
-                my += dy
-                mx += dx
-
-    return grid
+                    my += dy
+                    mx += dx
 
 
 def score(grid):
@@ -106,7 +99,7 @@ def score(grid):
 def solve_a(lines):
     grid = parse(lines)
 
-    grid = slide(grid)
+    slide(grid)
 
     return score(grid)    
 
@@ -124,13 +117,13 @@ def solve_b(lines):
 
     while True:
         for shift in shifts:
-            grid = slide(grid, shift)
+            slide(grid, shift)
 
         s = score(grid)
         
         cycle_scores[s].append(i)
 
-        if len(cycle_scores[s]) > 3:
+        if len(cycle_scores[s]) > 2:
             diff = i - cycle_scores[s][-2]
 
             if (totcycles - i) % diff == 0:
