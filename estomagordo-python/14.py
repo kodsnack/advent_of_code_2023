@@ -17,77 +17,24 @@ def parse(lines):
 def slide(grid, direction=(-1, 0)):
     h, w = dimensions(grid)
     dy, dx = direction
-
-    if direction == (-1, 0):
-        for y, x in product(range(h), range(w)):
-            c = grid[y][x]
-
-            if c != 'O':
-                continue
-
-            my = y
-            mx = x
-
-            while 0 <= my+dy < h and 0 <= mx+dx < w and grid[my+dy][mx+dx] == '.':
-                grid[my+dy][mx+dx] = 'O'
-                grid[my][mx] = '.'
-
-                my += dy
-                mx += dx
-
-    if direction == (1, 0):
-        for y in range(h-1, -1, -1):
-            for x in range(w):
-                c = grid[y][x]
-
-                if c != 'O':
-                    continue
-
-                my = y
-                mx = x
-
-                while 0 <= my+dy < h and 0 <= mx+dx < w and grid[my+dy][mx+dx] == '.':
-                    grid[my+dy][mx+dx] = 'O'
-                    grid[my][mx] = '.'
-
-                    my += dy
-                    mx += dx
+    ycoords = range(h) if dy <= 0 else range(h-1, -1, -1)
+    xcoords = range(w) if dx <= 0 else range(w-1, -1, -1)
     
-    if direction == (0, -1):
-        for y in range(h):
-            for x in range(w):
-                c = grid[y][x]
+    for y, x in product(ycoords, xcoords):
+        c = grid[y][x]
 
-                if c != 'O':
-                    continue
+        if c != 'O':
+            continue
 
-                my = y
-                mx = x
+        my = y
+        mx = x
 
-                while 0 <= my+dy < h and 0 <= mx+dx < w and grid[my+dy][mx+dx] == '.':
-                    grid[my+dy][mx+dx] = 'O'
-                    grid[my][mx] = '.'
+        while 0 <= my+dy < h and 0 <= mx+dx < w and grid[my+dy][mx+dx] == '.':
+            grid[my+dy][mx+dx] = 'O'
+            grid[my][mx] = '.'
 
-                    my += dy
-                    mx += dx
-    
-    if direction == (0, 1):
-        for y in range(h):
-            for x in range(w-1, -1, -1):
-                c = grid[y][x]
-
-                if c != 'O':
-                    continue
-
-                my = y
-                mx = x
-
-                while 0 <= my+dy < h and 0 <= mx+dx < w and grid[my+dy][mx+dx] == '.':
-                    grid[my+dy][mx+dx] = 'O'
-                    grid[my][mx] = '.'
-
-                    my += dy
-                    mx += dx
+            my += dy
+            mx += dx
 
 
 def score(grid):
