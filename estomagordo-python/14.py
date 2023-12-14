@@ -109,7 +109,6 @@ def score(grid):
 
 
 def solve_a(lines):
-    return 0
     grid = parse(lines)
 
     grid = slide(grid)
@@ -119,12 +118,6 @@ def solve_a(lines):
 
 def solve_b(lines):
     grid = parse(lines)
-
-    def pg(grid):
-        print()
-        for row in grid:
-            print(''.join(row))
-        print()
 
     cycle_scores = defaultdict(list)
     cycle_scores[score(grid)].append(0)
@@ -138,9 +131,16 @@ def solve_b(lines):
 
         cycle_scores[score(grid)].append(i+1)
 
-    for s in sorted(cycle_scores.keys()):
-        print(s, cycle_scores[s])
-        print()
+    totcycles = 1000000000
+
+    for v in cycle_scores.values():
+        if len(v) > 5:
+            cyclen = v[4] - v[3]
+
+            for k, v in cycle_scores.items():
+                for i in v[4:]:
+                    if (totcycles - i) % cyclen == 0:
+                        return k
 
 
 def main():
