@@ -113,7 +113,7 @@ def test_day14():
     assert b == 96317
 
 
-def test_day14():
+def test_day15():
     a, b = day15.main()
     
     assert a == 518107

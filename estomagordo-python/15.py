@@ -11,41 +11,38 @@ from helpers import adjacent, between, chunks, chunks_with_overlap, columns, dig
 
 
 def parse(lines):
-    return lines[0].split(',')
-    
+    data = []
+
+    for d in lines[0].split(','):
+        if '-' in d:
+            data.append((d, d[:-1], -1))
+        else:
+            label, sval = d.split('=')
+            data.append((d, label, int(sval)))
+
+    return data
 
 
 def score(seq):
-    val = 0
-
-    for c in seq:
-        val += ord(c)
-        val *= 17
-        val %= 256
-
-    return val
+    return reduce(lambda a, b: (a + b) * 17 % 256, map(ord, seq), 0)
 
 
 def solve_a(lines):
     data = parse(lines)
 
-    return sum(score(s) for s in data)
+    return sum(score(d[0]) for d in data)
 
 
 def solve_b(lines):
     data = parse(lines)
 
     boxes = [[] for _ in range(256)]
-    # lenses = {}
 
-    for d in data:
-        typepos = -2 if d[-1].isdigit() else -1
-        label = d[:typepos]
+    for _, label, length in data:
         boxpos = score(label)
         box = boxes[boxpos]
-        length = 0 if typepos == -1 else int(d[-1])
 
-        if d[typepos] == '-':
+        if length == -1:
             for i in range(len(box)):
                 if box[i][0] == label:
                     boxes[boxpos] = box[:i] + box[i+1:]
@@ -54,7 +51,7 @@ def solve_b(lines):
             found = False
 
             for i, lense in enumerate(box):
-                lab, leng = lense
+                lab = lense[0]
 
                 if lab == label:
                     box[i][1] = length
