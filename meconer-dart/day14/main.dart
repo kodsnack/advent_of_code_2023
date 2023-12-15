@@ -65,8 +65,8 @@ int calcResultP2(String input) {
     String hash = getHash(grid);
     if (existing.containsKey(hash)) {
       existing[hash]!.add(rollCycleNo);
-      if (existing[hash]!.length > 5) {
-        int cycleLength = existing[hash]![5] - existing[hash]![4];
+      if (existing[hash]!.length > 1) {
+        int cycleLength = existing[hash]![1] - existing[hash]![0];
         if ((999999999 - rollCycleNo) % cycleLength == 0) break;
       }
     } else {
