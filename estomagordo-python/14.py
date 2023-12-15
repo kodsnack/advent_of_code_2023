@@ -6,7 +6,7 @@ from itertools import combinations, permutations, product
 from math import ceil, comb, factorial, gcd, isclose, lcm
 
 from algo import a_star, custsort, merge_ranges, sssp
-from constants import EPSILON
+from constants import EPSILON, HUGE
 from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
     
 
@@ -40,7 +40,7 @@ def slide(grid, direction=(-1, 0)):
 def score(grid):
     h, w = dimensions(grid)
 
-    return sum(0 if grid[y][x] != 'O' else h-y for y, x in product(range(h), range(w)))
+    return sum(0 if grid[y][x] != 'O' else h-y + HUGE * x for y, x in product(range(h), range(w)))
 
 
 def solve_a(lines):
@@ -48,7 +48,7 @@ def solve_a(lines):
 
     slide(grid)
 
-    return score(grid)    
+    return score(grid) % HUGE
 
 
 def solve_b(lines):
@@ -70,11 +70,11 @@ def solve_b(lines):
         
         cycle_scores[s].append(i)
 
-        if len(cycle_scores[s]) > 2:
+        if len(cycle_scores[s]) > 1:
             diff = i - cycle_scores[s][-2]
 
             if (totcycles - i) % diff == 0:
-                return s
+                return s % HUGE
 
         i += 1
 
