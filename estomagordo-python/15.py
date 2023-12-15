@@ -36,36 +36,23 @@ def solve_a(lines):
 def solve_b(lines):
     data = parse(lines)
 
-    boxes = [[] for _ in range(256)]
+    boxes = [{} for _ in range(256)]
 
     for _, label, length in data:
         boxpos = score(label)
         box = boxes[boxpos]
 
         if length == -1:
-            for i in range(len(box)):
-                if box[i][0] == label:
-                    boxes[boxpos] = box[:i] + box[i+1:]
-                    break
+            if label in box:
+                del box[label]
         else:
-            found = False
-
-            for i, lense in enumerate(box):
-                lab = lense[0]
-
-                if lab == label:
-                    box[i][1] = length
-                    found = True
-                    break
-
-            if not found:
-                box.append([label, length])
+            box[label] = length
 
     s = 0
 
     for i, box in enumerate(boxes):
-        for j, lense in enumerate(box):
-            s += (i+1) * (j+1) * (lense[1])
+        for j, length in enumerate(box.values()):
+            s += (i+1) * (j+1) * length
 
     return s
 
