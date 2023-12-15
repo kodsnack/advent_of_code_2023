@@ -48,13 +48,7 @@ def solve_b(lines):
         else:
             box[label] = length
 
-    s = 0
-
-    for i, box in enumerate(boxes):
-        for j, length in enumerate(box.values()):
-            s += (i+1) * (j+1) * length
-
-    return s
+    return sum((i+1) * (j+1) * length for i, box in enumerate(boxes) for j, length in enumerate(box.values()))
 
 
 def main():
