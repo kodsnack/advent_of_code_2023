@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import '../util/util.dart';
 
 // const String inputFile = 'day14/example.txt';
