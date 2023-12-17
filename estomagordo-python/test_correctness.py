@@ -14,6 +14,7 @@ day13 = __import__('13')
 day14 = __import__('14')
 day15 = __import__('15')
 day16 = __import__('16')
+day17 = __import__('17')
 
 
 def test_day1():
@@ -126,3 +127,10 @@ def test_day16():
     
     assert a == 7074
     assert b == 7530
+
+
+def test_day17():
+    a, b = day17.main()
+    
+    assert a == 870
+    assert b == 1063
