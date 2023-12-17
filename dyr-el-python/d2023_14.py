@@ -1,5 +1,5 @@
 from aoc_prepare import PrepareAoc
-from collections import deque
+import sys
 
 def parse(inp):
     board = [c for c in inp if c in "#O."]
@@ -142,6 +142,9 @@ def main_profile(inp):
 
 if __name__ == "__main__":
     prep = PrepareAoc(2023, 14)
-    main(prep.get_content())
-    main_timer(prep.get_content())
-    main_profile(prep.get_content())
+    if "skip" not in sys.argv:
+        main(prep.get_content())
+    if "time" in sys.argv:
+        main_timer(prep.get_content())
+    if "profile" in sys.argv:
+        main_profile(prep.get_content())
