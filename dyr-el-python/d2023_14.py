@@ -1,41 +1,81 @@
 from aoc_prepare import PrepareAoc
-from collections import deque
+import sys
 
 def parse(inp):
-    result = {'.':set(), 'O':set(), '#':set()}
-    maxx = 0
-    maxy = 0
-    for lidx, line in enumerate(inp.splitlines()):
-        maxy = max(lidx, maxy)
-        for cidx, c in enumerate(line.strip()):
-            maxx = max(cidx, maxx)
-            result[c].add((lidx, cidx))
-    return result, maxy + 1, maxx + 1
+    board = [c for c in inp if c in "#O."]
+    maxx = len(inp.splitlines()[0])
+    maxy = len(inp.splitlines())
+    return board, maxy, maxx
 
-def tilt(a, dy, dx):
-    d = deque(a['O'])
-    while d:
-        y, x = d.popleft()
-        if (y, x) not in a['O']:
-            continue
-        ny, nx = y+dy, x+dx
-        if (ny, nx) in a['.']:
-            a['.'].remove((ny, nx))
-            a['O'].add((ny, nx))
-            a['.'].add((y, x))
-            a['O'].remove((y, x))
-            d.append((ny, nx))
-            oy, ox = y - dy, x - dx
-            if (oy, ox) in a['O']:
-                d.append((oy, ox))
+def print_board(a, maxy, maxx):
+    for idx, c in enumerate(a):
+        print(c, end="")
+        if (idx % maxx) == maxx - 1:
+            print()
 
-def weigh(a, maxy, _):
-    return sum((maxy - y) for y, _ in a['O'])
+def tilt_n(a, maxy, maxx):
+    for x in range(maxx):
+        slot = x
+        for y in range(maxy):
+            pos = y * maxx + x
+            c = a[pos]
+            if c == "#":
+                slot = pos + maxx
+            elif c == "O":
+                a[slot] = "O"
+                if slot != pos:
+                    a[pos] = "."
+                slot += maxx
+
+def tilt_s(a, maxy, maxx):
+    for x in range(maxx):
+        slot = maxx * (maxy - 1) + x
+        for y in range(maxy - 1, -1, -1):
+            pos = y * maxx + x
+            c = a[pos]
+            if c == "#":
+                slot = pos - maxx
+            elif c == "O":
+                a[slot] = "O"
+                if slot != pos:
+                    a[pos] = "."
+                slot -= maxx
+
+def tilt_w(a, maxy, maxx):
+    for y in range(maxy):
+        slot = maxx * y
+        for x in range(maxx):
+            pos = y * maxx + x
+            c = a[pos]
+            if c == "#":
+                slot = pos + 1
+            elif c == "O":
+                a[slot] = "O"
+                if slot != pos:
+                    a[pos] = "."
+                slot += 1
+
+def tilt_e(a, maxy, maxx):
+    for y in range(maxy):
+        slot = maxx * (y + 1) - 1
+        for x in range(maxx - 1, -1 , -1):
+            pos = y * maxx + x
+            c = a[pos]
+            if c == "#":
+                slot = pos - 1
+            elif c == "O":
+                a[slot] = "O"
+                if slot != pos:
+                    a[pos] = "."
+                slot -= 1
+
+def weigh(a, maxy, maxx):
+    return sum(((maxy - idx // maxx) for idx, c in enumerate(a) if c == "O"))
 
 def part1(inp):
-    result, maxy, maxx = parse(inp)
-    tilt(result, -1, 0)
-    return weigh(result, maxy, maxx)
+    a, maxy, maxx = parse(inp)
+    tilt_n(a, maxy, maxx)
+    return weigh(a, maxy, maxx)
 
 def part2(inp):
     result, maxy, maxx = parse(inp)
@@ -43,12 +83,12 @@ def part2(inp):
     i = 0
     found_cycle = False
     while i < 1000000000:
-        tilt(result, -1, 0)
-        tilt(result, 0, -1)
-        tilt(result, 1, 0)
-        tilt(result, 0, 1)
+        tilt_n(result, maxy, maxx)
+        tilt_w(result, maxy, maxx)
+        tilt_s(result, maxy, maxx)
+        tilt_e(result, maxy, maxx)
         i += 1
-        key = frozenset(result['O'])
+        key = "".join(result)
         if not found_cycle and key in cache:
             cycle = i - cache[key]
             i = i + ((1000000000 - i) // cycle) * cycle
@@ -95,7 +135,16 @@ def main_timer(inp):
     iterations, time = timer.autorange()
     print("average time for part 2 =", time/iterations)
 
+import cProfile
+def main_profile(inp):
+    cProfile.runctx('part1(inp.strip())', globals=globals(), locals={'inp':inp})
+    cProfile.runctx('part2(inp.strip())', globals=globals(), locals={'inp':inp})
+
 if __name__ == "__main__":
     prep = PrepareAoc(2023, 14)
-    main(prep.get_content())
-    main_timer(prep.get_content())
+    if "skip" not in sys.argv:
+        main(prep.get_content())
+    if "time" in sys.argv:
+        main_timer(prep.get_content())
+    if "profile" in sys.argv:
+        main_profile(prep.get_content())
