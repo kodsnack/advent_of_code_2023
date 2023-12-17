@@ -59,16 +59,16 @@ def solve(lines, sy, sx, sdy, sdx):
                 continue
             frontier.append((ny, nx, 0, 1))
         if c == '\\':
-            ndy = -1 if dx == -1 else 1 if dx == 1 else 0
-            ndx = -1 if dy == -1 else 1 if dy == 1 else 0
+            ndy = dx
+            ndx = dy
 
             if (ny, nx, ndy, ndx) in done:
                 continue
 
             frontier.append((ny, nx, ndy, ndx))
         if c == '/':
-            ndy = -1 if dx == 1 else 1 if dx == -1 else 0
-            ndx = -1 if dy == 1 else 1 if dy == -1 else 0
+            ndy = -dx
+            ndx = -dy
 
             if (ny, nx, ndy, ndx) in done:
                 continue
@@ -79,7 +79,10 @@ def solve(lines, sy, sx, sdy, sdx):
 
 
 def solve_a(lines):
-    return solve(lines, 0, 0, 1, 0)
+    dy = 1 if lines[0][0] in '\\|' else 0
+    dx = 1 - dy
+
+    return solve(lines, 0, 0, dy, dx)
 
 
 def solve_b(lines):

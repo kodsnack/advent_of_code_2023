@@ -32,10 +32,10 @@ def solve(lines, minsteps, maxsteps):
 
         seen.add((y, x, dy, dx))
         
-        canup = (dy > 0 or abs(dx) > minsteps-1) and dy >= 0 and dy < maxsteps and y < h-1 and (y+1, x, dy+1, 0) not in seen
-        candown = (dy < 0 or abs(dx) > minsteps-1) and dy <= 0 and abs(dy) < maxsteps and y > 0 and (y-1, x, dy-1, 0) not in seen
-        canright = (dx > 0 or abs(dy) > minsteps-1) and dx >= 0 and dx < maxsteps and x < w-1 and (y, x+1, 0, dx+1) not in seen
-        canleft = (dx < 0 or abs(dy) > minsteps-1) and dx <= 0 and abs(dx) < maxsteps and x > 0 and (y, x-1, 0, dx-1) not in seen
+        canup = (dy > 0 or abs(dx) > minsteps-1) and 0 <= dy < maxsteps and y < h-1 and (y+1, x, dy+1, 0) not in seen
+        candown = (dy < 0 or abs(dx) > minsteps-1) and -maxsteps < dy <= 0 and y > 0 and (y-1, x, dy-1, 0) not in seen
+        canright = (dx > 0 or abs(dy) > minsteps-1) and 0 <= dx < maxsteps and x < w-1 and (y, x+1, 0, dx+1) not in seen
+        canleft = (dx < 0 or abs(dy) > minsteps-1) and -maxsteps < dx <= 0 and x > 0 and (y, x-1, 0, dx-1) not in seen
 
         if canup:
             heappush(frontier, (steps + grid[y+1][x], y+1, x, dy+1, 0))
@@ -45,6 +45,7 @@ def solve(lines, minsteps, maxsteps):
             heappush(frontier, (steps + grid[y][x+1], y, x+1, 0, dx+1))
         if canleft:
             heappush(frontier, (steps + grid[y][x-1], y, x-1, 0, dx-1))
+
 
 def solve_a(lines):
     return solve(lines, 0, 3)
