@@ -14,68 +14,44 @@ def parse(lines):
     return [digits(line) for line in lines]
 
 
-def solve_a(lines):
+def solve(lines, minsteps, maxsteps):
     grid = parse(lines)
-
     h, w = dimensions(grid)
-    seen = {}
-    frontier = [(0, 0, 0, 0, 0)]
-    best = HUGE
+    
+    seen = set()
+    frontier = [(grid[1][0], 1, 0, 1, 0), (grid[0][1], 0, 1, 0, 1)]
 
     while frontier:
         steps, y, x, dy, dx = heappop(frontier)
 
         if y == h-1 and x == w-1:
-            best = min(best, steps)
+            return steps
+
+        if (y, x, dy, dx) in seen:
             continue
 
-        if (y, x, dy, dx) in seen and seen[(y, x, dy, dx)] <= steps:
-            continue
+        seen.add((y, x, dy, dx))
+        
+        canup = (dy > 0 or abs(dx) > minsteps-1) and dy >= 0 and dy < maxsteps and y < h-1 and (y+1, x, dy+1, 0) not in seen
+        candown = (dy < 0 or abs(dx) > minsteps-1) and dy <= 0 and abs(dy) < maxsteps and y > 0 and (y-1, x, dy-1, 0) not in seen
+        canright = (dx > 0 or abs(dy) > minsteps-1) and dx >= 0 and dx < maxsteps and x < w-1 and (y, x+1, 0, dx+1) not in seen
+        canleft = (dx < 0 or abs(dy) > minsteps-1) and dx <= 0 and abs(dx) < maxsteps and x > 0 and (y, x-1, 0, dx-1) not in seen
 
-        seen[(y, x, dy, dx)] = steps
-
-        if dy >= 0 and dy < 3 and y < h-1 and ((y+1, x, dy+1, 0) not in seen or seen[(y+1, x, dy+1, 0)] > steps + grid[y+1][x]):
+        if canup:
             heappush(frontier, (steps + grid[y+1][x], y+1, x, dy+1, 0))
-        if dy <= 0 and dy > -3 and y > 0 and ((y-1, x, dy-1, 0) not in seen or seen[(y-1, x, dy-1, 0)] > steps + grid[y-1][x]):
+        if candown:
             heappush(frontier, (steps + grid[y-1][x], y-1, x, dy-1, 0))
-        if dx >= 0 and dx < 3 and x < w-1 and ((y, x+1, 0, dx+1) not in seen or seen[(y, x+1, 0, dx+1)] > steps + grid[y][x+1]):
+        if canright:
             heappush(frontier, (steps + grid[y][x+1], y, x+1, 0, dx+1))
-        if dx <= 0 and dx > -3 and x > 0 and ((y, x-1, 0, dx-1) not in seen or seen[(y, x-1, 0, dx-1)] > steps + grid[y][x-1]):
+        if canleft:
             heappush(frontier, (steps + grid[y][x-1], y, x-1, 0, dx-1))
 
-    return best
+def solve_a(lines):
+    return solve(lines, 0, 3)
 
 
 def solve_b(lines):
-    grid = parse(lines)
-
-    h, w = dimensions(grid)
-    seen = {}
-    frontier = [(grid[1][0], 1, 0, 1, 0), (grid[0][1], 0, 1, 0, 1)]
-    best = HUGE
-
-    while frontier:
-        steps, y, x, dy, dx = heappop(frontier)
-
-        if y == h-1 and x == w-1:
-            best = min(best, steps)
-            continue
-
-        if (y, x, dy, dx) in seen and seen[(y, x, dy, dx)] <= steps:
-            continue
-
-        seen[(y, x, dy, dx)] = steps        
-
-        if (dy > 0 or abs(dx) > 3) and dy >= 0 and dy < 10 and y < h-1 and ((y+1, x, dy+1, 0) not in seen or seen[(y+1, x, dy+1, 0)] > steps + grid[y+1][x]):
-            heappush(frontier, (steps + grid[y+1][x], y+1, x, dy+1, 0))
-        if (dy < 0 or abs(dx) > 3) and dy <= 0 and dy > -10 and y > 0 and ((y-1, x, dy-1, 0) not in seen or seen[(y-1, x, dy-1, 0)] > steps + grid[y-1][x]):
-            heappush(frontier, (steps + grid[y-1][x], y-1, x, dy-1, 0))
-        if (dx > 0 or abs(dy) > 3) and dx >= 0 and dx < 10 and x < w-1 and ((y, x+1, 0, dx+1) not in seen or seen[(y, x+1, 0, dx+1)] > steps + grid[y][x+1]):
-            heappush(frontier, (steps + grid[y][x+1], y, x+1, 0, dx+1))
-        if (dx < 0 or abs(dy) > 3) and dx <= 0 and dx > -10 and x > 0 and ((y, x-1, 0, dx-1) not in seen or seen[(y, x-1, 0, dx-1)] > steps + grid[y][x-1]):
-            heappush(frontier, (steps + grid[y][x-1], y, x-1, 0, dx-1))
-
-    return best
+    return solve(lines, 4, 10)
 
 
 def main():
