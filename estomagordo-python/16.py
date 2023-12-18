@@ -1,4 +1,4 @@
-from bisect import bisect, bisect_left, bisect_right
+from bisect import bisect_left, bisect_right
 from collections import Counter, defaultdict, deque
 from functools import cache, reduce
 from heapq import heapify, heappop, heappush
@@ -35,12 +35,23 @@ def solve(lines, sy, sx, sdy, sdx):
             continue
 
         c = lines[ny][nx]
+        skipping = False
 
-        if c == '.' or (c == '|' and dy != 0) or (c == '-' and dx != 0):
-            if (ny, nx, dy, dx) in done:
-                continue
+        while c == '.' or (c == '|' and dy != 0) or (c == '-' and dx != 0):
+            done.add((ny, nx, dy, dx))
+            seen.add((ny, nx))
 
-            frontier.append((ny, nx, dy, dx))
+            ny += dy
+            nx += dx
+
+            if ny in (-1, h) or nx in (-1, w):
+                skipping = True
+                break
+
+            c = lines[ny][nx]
+
+        if skipping:
+            continue
 
         if c == '|':
             if (ny, nx, -1, 0) in done:
