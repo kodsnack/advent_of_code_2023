@@ -133,7 +133,6 @@ def solve_b(lines):
     relevys = set()
 
     for y in horistrokes.keys():
-        relevys.add(y-1)
         relevys.add(y)
         relevys.add(y+1)
 
