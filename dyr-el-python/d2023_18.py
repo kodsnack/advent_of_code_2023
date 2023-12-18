@@ -55,20 +55,19 @@ def fill_outside(trenches):
         if pos not in trenches:
             flood_fill(trenches, pos, -1, minx, maxx, miny, maxy)
 
+def color_trenches(trenches, segments):
+    pos = Pos2D(0, 0)
+    deltas = {"U": Pos2D(0, -1), "D": Pos2D(0, 1), "L": Pos2D(-1, 0), "R": Pos2D(1, 0)}
+    for dir, number, color in segments:
+        for _ in range(number):
+            pos = pos + deltas[dir]
+            trenches[pos] = color
+
+
 def part1(inp):
     trenches = dict()
     pos = Pos2D(0, 0)
-    for dir, number, color in parse(inp):
-        for _ in range(number):
-            if dir == "U":
-                pos = pos.north()
-            if dir == "D":
-                pos = pos.south()
-            if dir == "L":
-                pos = pos.west()
-            if dir == "R":
-                pos = pos.east()
-            trenches[pos] = color
+    color_trenches(trenches, parse(inp))
     fill_outside(trenches)
     maxx = max((pos.x for pos in trenches))
     maxy = max((pos.y for pos in trenches))
@@ -77,37 +76,25 @@ def part1(inp):
     return (maxx - minx + 1) * (maxy - miny + 1) - sum((trench < 0 for trench in trenches.values()))
 
 
-def part2(inp):
-    result = list(parse2(inp))
-    pos = Pos2D(0, 0)
+def find_verticals(actions):
+    result = list()
     dirs = {0: Pos2D(1, 0), 1: Pos2D(0, 1), 2: Pos2D(-1, 0), 3: Pos2D(0, -1)}
-    l = list()
-    verticals = list()
-    horizontals = list()
-    for direction, length in result:
-        npos = dirs[direction] * length + pos
-        l.append((pos, npos))
+    pos = Pos2D(0, 0)
+    for direction, length in actions:
+        next_pos = dirs[direction] * length + pos
         if direction in (1, 3):
-            verticals.append((pos, npos))
-        else:
-            horizontals.append((pos, npos))
-        pos = npos
-    verticals.sort(key=lambda v:(v[0].x, min(v[0].y, v[1].y)))
-    horizontals.sort(key=lambda v:(min(v[0].x, v[1].x), v[0].y))
-    vypos = sorted(set([vertical[0].y for vertical in verticals] + 
-                       [vertical[1].y for vertical in verticals]))
-    ymin, ymax = vypos[0], vypos[-1]
-    hypos = sorted(set([y+1 for y in vypos] + [y-1 for y in vypos]) - set(vypos))
-    hypos = hypos[1:-1]
+            result.append((pos, next_pos))
+        pos = next_pos
+    result.sort(key=lambda v:(v[0].x, min(v[0].y, v[1].y)))
+    return result
+
+
+def area_for_horizontal_lines(verticals, v_ypos):
     area = 0
-    print()
-    for y in vypos:
-        print(f"{y=}")
+    for y in v_ypos:
         state = "outside"
         for vertical in verticals:
-            print(f"{vertical=}")
             vymin, vymax = min(vertical[0].y, vertical[1].y), max(vertical[0].y, vertical[1].y)
-            print(f"{state=}, {y=}, {vymin=}, {vymax=}")
             if state == "outside":
                 if y == vymin:
                     state = "below"
@@ -138,32 +125,40 @@ def part2(inp):
                     area += (vertical[1].x - startx + 1)
                 elif y == vymax:
                     state = "inside"
-            print(f"{state=}, {area=}")
-    print()
+    return area
+
+
+def area_for_vertical_blocks(verticals, h_ypos):
     ongoing = dict()
-    for y in hypos:
+    area = 0
+    for y in h_ypos:
         state = "outside"
         for vertical in verticals:
-            print(f"{y=} {state=}")
-            print(f"{vertical=}")
             vymin, vymax = min(vertical[0].y, vertical[1].y), max(vertical[0].y, vertical[1].y)
             if y <= vymin or y >= vymax:
                 continue
-            print(f"{y=}, {vymin=}, {vymax=}")
             if state == "outside":
                 state = "inside"
                 xstart = vertical[0].x
                 continue
             xend = vertical[0].x
             if (xstart, xend) in ongoing:
-                area += (xend - xstart + 1) * (y - ongoing[(xstart, xend)])
-                print(f"end on ongoing {ongoing=}, {xstart=}, {xend=} {area=}")
+                area += (xend - xstart + 1) * (y - ongoing[(xstart, xend)] + 1)
                 del ongoing[(xstart, xend)]
             else:
-                print(f"{ongoing=}")
                 ongoing[(xstart, xend)] = y
-                print(f"start of ongoing {y=}, {xstart=}, {xend=}")
             state = "outside"
+    return area
+
+
+def part2(inp):
+    verticals = find_verticals(parse2(inp))
+    v_ypos = sorted(set([vertical[0].y for vertical in verticals] +
+                        [vertical[1].y for vertical in verticals]))
+    ymin, ymax = v_ypos[0], v_ypos[-1]
+    h_ypos = sorted(set([y+1 for y in v_ypos] + [y-1 for y in v_ypos]) - set(v_ypos))[1:-1]
+    area = (area_for_horizontal_lines(verticals, v_ypos)
+            + area_for_vertical_blocks(verticals, h_ypos))
     return area
 
 
@@ -184,7 +179,7 @@ L 2 (#015232)
 U 2 (#7a21e3)""")
 
 
-def test_1_2():
+def test_2_1():
     assert 952408144115 == part2("""R 6 (#70c710)
 D 5 (#0dc571)
 L 2 (#5713f0)
