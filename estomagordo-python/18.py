@@ -84,12 +84,22 @@ def solve_a(lines):
 
 
 def solve_b(lines):
+    oldrules = True
+
     vectors = {
         '0': (0, 1),
         '2': (0, -1),
         '3': (-1, 0),
         '1': (1, 0)
     }
+
+    if oldrules:
+        vectors = {
+            'R': (0, 1),
+            'L': (0, -1),
+            'U': (-1, 0),
+            'D': (1, 0)
+        }
 
     data = parse(lines)
     
@@ -102,9 +112,14 @@ def solve_b(lines):
 
     count = 0
 
-    for _, _, colour in data:
-        dy, dx = vectors[(colour[-2])]
-        length = int(colour[2:-2], 16)
+    for direction, length, colour in data:
+        dy=dx=-1
+
+        if oldrules:
+            dy, dx = vectors[direction]
+        else:
+            dy, dx = vectors[(colour[-2])]
+            length = int(colour[2:-2], 16)        
 
         if dy == 1:
             vertstrokes.append((x, y, y + length))
@@ -121,9 +136,11 @@ def solve_b(lines):
         miny = min(miny, y)
         maxy = max(maxy, y)
 
-        count += length - 1
+        # count += length - 1
 
-    for y in range(miny, maxy):
+    a = 22
+
+    for y in range(miny, maxy+1):
         hitting = [x for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
         hitting.sort()
         
@@ -143,8 +160,10 @@ def solve_b(lines):
                 if linestart == pastx and lineend == thisx:
                     if inside:
                         contribution += lineend - linestart
+                    inside = not inside
 
         count += contribution
+        # print(hitting, contribution)
 
     return count
 
@@ -163,6 +182,7 @@ if __name__ == '__main__':
     print(main())
 
 # mytest   952402606509
+# latest   952407216608
 # corrtest 952408144115
 # newstrat 952409011757
 # +3run    952408655403
