@@ -84,22 +84,12 @@ def solve_a(lines):
 
 
 def solve_b(lines):
-    oldrules = False
-
     vectors = {
         '0': (0, 1),
         '2': (0, -1),
         '3': (-1, 0),
         '1': (1, 0)
     }
-
-    if oldrules:
-        vectors = {
-            'R': (0, 1),
-            'L': (0, -1),
-            'U': (-1, 0),
-            'D': (1, 0)
-        }
 
     data = parse(lines)
     
@@ -114,21 +104,13 @@ def solve_b(lines):
     count = 0
 
     for i, d in enumerate(data):
-        direction, length, colour = d
-        dy=dx=-1
+        _, _, colour = d
 
-        if oldrules:
-            dy, dx = vectors[direction]
-        else:
-            dy, dx = vectors[(colour[-2])]
-            length = int(colour[2:-2], 16)
+        dy, dx = vectors[(colour[-2])]
+        length = int(colour[2:-2], 16)
 
         prevdir = data[i-1][2][-2]
         nextdir = data[(i+1) % len(data)][2][-2]
-
-        if oldrules:
-            prevdir = data[i-1][0]
-            nextdir = data[(i+1) % len(data)][0]
             
         plateau = dx != 0 and prevdir != nextdir
 
@@ -148,30 +130,6 @@ def solve_b(lines):
         maxy = max(maxy, y)
         maxx = max(maxx, x)
 
-        # print(f'Going from {(y-dy*length)//5000},{(x-dx*length)//5000} to {y//5000},{x//5000}')
-        # print(f'Going to {y//5000},{x//5000}')
-
-        # count += length - 1
-
-    a = 22
-    printed = set()
-    divisor = 5000
-
-    if 0:#not oldrules:
-        matrix = [['.' for _ in range(maxx//divisor + 1)] for _ in range(maxy//divisor + 1)]
-
-        for x, starty, endy in vertstrokes:
-            for y in range(starty//divisor, endy//divisor+1):
-                matrix[y][x//divisor] = '#'
-
-        for y, seqs in horistrokes.items():
-            for seq in seqs:
-                for x in range(seq[0]//divisor, seq[1]//divisor + 1):
-                    matrix[y//divisor][x] = '#'
-
-        for row in matrix:
-            print(''.join(row))
-
     relevys = set()
 
     for y in horistrokes.keys():
@@ -182,8 +140,6 @@ def solve_b(lines):
     eventys = sorted(relevys)
 
     for ii, y in enumerate(eventys):
-        if y % 100000 == 0:
-            print(y, maxy)
         hitting = [[x, True, False] for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
         hitting.sort()
         
@@ -195,8 +151,7 @@ def solve_b(lines):
                 if hitting[i][0] == end:
                     hitting[i][1] = plateau
                     hitting[i][2] = True
-
-        a = 22
+                    
         prevused = False
         
         for i in range(1, len(hitting)):
@@ -212,34 +167,9 @@ def solve_b(lines):
             if this[1]:
                 inside = not inside
 
-            # for linestart, lineend in horistrokes[y]:
-            #     if linestart == pastx and lineend == thisx:
-            #         if inside:
-            #             contribution += lineend - linestart
-            #         inside = not inside
-
         rows = 1 if ii == len(eventys)-1 else eventys[ii+1] - y
         
         count += contribution * rows
-
-
-        if oldrules:
-            print(y, maxy, hitting, contribution)
-        else:
-            # if len(hitting) > 3:
-                # t = tuple([tuple(e) for e in hitting])
-            t = tuple((e[1], e[2]) for e in hitting)
-            if t not in printed:
-                print(f'{y}/{maxy}')
-
-                for h in hitting:
-                    ty = 'vert' if not h[2] else 'plateau' if h[1] else 'horiz'
-
-                    print(f'Have a {ty} at {h[0]}')
-
-                print(f'Adding {contribution}\n')
-
-                printed.add(t)
 
     return count
 
@@ -256,17 +186,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# mytest   952402606509
-# latest   952407216608
-# allcorr? 952407314140
-# allcorr2 952408144120
-# allcorr3 952408144116
-# corrtest 952408144115
-# newstrat 952409011757
-# +3run    952408655403
-# +1run    952404622807        
-# +2run    952406639105
-    
-
-# 87350190392996 wrong
