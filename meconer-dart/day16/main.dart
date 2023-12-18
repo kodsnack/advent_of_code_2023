@@ -79,95 +79,36 @@ class Cave {
     final tile = grid[pos.row][pos.col];
     tile.isEnergized = true;
 
-    switch (direction) {
-      case 'R':
-        switch (tile.tileChar) {
-          case '.':
-          case '-':
-            calcBeamPath(pos.moveRight(), direction, seen);
-            break;
-
-          case '/':
-            calcBeamPath(pos.moveUp(), 'U', seen);
-            break;
-
-          case r'\':
-            calcBeamPath(pos.moveDown(), 'D', seen);
-            break;
-
-          case '|':
-            // Split beam
-            calcBeamPath(pos.moveUp(), 'U', seen);
-            calcBeamPath(pos.moveDown(), 'D', seen);
-            break;
-          default:
-            print('Err');
-        }
-      case 'D':
-        switch (tile.tileChar) {
-          case '.':
-          case '|':
-            calcBeamPath(pos.moveDown(), 'D', seen);
-            break;
-
-          case '/':
-            calcBeamPath(pos.moveLeft(), 'L', seen);
-            break;
-
-          case r'\':
-            calcBeamPath(pos.moveRight(), 'R', seen);
-          case '-':
-            // Split beam
-            calcBeamPath(pos.moveLeft(), 'L', seen);
-            calcBeamPath(pos.moveRight(), 'R', seen);
-            break;
-          default:
-            print('Err');
-        }
-
-      case 'L':
-        switch (tile.tileChar) {
-          case '.':
-          case '-':
-            calcBeamPath(pos.moveLeft(), 'L', seen);
-            break;
-
-          case '/':
-            calcBeamPath(pos.moveDown(), 'D', seen);
-            break;
-
-          case r'\':
-            calcBeamPath(pos.moveUp(), 'U', seen);
-          case '|':
-            // Split beam
-            calcBeamPath(pos.moveUp(), 'U', seen);
-            calcBeamPath(pos.moveDown(), 'D', seen);
-            break;
-          default:
-            print('Err');
-        }
-      case 'U':
-        switch (tile.tileChar) {
-          case '.':
-          case '|':
-            calcBeamPath(pos.moveUp(), 'U', seen);
-            break;
-
-          case '/':
-            calcBeamPath(pos.moveRight(), 'R', seen);
-            break;
-
-          case r'\':
-            calcBeamPath(pos.moveLeft(), 'L', seen);
-          case '-':
-            // Split beam
-            calcBeamPath(pos.moveLeft(), 'L', seen);
-            calcBeamPath(pos.moveRight(), 'R', seen);
-            break;
-          default:
-            print('Err');
-        }
+    List<String> nextDirections = getNextMoves(direction, tile.tileChar);
+    for (final direction in nextDirections) {
+      calcBeamPath(pos.moveDirStr(direction), direction, seen);
     }
+  }
+
+  List<String> getNextMoves(String direction, String tileChar) {
+    const Map<(String, String), List<String>> nextMoves = {
+      ('R', '.'): ['R'],
+      ('R', '-'): ['R'],
+      ('R', '/'): ['U'],
+      ('R', r'\'): ['D'],
+      ('R', '|'): ['U', 'D'],
+      ('D', '.'): ['D'],
+      ('D', '-'): ['L', 'R'],
+      ('D', '/'): ['L'],
+      ('D', r'\'): ['R'],
+      ('D', '|'): ['D'],
+      ('L', '.'): ['L'],
+      ('L', '-'): ['L'],
+      ('L', '/'): ['D'],
+      ('L', r'\'): ['U'],
+      ('L', '|'): ['U', 'D'],
+      ('U', '.'): ['U'],
+      ('U', '-'): ['L', 'R'],
+      ('U', '/'): ['R'],
+      ('U', r'\'): ['L'],
+      ('U', '|'): ['U'],
+    };
+    return nextMoves[(direction, tileChar)]!;
   }
 
   void printEnergized() {
