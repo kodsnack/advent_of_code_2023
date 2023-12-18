@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap, words, between, dimensions, sum_of_differences
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap, words, between, dimensions, sum_of_differences, rim
 
 
 def test_distance():
@@ -435,3 +435,27 @@ def test_sum_of_differences():
     l = [-3, 0, 4, 4, 9]
 
     assert 56 == sum_of_differences(l)
+
+
+def test_rim():    
+    matrix = [
+        [1, 2, 3, 4],
+        [5, 6, 7, 8],
+        [9, 10, 11, 12],
+        [13, 14, 15, 16]
+    ]
+
+    matrim = rim(matrix)
+    
+    assert (0, 0, 1) in matrim 
+    assert (0, 1, 2) in matrim
+    assert (0, 2, 3) in matrim
+    assert (0, 3, 4) in matrim
+    assert (3, 0, 13) in matrim
+    assert (3, 1, 14) in matrim
+    assert (3, 2, 15) in matrim
+    assert (3, 3, 16) in matrim
+    assert (1, 0, 5) in matrim
+    assert (2, 0, 9) in matrim
+    assert (1, 3, 8) in matrim
+    assert (2, 3, 12) in matrim
