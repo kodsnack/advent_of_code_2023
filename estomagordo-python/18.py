@@ -107,6 +107,7 @@ def solve_b(lines):
     x = 0
     miny = 0
     maxy = 0
+    maxx = 0
     vertstrokes = []
     horistrokes = defaultdict(list)
 
@@ -145,14 +146,31 @@ def solve_b(lines):
 
         miny = min(miny, y)
         maxy = max(maxy, y)
+        maxx = max(maxx, x)
 
         # count += length - 1
 
     a = 22
     printed = set()
+    divisor = 5000
 
-    for y in range(miny, maxy+1):
-        hitting = [[x, True] for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
+    if 0:#not oldrules:
+        matrix = [['.' for _ in range(maxx//divisor + 1)] for _ in range(maxy//divisor + 1)]
+
+        for x, starty, endy in vertstrokes:
+            for y in range(starty//divisor, endy//divisor+1):
+                matrix[y][x//divisor] = '#'
+
+        for y, seqs in horistrokes.items():
+            for seq in seqs:
+                for x in range(seq[0]//divisor, seq[1]//divisor + 1):
+                    matrix[y//divisor][x] = '#'
+
+        for row in matrix:
+            print(''.join(row))
+
+    for y in range(miny, maxy//divisor+1):
+        hitting = [[x, True, False] for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
         hitting.sort()
         
         contribution = 1
@@ -162,6 +180,7 @@ def solve_b(lines):
             for i in range(len(hitting)):
                 if hitting[i][0] == end:
                     hitting[i][1] = plateau
+                    hitting[i][2] = True
 
         a = 22
         
@@ -169,7 +188,7 @@ def solve_b(lines):
             this = hitting[i]
             past = hitting[i-1]
 
-            if inside or not this[1]:
+            if inside or this[2]:
                 contribution += this[0] - past[0]
             
             if this[1]:
@@ -188,9 +207,17 @@ def solve_b(lines):
         else:
             # if len(hitting) > 3:
                 # t = tuple([tuple(e) for e in hitting])
-            t = tuple(e[1] for e in hitting)
+            t = tuple((e[1], e[2]) for e in hitting)
             if t not in printed:
-                print(y, maxy, hitting, contribution)
+                print(f'{y}/{maxy}')
+
+                for h in hitting:
+                    ty = 'vert' if not h[2] else 'plateau' if h[1] else 'horiz'
+
+                    print(f'Have a {ty} at {h[0]}')
+
+                print(f'Adding {contribution}\n')
+
                 printed.add(t)
 
     return count
@@ -214,5 +241,5 @@ if __name__ == '__main__':
 # corrtest 952408144115
 # newstrat 952409011757
 # +3run    952408655403
-# +1run    952404622807
+# +1run    952404622807        
 # +2run    952406639105
