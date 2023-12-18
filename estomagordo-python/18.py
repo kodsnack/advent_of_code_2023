@@ -127,7 +127,7 @@ def solve_b(lines):
         hitting = [x for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
         hitting.sort()
         
-        contribution = 0
+        contribution = 1
         inside = True
 
         for i in range(1, len(hitting)):
@@ -135,13 +135,14 @@ def solve_b(lines):
             pastx = hitting[i-1]
 
             if inside:
-                contribution += thisx - pastx - 1           
+                contribution += thisx - pastx
             
             inside = not inside
 
             for linestart, lineend in horistrokes[y]:
                 if linestart == pastx and lineend == thisx:
-                    inside = not inside
+                    if inside:
+                        contribution += lineend - linestart
 
         count += contribution
 
