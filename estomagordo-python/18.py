@@ -174,6 +174,9 @@ def solve_b(lines):
 
         if oldrules:
             print(hitting, contribution)
+        else:
+            if len(hitting) > 3:
+                print(hitting, contribution)
 
     return count
 
