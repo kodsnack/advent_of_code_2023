@@ -172,10 +172,16 @@ def solve_b(lines):
         for row in matrix:
             print(''.join(row))
 
-    eventys = sorted(horistrokes.keys())
-    prevy = miny
+    relevys = set()
 
-    for y in range(miny, maxy+1):
+    for y in horistrokes.keys():
+        relevys.add(y-1)
+        relevys.add(y)
+        relevys.add(y+1)
+
+    eventys = sorted(relevys)
+
+    for ii, y in enumerate(eventys):
         if y % 100000 == 0:
             print(y, maxy)
         hitting = [[x, True, False] for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
@@ -212,7 +218,10 @@ def solve_b(lines):
             #             contribution += lineend - linestart
             #         inside = not inside
 
-        count += contribution
+        rows = 1 if ii == len(eventys)-1 else eventys[ii+1] - y
+        
+        count += contribution * rows
+
 
         if oldrules:
             print(y, maxy, hitting, contribution)
@@ -258,3 +267,6 @@ if __name__ == '__main__':
 # +3run    952408655403
 # +1run    952404622807        
 # +2run    952406639105
+    
+
+# 87350190392996 wrong
