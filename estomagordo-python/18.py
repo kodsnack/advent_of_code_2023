@@ -84,7 +84,7 @@ def solve_a(lines):
 
 
 def solve_b(lines):
-    oldrules = True
+    oldrules = False
 
     vectors = {
         '0': (0, 1),
@@ -141,29 +141,39 @@ def solve_b(lines):
     a = 22
 
     for y in range(miny, maxy+1):
-        hitting = [x for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
+        hitting = [[x, True] for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
         hitting.sort()
         
         contribution = 1
         inside = True
 
+        for _, end in horistrokes[y]:
+            for i in range(len(hitting)):
+                if hitting[i][0] == end:
+                    hitting[i][1] = False
+
+        a = 22
+        
         for i in range(1, len(hitting)):
-            thisx = hitting[i]
-            pastx = hitting[i-1]
+            this = hitting[i]
+            past = hitting[i-1]
 
-            if inside:
-                contribution += thisx - pastx
+            if inside or not this[1]:
+                contribution += this[0] - past[0]
             
-            inside = not inside
+            if this[1]:
+                inside = not inside
 
-            for linestart, lineend in horistrokes[y]:
-                if linestart == pastx and lineend == thisx:
-                    if inside:
-                        contribution += lineend - linestart
-                    inside = not inside
+            # for linestart, lineend in horistrokes[y]:
+            #     if linestart == pastx and lineend == thisx:
+            #         if inside:
+            #             contribution += lineend - linestart
+            #         inside = not inside
 
         count += contribution
-        # print(hitting, contribution)
+
+        if oldrules:
+            print(hitting, contribution)
 
     return count
 
