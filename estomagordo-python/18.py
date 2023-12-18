@@ -112,23 +112,33 @@ def solve_b(lines):
 
     count = 0
 
-    for direction, length, colour in data:
+    for i, d in enumerate(data):
+        direction, length, colour = d
         dy=dx=-1
 
         if oldrules:
             dy, dx = vectors[direction]
         else:
             dy, dx = vectors[(colour[-2])]
-            length = int(colour[2:-2], 16)        
+            length = int(colour[2:-2], 16)
+
+        prevdir = data[i-1][2][2]
+        nextdir = data[(i+1) % len(data)][2][2]
+
+        if oldrules:
+            prevdir = data[i-1][0]
+            nextdir = data[(i+1) % len(data)][0]
+            
+        plateau = dx != 0 and prevdir != nextdir
 
         if dy == 1:
             vertstrokes.append((x, y, y + length))
         if dy == -1:
             vertstrokes.append((x, y - length, y))
         if dx == 1:
-            horistrokes[y].append((x, x + length))
+            horistrokes[y].append((x, x + length, plateau))
         if dx == -1:
-            horistrokes[y].append((x - length, x))
+            horistrokes[y].append((x - length, x, plateau))
         
         y += dy * length
         x += dx * length
@@ -139,6 +149,7 @@ def solve_b(lines):
         # count += length - 1
 
     a = 22
+    printed = set()
 
     for y in range(miny, maxy+1):
         hitting = [[x, True] for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
@@ -147,10 +158,10 @@ def solve_b(lines):
         contribution = 1
         inside = True
 
-        for _, end in horistrokes[y]:
+        for _, end, plateau in horistrokes[y]:
             for i in range(len(hitting)):
                 if hitting[i][0] == end:
-                    hitting[i][1] = False
+                    hitting[i][1] = plateau
 
         a = 22
         
@@ -173,10 +184,14 @@ def solve_b(lines):
         count += contribution
 
         if oldrules:
-            print(hitting, contribution)
+            print(y, maxy, hitting, contribution)
         else:
-            if len(hitting) > 3:
-                print(hitting, contribution)
+            # if len(hitting) > 3:
+                # t = tuple([tuple(e) for e in hitting])
+            t = tuple(e[1] for e in hitting)
+            if t not in printed:
+                print(y, maxy, hitting, contribution)
+                printed.add(t)
 
     return count
 
