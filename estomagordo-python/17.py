@@ -19,7 +19,7 @@ def solve(lines, minsteps, maxsteps):
     h, w = dimensions(grid)
     
     seen = set()
-    frontier = [(grid[1][0], 1, 0, 1, 0), (grid[0][1], 0, 1, 0, 1)]
+    frontier = [(0, 0, 0, 0, 0)]
 
     while frontier:
         steps, y, x, dy, dx = heappop(frontier)
@@ -31,24 +31,58 @@ def solve(lines, minsteps, maxsteps):
             continue
 
         seen.add((y, x, dy, dx))
-        
-        canup = (dy > 0 or abs(dx) > minsteps-1) and 0 <= dy < maxsteps and y < h-1 and (y+1, x, dy+1, 0) not in seen
-        candown = (dy < 0 or abs(dx) > minsteps-1) and -maxsteps < dy <= 0 and y > 0 and (y-1, x, dy-1, 0) not in seen
-        canright = (dx > 0 or abs(dy) > minsteps-1) and 0 <= dx < maxsteps and x < w-1 and (y, x+1, 0, dx+1) not in seen
-        canleft = (dx < 0 or abs(dy) > minsteps-1) and -maxsteps < dx <= 0 and x > 0 and (y, x-1, 0, dx-1) not in seen
 
-        if canup:
-            heappush(frontier, (steps + grid[y+1][x], y+1, x, dy+1, 0))
-        if candown:
-            heappush(frontier, (steps + grid[y-1][x], y-1, x, dy-1, 0))
-        if canright:
-            heappush(frontier, (steps + grid[y][x+1], y, x+1, 0, dx+1))
-        if canleft:
-            heappush(frontier, (steps + grid[y][x-1], y, x-1, 0, dx-1))
+        if dy == 0:
+            cumsteps = 0
+
+            for hops in range(1, maxsteps+1):
+                if y + hops >= h:
+                    break
+
+                cumsteps += grid[y+hops][x]
+
+                if hops >= minsteps and (y + hops, x, 1, 0) not in seen:
+                    heappush(frontier, (steps + cumsteps, y + hops, x, 1, 0))
+
+        if dy == 0:
+            cumsteps = 0
+
+            for hops in range(1, maxsteps+1):
+                if y - hops < 0:
+                    break
+
+                cumsteps += grid[y-hops][x]
+
+                if hops >= minsteps and (y - hops, x, -1, 0) not in seen:
+                    heappush(frontier, (steps + cumsteps, y - hops, x, -1, 0))
+
+        if dx == 0:
+            cumsteps = 0
+
+            for hops in range(1, maxsteps+1):
+                if x + hops >= w:
+                    break
+
+                cumsteps += grid[y][x+hops]
+
+                if hops >= minsteps and (y, x + hops, 0, 1) not in seen:
+                    heappush(frontier, (steps + cumsteps, y, x + hops, 0, 1))
+
+        if dx == 0:
+            cumsteps = 0
+
+            for hops in range(1, maxsteps+1):
+                if x - hops < 0:
+                    break
+
+                cumsteps += grid[y][x-hops]
+
+                if hops >= minsteps and (y, x - hops, 0, -1) not in seen:
+                    heappush(frontier, (steps + cumsteps, y, x - hops, 0, -1))
 
 
 def solve_a(lines):
-    return solve(lines, 0, 3)
+    return solve(lines, 1, 3)
 
 
 def solve_b(lines):
