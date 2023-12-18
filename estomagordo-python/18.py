@@ -123,8 +123,8 @@ def solve_b(lines):
             dy, dx = vectors[(colour[-2])]
             length = int(colour[2:-2], 16)
 
-        prevdir = data[i-1][2][2]
-        nextdir = data[(i+1) % len(data)][2][2]
+        prevdir = data[i-1][2][-2]
+        nextdir = data[(i+1) % len(data)][2][-2]
 
         if oldrules:
             prevdir = data[i-1][0]
@@ -148,6 +148,9 @@ def solve_b(lines):
         maxy = max(maxy, y)
         maxx = max(maxx, x)
 
+        # print(f'Going from {(y-dy*length)//5000},{(x-dx*length)//5000} to {y//5000},{x//5000}')
+        # print(f'Going to {y//5000},{x//5000}')
+
         # count += length - 1
 
     a = 22
@@ -169,7 +172,7 @@ def solve_b(lines):
         for row in matrix:
             print(''.join(row))
 
-    for y in range(miny, maxy//divisor+1):
+    for y in range(miny, maxy+1):
         hitting = [[x, True, False] for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
         hitting.sort()
         
