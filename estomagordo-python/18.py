@@ -172,11 +172,16 @@ def solve_b(lines):
         for row in matrix:
             print(''.join(row))
 
+    eventys = sorted(horistrokes.keys())
+    prevy = miny
+
     for y in range(miny, maxy+1):
+        if y % 100000 == 0:
+            print(y, maxy)
         hitting = [[x, True, False] for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
         hitting.sort()
         
-        contribution = 1
+        contribution = 0
         inside = True
 
         for _, end, plateau in horistrokes[y]:
@@ -186,13 +191,17 @@ def solve_b(lines):
                     hitting[i][2] = True
 
         a = 22
+        prevused = False
         
         for i in range(1, len(hitting)):
             this = hitting[i]
             past = hitting[i-1]
 
             if inside or this[2]:
-                contribution += this[0] - past[0]
+                contribution += this[0] - past[0] + (0 if prevused else 1)
+                prevused = True
+            else:
+                prevused = False
             
             if this[1]:
                 inside = not inside
@@ -241,6 +250,9 @@ if __name__ == '__main__':
 
 # mytest   952402606509
 # latest   952407216608
+# allcorr? 952407314140
+# allcorr2 952408144120
+# allcorr3 952408144116
 # corrtest 952408144115
 # newstrat 952409011757
 # +3run    952408655403
