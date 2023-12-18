@@ -32,53 +32,23 @@ def solve(lines, minsteps, maxsteps):
 
         seen.add((y, x, dy, dx))
 
-        if dy == 0:
+        for gy, gx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            if gy * dy != 0 or gx * dx != 0:
+                continue           
+        
             cumsteps = 0
 
             for hops in range(1, maxsteps+1):
-                if y + hops >= h:
+                py = y + hops * gy
+                px = x + hops * gx
+
+                if py < 0 or py >= h or px < 0 or px >= w:
                     break
 
-                cumsteps += grid[y+hops][x]
+                cumsteps += grid[y+hops*gy][x+hops*gx]
 
-                if hops >= minsteps and (y + hops, x, 1, 0) not in seen:
-                    heappush(frontier, (steps + cumsteps, y + hops, x, 1, 0))
-
-        if dy == 0:
-            cumsteps = 0
-
-            for hops in range(1, maxsteps+1):
-                if y - hops < 0:
-                    break
-
-                cumsteps += grid[y-hops][x]
-
-                if hops >= minsteps and (y - hops, x, -1, 0) not in seen:
-                    heappush(frontier, (steps + cumsteps, y - hops, x, -1, 0))
-
-        if dx == 0:
-            cumsteps = 0
-
-            for hops in range(1, maxsteps+1):
-                if x + hops >= w:
-                    break
-
-                cumsteps += grid[y][x+hops]
-
-                if hops >= minsteps and (y, x + hops, 0, 1) not in seen:
-                    heappush(frontier, (steps + cumsteps, y, x + hops, 0, 1))
-
-        if dx == 0:
-            cumsteps = 0
-
-            for hops in range(1, maxsteps+1):
-                if x - hops < 0:
-                    break
-
-                cumsteps += grid[y][x-hops]
-
-                if hops >= minsteps and (y, x - hops, 0, -1) not in seen:
-                    heappush(frontier, (steps + cumsteps, y, x - hops, 0, -1))
+                if hops >= minsteps and (y + hops*gy, x + hops*gx, gy, gx) not in seen:
+                    heappush(frontier, (steps + cumsteps, y + hops*gy, x + hops*gx, gy, gx))
 
 
 def solve_a(lines):
