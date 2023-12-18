@@ -80,22 +80,72 @@ def solve_a(lines):
     sy, sx = find_inside(filled)
     flood_fill(filled, sy, sx)
 
-    miny = min(p[0] for p in filled)
-    maxy = max(p[0] for p in filled)
-    minx = min(p[1] for p in filled)
-    maxx = max(p[1] for p in filled)
-
-    for y in range(miny, maxy+1):
-        line = ['S' if (y, x) == (sy, sx) else '#' if (y, x) in filled else '.' for x in range(minx, maxx+1)]
-        print(''.join(line))
-
     return len(filled)
 
 
 def solve_b(lines):
-    data = parse(lines)
+    vectors = {
+        '0': (0, 1),
+        '2': (0, -1),
+        '3': (-1, 0),
+        '1': (1, 0)
+    }
 
-    return None
+    data = parse(lines)
+    
+    y = 0
+    x = 0
+    miny = 0
+    maxy = 0
+    vertstrokes = []
+    horistrokes = defaultdict(list)
+
+    count = 0
+
+    for _, _, colour in data:
+        dy, dx = vectors[(colour[-2])]
+        length = int(colour[2:-2], 16)
+
+        if dy == 1:
+            vertstrokes.append((x, y, y + length))
+        if dy == -1:
+            vertstrokes.append((x, y - length, y))
+        if dx == 1:
+            horistrokes[y].append((x, x + length))
+        if dx == -1:
+            horistrokes[y].append((x - length, x))
+        
+        y += dy * length
+        x += dx * length
+
+        miny = min(miny, y)
+        maxy = max(maxy, y)
+
+        count += length - 1
+
+    for y in range(miny, maxy):
+        hitting = [x for x, starty, endy in vertstrokes if between(y, starty, endy, False)]
+        hitting.sort()
+        
+        contribution = 0
+        inside = True
+
+        for i in range(1, len(hitting)):
+            thisx = hitting[i]
+            pastx = hitting[i-1]
+
+            if inside:
+                contribution += thisx - pastx - 1           
+            
+            inside = not inside
+
+            for linestart, lineend in horistrokes[y]:
+                if linestart == pastx and lineend == thisx:
+                    inside = not inside
+
+        count += contribution
+
+    return count
 
 
 def main():
@@ -110,3 +160,10 @@ def main():
 
 if __name__ == '__main__':
     print(main())
+
+# mytest   952402606509
+# corrtest 952408144115
+# newstrat 952409011757
+# +3run    952408655403
+# +1run    952404622807
+# +2run    952406639105
