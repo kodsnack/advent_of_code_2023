@@ -137,4 +137,23 @@ class LinePos {
         return '';
     }
   }
+
+  LinePos moveDist(int length, String directionStr) {
+    switch (directionStr) {
+      case 'U':
+      case 'N':
+        return LinePos(col, row - length);
+      case 'E':
+      case 'R':
+        return LinePos(col + length, row);
+      case 'S':
+      case 'D':
+        return LinePos(col, row + length);
+      case 'W':
+      case 'L':
+        return LinePos(col - length, row);
+      default:
+        throw ArgumentError('Wrong direction str');
+    }
+  }
 }

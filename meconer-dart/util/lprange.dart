@@ -21,4 +21,8 @@ class LPRange {
     if (pos.row < rowMin || pos.row > rowMax) return false;
     return true;
   }
+
+  getArea() {
+    return (colMax - colMin + 1) * (rowMax - rowMin + 1);
+  }
 }
