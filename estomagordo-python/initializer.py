@@ -1,7 +1,7 @@
 from os import path
 from sys import argv
 
-program_file = lambda day: f"""from bisect import bisect, bisect_left, bisect_right
+program_file = lambda day: f"""from bisect import bisect_left, bisect_right
 from collections import Counter, defaultdict, deque
 from functools import cache, reduce
 from heapq import heapify, heappop, heappush

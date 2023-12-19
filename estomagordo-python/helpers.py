@@ -151,3 +151,14 @@ def dimensions(grid):
 
 def sum_of_differences(l):
     return sum((l[i] - l[i-1]) * (len(l) - i) * i for i in range(1, len(l)))
+
+
+def rim(matrix):
+    h, w = dimensions(matrix)
+
+    top = [(0, x, matrix[0][x]) for x in range(w)]
+    bottom = [(h-1, x, matrix[h-1][x]) for x in range(w)]
+    left = [(y, 0, matrix[y][0]) for y in range(h)]
+    right = [(y, w-1, matrix[y][w-1]) for y in range(h)]
+
+    return top + bottom + left + right
