@@ -49,9 +49,7 @@ def parse(lines):
 def solve_a(lines):
     workflows, parts = parse(lines)
 
-    total = 0
-
-    for p in parts:
+    def evaluate(p):
         flow = 'in'
 
         while flow not in ('R', 'A'):
@@ -74,27 +72,22 @@ def solve_a(lines):
                         break
 
         if flow == 'A':
-            total += sum(p.values())
+            return sum(p.values())
+        
+        return 0
 
-    return total
+    return sum(evaluate(p) for p in parts)
 
 
 def solve_b(lines):
     workflows = parse(lines)[0]
-    accepted = {'x': [], 'm': [], 'a': [], 's': []}
     total = 0
 
     frontier = [('in', {'x': [1, 4000], 'm': [1, 4000], 'a': [1, 4000], 's': [1, 4000]})]
 
     for label, d in frontier:
         if label == 'A':
-            for k, v in d.items():
-                accepted[k].append(v)
-            val = 1
-
-            for v in d.values():
-                val *= (v[1]+1-v[0])
-            total += val
+            total += multall(v[1]+1-v[0] for v in d.values())
             continue
 
         if label == 'R':
@@ -123,19 +116,7 @@ def solve_b(lines):
                         frontier.append((target,newd))
                         d[resource] = [lo, num]
 
-    parts = [set() for _ in range(4)]
-    
-    for i, v in enumerate(accepted.values()):
-        
-        for interval in v:        
-            lo, hi = interval
-
-            for num in range(lo, hi+1):
-                parts[i].add(num)
-    print([len(p) for p in parts])
-    return total
-    return multall(len(p) for p in parts)
-            
+    return total            
 
 
 def main():
