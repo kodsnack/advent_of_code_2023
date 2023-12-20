@@ -32,42 +32,55 @@ def parse(lines):
                 graph[destination][3][name] = 0
 
     return graph
+
+
+def cycle(graph, key_inputs=set()):
+    counts = [0, 0]
+    key_inputs_set = set()
+    pulses = [('button', 'broadcaster', 0)]
+
+    for sender, receiver, pulse in pulses:
+        counts[pulse] += 1
+
+        if receiver not in graph:
+            continue           
+
+        module_type, destinations, _, _ = graph[receiver]
+
+        if module_type == 0:
+            if pulse == 0:
+                graph[receiver][2] = 1 - graph[receiver][2]
+                outsignal = graph[receiver][2]
+
+                for d in destinations:
+                    pulses.append((receiver, d, outsignal))
+
+        if module_type == 1:
+            graph[receiver][3][sender] = pulse
+            outpulse = 0 if all(v == 1 for v in graph[receiver][3].values()) else 1
+
+            for d in destinations:
+                pulses.append((receiver, d, outpulse))
+
+            if pulse == 1 and receiver in key_inputs:
+                key_inputs_set.add(receiver)
+
+        if module_type == 2:
+            for d in destinations:
+                pulses.append((receiver, d, pulse))
+
+    return counts, key_inputs_set
     
 
 def solve_a(lines):
     graph = parse(lines)
-
     counts = [0, 0]
-
+    
     for _ in range(1000):
-        pulses = [('button', 'broadcaster', 0)]
-
-        for sender, receiver, pulse in pulses:
-            counts[pulse] += 1
-
-            if receiver not in graph:
-                continue           
-
-            module_type, destinations, _, _ = graph[receiver]
-
-            if module_type == 0:
-                if pulse == 0:
-                    graph[receiver][2] = 1 - graph[receiver][2]
-                    outsignal = graph[receiver][2]
-
-                    for d in destinations:
-                        pulses.append((receiver, d, outsignal))
-
-            if module_type == 1:
-                graph[receiver][3][sender] = pulse
-                outpulse = 0 if all(v == 1 for v in graph[receiver][3].values()) else 1
-
-                for d in destinations:
-                    pulses.append((receiver, d, outpulse))
-
-            if module_type == 2:
-                for d in destinations:
-                    pulses.append((receiver, d, pulse))
+        lohi, _ = cycle(graph)
+        lo, hi = lohi
+        counts[0] += lo
+        counts[1] += hi
 
     return counts[0] * counts[1]
 
@@ -83,53 +96,23 @@ def solve_b(lines):
             if d == 'rx':
                 rx_input = k                
 
-    rx_input_inputs = {}
+    key_inputs = {}
 
     for k, v in graph.items():
         for d in v[1]:
             if d == rx_input:
-                rx_input_inputs[k]= 0
+                key_inputs[k]= 0
 
     while True:
         presses += 1
-        if presses == 40000:
-            return 8
-        pulses = [('button', 'broadcaster', 0)]
+        _, key_inputs_set = cycle(graph)
 
-        for sender, receiver, pulse in pulses:
-            if receiver == 'rx' and pulse == 0:
-                return presses
+        for key_input, in key_inputs_set:
+            if key_inputs[key_input] == 0:
+                key_inputs[key_input] = presses
 
-            if receiver not in graph:
-                continue           
-
-            module_type, destinations, _, _ = graph[receiver]
-
-            if module_type == 0:
-                if pulse == 0:
-                    graph[receiver][2] = 1 - graph[receiver][2]
-                    outsignal = graph[receiver][2]
-
-                    for d in destinations:
-                        pulses.append((receiver, d, outsignal))
-
-            if module_type == 1:
-                graph[receiver][3][sender] = pulse
-                outpulse = 0 if all(v == 1 for v in graph[receiver][3].values()) else 1
-
-                if receiver in rx_input_inputs and outpulse == 1:
-                    if rx_input_inputs[receiver] == 0:
-                        rx_input_inputs[receiver] = presses
-
-                    if not any(v == 0 for v in rx_input_inputs.values()):
-                        return lcm(*rx_input_inputs.values())
-
-                for d in destinations:
-                    pulses.append((receiver, d, outpulse))
-
-            if module_type == 2:
-                for d in destinations:
-                    pulses.append((receiver, d, pulse))
+            if not any(v == 0 for v in key_inputs.values()):
+                return lcm(*key_inputs.values())
 
 
 def main():
