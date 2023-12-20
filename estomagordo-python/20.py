@@ -62,7 +62,7 @@ def cycle(graph, key_inputs=set()):
             for d in destinations:
                 pulses.append((receiver, d, outpulse))
 
-            if pulse == 1 and receiver in key_inputs:
+            if outpulse == 1 and receiver in key_inputs:
                 key_inputs_set.add(receiver)
 
         if module_type == 2:
@@ -105,9 +105,9 @@ def solve_b(lines):
 
     while True:
         presses += 1
-        _, key_inputs_set = cycle(graph)
+        _, key_inputs_set = cycle(graph, {k for k in key_inputs.keys()})
 
-        for key_input, in key_inputs_set:
+        for key_input in key_inputs_set:
             if key_inputs[key_input] == 0:
                 key_inputs[key_input] = presses
 
