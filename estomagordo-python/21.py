@@ -55,7 +55,7 @@ def solve_b(lines):
 
     # parity = defaultdict(set)
 
-    n = 500
+    n = 5000
     maxsteps = 500
 
     thisgen = [(sy, sx)]
@@ -125,12 +125,14 @@ def solve_b(lines):
         cumvalues = [s[2] for s in series[skip+cycle_index:len(series):cycle_length]] # [1, 9, 25, 49, 81]
 
         basediff = cumvalues[1] - cumvalues[0] # 8
-        secdiff = cumvalues[2] - cumvalues[1] # 16
-        extradiff = secdiff - basediff # 8
+        # secdiff = cumvalues[2] - cumvalues[1] # 16
+        # extradiff = secdiff - basediff # 8
+        extradiff = cumvalues[3] + cumvalues[1] - 2 * cumvalues[2]
+        magicdiff = cumvalues[2] - cumvalues[1] - basediff - extradiff
         # skips = full_cycles * cycle_length # 12
         extradiffcount = (full_cycles - 1 + (full_cycles-1)**2) // 2 # 6
 
-        val = cumvalues[0] + basediff * full_cycles + extradiff * extradiffcount # 81
+        val = cumvalues[0] + basediff * full_cycles + extradiff * extradiffcount + (full_cycles - 1) * magicdiff # 81
 
         actual_index = skip + cycle_length * full_cycles + cycle_index
 
@@ -162,7 +164,7 @@ def solve_b(lines):
 
         cumcumsum2 += series_analyzer(series, n)
 
-        # print()
+        print()
         
         cumcumsum += cumsum
             
