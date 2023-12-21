@@ -50,10 +50,10 @@ def solve_b(lines):
     sy, sx = parse(lines)
 
     firstseens = {
-        (y, x): {} for y, x in product(range(h), range(w))
+        (y, x): (set(), defaultdict(list)) for y, x in product(range(h), range(w))
     }
 
-    maxsteps = 100
+    maxsteps = 200
 
     thisgen = [(sy, sx)]
     nextgen = set()
@@ -64,8 +64,9 @@ def solve_b(lines):
             wy, wx = y//h, x//w
             oy, ox = y%h, x%w
 
-            if (wy, wx) not in firstseens[(oy, ox)]:
-                firstseens[(oy, ox)][(wy, wx)] = step
+            if (wy, wx) not in firstseens[(oy, ox)][0]:
+                firstseens[(oy, ox)][0].add((wy, wx))                
+                firstseens[(oy, ox)][1][step].append((wy, wx))
 
             for ny, nx in neighs(y, x):
                 if lines[ny%h][nx%w] == '#':
@@ -78,7 +79,10 @@ def solve_b(lines):
 
     for k, v in firstseens.items():
         print(k)
-        print(v)
+        
+        for kk, vv in v[1].items():
+            print(kk, len(vv))
+
         print()
             
     
