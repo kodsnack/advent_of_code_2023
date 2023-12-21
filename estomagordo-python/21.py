@@ -52,7 +52,7 @@ def solve_b(lines):
     dots = [(y, x) for y, x in product(range(h), range(w)) if lines[y][x] != '#']
 
     firstseens = {
-        (y, x): (set(), defaultdict(list)) for y, x in dots
+        (y, x): (set(), defaultdict(int)) for y, x in dots
     }    
     
     n = 26501365
@@ -69,7 +69,7 @@ def solve_b(lines):
 
             if (wy, wx) not in firstseens[(oy, ox)][0]:
                 firstseens[(oy, ox)][0].add((wy, wx))                
-                firstseens[(oy, ox)][1][step].append((wy, wx))
+                firstseens[(oy, ox)][1][step] += 1
 
             for ny, nx in neighs(y, x):
                 if lines[ny%h][nx%w] == '#':
@@ -104,9 +104,6 @@ def solve_b(lines):
         cycle_start = series[skip][0]
         cycle_span = sum(cycle)
 
-        print(cycle_length, cycle_span, len(series), [s[0] for s in series], cycle)
-        print()
-
         full_cycles = (n - cycle_start) // cycle_span
         skip_span = full_cycles * cycle_span
         cycle_index = 0
@@ -126,32 +123,25 @@ def solve_b(lines):
 
         val = cumvalues[0] + basediff * full_cycles + extradiff * extradiffcount + (full_cycles - 1) * magicdiff
 
-        return val
+        return val        
+    
+    def summarize(y, x):
+        cumsum = 0        
+        encounters = firstseens[(y, x)][1]
         
-    cumcumsum = 0
-    cumcumsum2 = 0
-
-    for y, x in dots:   
-        cumsum = 0
-        k = (y, x)
-        v = firstseens[(k)]
-        
-        if not v[1]:
-            continue
+        if not encounters:
+            return 0
 
         series = []
         
-        for kk, vv in v[1].items():
-            if kk % 2 == n % 2:
-                cumsum += len(vv)
-                series.append((kk, len(vv), cumsum))
+        for step, occurences in encounters.items():
+            if (step + n) % 2 == 0:
+                cumsum += occurences
+                series.append((step, occurences, cumsum))
 
-        cumcumsum2 += series_analyzer(series, n)
-
-        cumcumsum += cumsum
-            
-    return cumcumsum2
-
+        return series_analyzer(series, n)
+    
+    return sum(summarize(y, x) for y, x in dots)
 
 def main():
     lines = []
