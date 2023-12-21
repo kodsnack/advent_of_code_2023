@@ -55,6 +55,7 @@ def solve_b(lines):
 
     # parity = defaultdict(set)
 
+    n = 100
     maxsteps = 100
 
     thisgen = [(sy, sx)]
@@ -88,7 +89,39 @@ def solve_b(lines):
 
     # return
         
+    def find_recurrence(series):
+        firstdiffs = [series[i][0] - series[i-1][0] for i in range(1, len(series))]
+
+        for skip in range(len(firstdiffs)//2):
+            for cycle_length in range(1, len(firstdiffs)//2):
+                proposal = [d for d in firstdiffs[skip:cycle_length+skip]]
+
+                valid = True
+
+                for i, d in enumerate(firstdiffs[skip:]):
+                    if proposal[i%cycle_length] != d:
+                        valid = False
+                        break
+
+                if valid:
+                    return skip, len(proposal)
+        
+    def series_analyzer(series, n):
+        skip, recurrence_length = find_recurrence(series)
+
+        full_cycles = (n - skip) // recurrence_length
+        cycle_index = (n - skip) % recurrence_length
+
+        cumvalues = [s[2] for s in series[skip:len(series):recurrence_length]]
+
+        basediff = cumvalues[1] - cumvalues[0]
+        secdiff = cumvalues[2] - cumvalues[1]
+        extradiff = secdiff - basediff
+
+        return basediff + (full_cycles - 1) + extradiff
+        
     cumcumsum = 0
+    cumcumsum2 = 0
 
     for y, x in product(range(h), range(w)):   
         cumsum = 0
@@ -99,17 +132,22 @@ def solve_b(lines):
             continue
         
         print(k)
+
+        series = []
         
         for kk, vv in v[1].items():
             if kk % 2 == maxsteps % 2:
                 cumsum += len(vv)
-                print(kk, len(vv), cumsum)            
+                series.append((kk, len(vv), cumsum))
+                print(kk, len(vv), cumsum)
+
+        cumcumsum2 += series_analyzer(series, n)
 
         print()
         
         cumcumsum += cumsum
             
-    return cumcumsum
+    return cumcumsum2
     
     # opencount = sum(sum(c == '.' for c in row) for row in lines)
     # worlds = {(0, 0): 0}
