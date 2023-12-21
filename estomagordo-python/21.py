@@ -48,63 +48,96 @@ def solve_a(lines):
 def solve_b(lines):
     h, w = dimensions(lines)
     sy, sx = parse(lines)
+
+    firstseens = {
+        (y, x): {} for y, x in product(range(h), range(w))
+    }
+
+    maxsteps = 100
+
+    thisgen = [(sy, sx)]
+    nextgen = set()
+    step = 0
+
+    while step < maxsteps:
+        for y, x in thisgen:
+            wy, wx = y//h, x//w
+            oy, ox = y%h, x%w
+
+            if (wy, wx) not in firstseens[(oy, ox)]:
+                firstseens[(oy, ox)][(wy, wx)] = step
+
+            for ny, nx in neighs(y, x):
+                if lines[ny%h][nx%w] == '#':
+                    continue
+
+                nextgen.add((ny, nx))
+
+        thisgen = list(nextgen)
+        step += 1
+
+    for k, v in firstseens.items():
+        print(k)
+        print(v)
+        print()
+            
     
-    opencount = sum(sum(c == '.' for c in row) for row in lines)
-    worlds = {(0, 0): 0}
-    first_enter_rim = {}
+    # opencount = sum(sum(c == '.' for c in row) for row in lines)
+    # worlds = {(0, 0): 0}
+    # first_enter_rim = {}
 
-    for y, x in product(range(h), range(w)):
-        onrim = y in (0, h-1) or x in (0, w-1)
+    # for y, x in product(range(h), range(w)):
+    #     onrim = y in (0, h-1) or x in (0, w-1)
 
-        if onrim:
-            first_enter_rim[(y, x)] = defaultdict(int)
+    #     if onrim:
+    #         first_enter_rim[(y, x)] = defaultdict(int)
     
-    # maxsteps = 50
+    # # maxsteps = 50
 
-    # cells = defaultdict(set)
-    # cells[(sy, sx)].add(0)
+    # # cells = defaultdict(set)
+    # # cells[(sy, sx)].add(0)
     
-    seen = set()
-    frontier = [(0, sy, sx)]
+    # seen = set()
+    # frontier = [(0, sy, sx)]
 
-    for step, y, x in frontier:
-        if (y//h, x//w) not in worlds:
-            worlds[(y//h, x//w)] = step
-            print(step, f'({y//h, x//w})', len(worlds))
-        if all(len(v) > 17 for v in first_enter_rim.values()):
-            break
-            # for by, bx in first_enter_rim.keys():
-            #     print(f'({by},{bx}):\n')
+    # for step, y, x in frontier:
+    #     if (y//h, x//w) not in worlds:
+    #         worlds[(y//h, x//w)] = step
+    #         print(step, f'({y//h, x//w})', len(worlds))
+    #     if all(len(v) > 17 for v in first_enter_rim.values()):
+    #         break
+    #         # for by, bx in first_enter_rim.keys():
+    #         #     print(f'({by},{bx}):\n')
 
-            #     for ry, rx in first_enter_rim[(by, bx)]:
-            #         print(f'({ry},{rx}) [({ry//h},{rx//w})]: {first_enter_rim[(by, bx)][(ry, rx)]}')
+    #         #     for ry, rx in first_enter_rim[(by, bx)]:
+    #         #         print(f'({ry},{rx}) [({ry//h},{rx//w})]: {first_enter_rim[(by, bx)][(ry, rx)]}')
                 
-            #     print()
+    #         #     print()
 
-            # return step
+    #         # return step
 
-        if (y, x) in seen:
-            continue
+    #     if (y, x) in seen:
+    #         continue
 
-        seen.add((y, x))
-        onrim = y in (0, h-1) or x in (0, w-1)
+    #     seen.add((y, x))
+    #     onrim = y in (0, h-1) or x in (0, w-1)
 
-        if onrim:
-            by, bx = y%h, x%w
+    #     if onrim:
+    #         by, bx = y%h, x%w
 
-            if (y, x) not in first_enter_rim[(by, bx)]:
-                first_enter_rim[(by, bx)][(y, x)] = step
+    #         if (y, x) not in first_enter_rim[(by, bx)]:
+    #             first_enter_rim[(by, bx)][(y, x)] = step
 
-        for ny, nx in neighs(y, x):
-            if lines[ny%h][nx%w] == '#':
-                continue
+    #     for ny, nx in neighs(y, x):
+    #         if lines[ny%h][nx%w] == '#':
+    #             continue
 
-            if (ny, nx) in seen:
-                continue
+    #         if (ny, nx) in seen:
+    #             continue
 
-            frontier.append((step+1, ny, nx))
+    #         frontier.append((step+1, ny, nx))
 
-    totalsteps = 500
+    # totalsteps = 500
 
     
 
