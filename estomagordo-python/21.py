@@ -53,14 +53,17 @@ def solve_b(lines):
         (y, x): (set(), defaultdict(list)) for y, x in product(range(h), range(w))
     }
 
-    maxsteps = 200
+    # parity = defaultdict(set)
+
+    maxsteps = 100
 
     thisgen = [(sy, sx)]
     nextgen = set()
     step = 0
 
-    while step < maxsteps:
+    while step < maxsteps+1:
         for y, x in thisgen:
+            # parity[(y, x)].add(step)
             wy, wx = y//h, x//w
             oy, ox = y%h, x%w
 
@@ -75,16 +78,38 @@ def solve_b(lines):
                 nextgen.add((ny, nx))
 
         thisgen = list(nextgen)
+        nextgen = set()
         step += 1
+    
+    # for v in parity.values():
+    #     if len(v) > 10:
+    #         print(v)
+    #         print()
 
-    for k, v in firstseens.items():
+    # return
+        
+    cumcumsum = 0
+
+    for y, x in product(range(h), range(w)):   
+        cumsum = 0
+        k = (y, x)
+        v = firstseens[(k)]
+        
+        if not v[1]:
+            continue
+        
         print(k)
         
         for kk, vv in v[1].items():
-            print(kk, len(vv))
+            if kk % 2 == maxsteps % 2:
+                cumsum += len(vv)
+                print(kk, len(vv), cumsum)            
 
         print()
+        
+        cumcumsum += cumsum
             
+    return cumcumsum
     
     # opencount = sum(sum(c == '.' for c in row) for row in lines)
     # worlds = {(0, 0): 0}
