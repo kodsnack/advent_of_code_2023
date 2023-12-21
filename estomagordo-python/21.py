@@ -48,30 +48,78 @@ def solve_a(lines):
 def solve_b(lines):
     h, w = dimensions(lines)
     sy, sx = parse(lines)
+    first_enter_rim = {}
+    
+    maxsteps = 50
 
-    seen = defaultdict(set)
-    numsteps = 6
+    # cells = defaultdict(set)
+    # cells[(sy, sx)].add(0)
+    
+    seen = set()
+    frontier = [(0, sy, sx)]
 
-    this_gen = defaultdict(int)
-    this_gen[(sy, sx)] = 1    
-    next_gen = defaultdict(int)
+    for step, y, x in frontier:
+        if step == maxsteps:
+            for by, bx in first_enter_rim.keys():
+                print(f'({by},{bx}):\n')
 
-    for step in range(numsteps+1):
-        if step % 1000 == 0:
-            print(step)
-        if step == numsteps:
-            return multall(this_gen.values())
-        for pos, num in this_gen.items():
-            y, x = pos
+                for ry, rx in first_enter_rim[(by, bx)]:
+                    print(f'({ry},{rx} [({ry//h},{rx//w})]): {first_enter_rim[(by, bx)][(ry, rx)]}')
+                
+                print()
 
-            for ny, nx in neighs(y, x):
-                if lines[ny%h][nx%w] == '#':
-                    continue
+            return
 
-                next_gen[(ny%h, nx%w)] += num
+        if (y, x) in seen:
+            continue
 
-        this_gen = next_gen
-        next_gen = defaultdict(int)
+        seen.add((y, x))
+        onrim = y in (0, h-1) or x in (0, w-1)
+
+        if onrim:
+            by, bx = y%h, x%w
+
+            if (by, bx) not in first_enter_rim:
+                first_enter_rim[(by, bx)] = defaultdict(int)
+
+            if (y, x) not in first_enter_rim[(by, bx)]:
+                first_enter_rim[(by, bx)][(y, x)] = step
+
+        for ny, nx in neighs(y, x):
+            if lines[ny%h][nx%w] == '#':
+                continue
+
+            if (ny, nx) in seen:
+                continue
+
+            frontier.append((step+1, ny, nx))
+
+    # h, w = dimensions(lines)
+    # sy, sx = parse(lines)
+
+    # seen = defaultdict(set)
+    # numsteps = 5000
+
+    # this_gen = defaultdict(int)
+    # this_gen[(sy, sx)] = 1    
+    # next_gen = defaultdict(int)
+
+    # for step in range(numsteps+1):
+    #     if step % 1000 == 0:
+    #         print(step)
+    #     if step == numsteps:
+    #         return multall(this_gen.values())
+    #     for pos, num in this_gen.items():
+    #         y, x = pos
+
+    #         for ny, nx in neighs(y, x):
+    #             if lines[ny%h][nx%w] == '#':
+    #                 continue
+
+    #             next_gen[(ny%h, nx%w)] += num
+
+    #     this_gen = next_gen
+    #     next_gen = defaultdict(int)
 
 
 def main():
