@@ -55,8 +55,8 @@ def solve_b(lines):
 
     # parity = defaultdict(set)
 
-    n = 100
-    maxsteps = 200
+    n = 500
+    maxsteps = 500
 
     thisgen = [(sy, sx)]
     nextgen = set()
@@ -92,7 +92,7 @@ def solve_b(lines):
     def find_recurrence(series):
         firstdiffs = [series[i][0] - series[i-1][0] for i in range(1, len(series))]
 
-        for skip in range(len(firstdiffs)//2):
+        for skip in range(1, len(firstdiffs)//2):
             for cycle_length in range(1, len(firstdiffs)//2):
                 proposal = [d for d in firstdiffs[skip:cycle_length+skip]]
 
@@ -114,8 +114,12 @@ def solve_b(lines):
         full_cycles = (n - cycle_start) // cycle_span # 4
         skip_span = full_cycles * cycle_span # 88
         cycle_index = 0 # 0
+        cumskip = [cycle[0]]
 
-        while cycle_index < cycle_length and skip_span + cycle[cycle_index] <= n - cycle_start:
+        for c in cycle[1:]:
+            cumskip.append(c + cumskip[-1])
+
+        while cycle_index < cycle_length and skip_span + cumskip[cycle_index] <= n - cycle_start:
             cycle_index += 1        
 
         cumvalues = [s[2] for s in series[skip+cycle_index:len(series):cycle_length]] # [1, 9, 25, 49, 81]
@@ -130,6 +134,9 @@ def solve_b(lines):
 
         actual_index = skip + cycle_length * full_cycles + cycle_index
 
+        if actual_index < len(series) and series[actual_index][2] != val:
+            print('panic')
+
         return val
         
     cumcumsum = 0
@@ -143,7 +150,7 @@ def solve_b(lines):
         if not v[1]:
             continue
         
-        print(k)
+        # print(k)
 
         series = []
         
@@ -151,11 +158,11 @@ def solve_b(lines):
             if kk % 2 == maxsteps % 2:
                 cumsum += len(vv)
                 series.append((kk, len(vv), cumsum))
-                print(kk, len(vv), cumsum)
+                # print(kk, len(vv), cumsum)
 
         cumcumsum2 += series_analyzer(series, n)
 
-        print()
+        # print()
         
         cumcumsum += cumsum
             
