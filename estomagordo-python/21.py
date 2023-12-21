@@ -49,11 +49,12 @@ def solve_b(lines):
     h, w = dimensions(lines)
     sy, sx = parse(lines)
 
+    dots = [(y, x) for y, x in product(range(h), range(w)) if lines[y][x] != '#']
+
     firstseens = {
-        (y, x): (set(), defaultdict(list)) for y, x in product(range(h), range(w))
-    }
+        (y, x): (set(), defaultdict(list)) for y, x in dots
+    }    
     
-    maxsteps = 2719
     n = 26501365
 
     thisgen = [(sy, sx)]
@@ -61,9 +62,7 @@ def solve_b(lines):
     nextgen = set()
     step = 0
 
-    while step < maxsteps+1:
-        if step % 100 == 0:
-            print(step, maxsteps, len(totseen))
+    while step == 0 or any(0 < len(fsv[1]) < 19 for fsv in firstseens.values()):
         for y, x in thisgen:
             wy, wx = y//h, x//w
             oy, ox = y%h, x%w
@@ -132,7 +131,7 @@ def solve_b(lines):
     cumcumsum = 0
     cumcumsum2 = 0
 
-    for y, x in product(range(h), range(w)):   
+    for y, x in dots:   
         cumsum = 0
         k = (y, x)
         v = firstseens[(k)]
@@ -143,7 +142,7 @@ def solve_b(lines):
         series = []
         
         for kk, vv in v[1].items():
-            if kk % 2 == maxsteps % 2:
+            if kk % 2 == n % 2:
                 cumsum += len(vv)
                 series.append((kk, len(vv), cumsum))
 
