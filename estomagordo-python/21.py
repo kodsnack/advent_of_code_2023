@@ -48,9 +48,18 @@ def solve_a(lines):
 def solve_b(lines):
     h, w = dimensions(lines)
     sy, sx = parse(lines)
-    first_enter_rim = {}
     
-    maxsteps = 50
+    opencount = sum(sum(c == '.' for c in row) for row in lines)
+    worlds = {(0, 0): 0}
+    first_enter_rim = {}
+
+    for y, x in product(range(h), range(w)):
+        onrim = y in (0, h-1) or x in (0, w-1)
+
+        if onrim:
+            first_enter_rim[(y, x)] = defaultdict(int)
+    
+    # maxsteps = 50
 
     # cells = defaultdict(set)
     # cells[(sy, sx)].add(0)
@@ -59,16 +68,20 @@ def solve_b(lines):
     frontier = [(0, sy, sx)]
 
     for step, y, x in frontier:
-        if step == maxsteps:
-            for by, bx in first_enter_rim.keys():
-                print(f'({by},{bx}):\n')
+        if (y//h, x//w) not in worlds:
+            worlds[(y//h, x//w)] = step
+            print(step, f'({y//h, x//w})', len(worlds))
+        if all(len(v) > 17 for v in first_enter_rim.values()):
+            break
+            # for by, bx in first_enter_rim.keys():
+            #     print(f'({by},{bx}):\n')
 
-                for ry, rx in first_enter_rim[(by, bx)]:
-                    print(f'({ry},{rx} [({ry//h},{rx//w})]): {first_enter_rim[(by, bx)][(ry, rx)]}')
+            #     for ry, rx in first_enter_rim[(by, bx)]:
+            #         print(f'({ry},{rx}) [({ry//h},{rx//w})]: {first_enter_rim[(by, bx)][(ry, rx)]}')
                 
-                print()
+            #     print()
 
-            return
+            # return step
 
         if (y, x) in seen:
             continue
@@ -78,9 +91,6 @@ def solve_b(lines):
 
         if onrim:
             by, bx = y%h, x%w
-
-            if (by, bx) not in first_enter_rim:
-                first_enter_rim[(by, bx)] = defaultdict(int)
 
             if (y, x) not in first_enter_rim[(by, bx)]:
                 first_enter_rim[(by, bx)][(y, x)] = step
@@ -93,6 +103,10 @@ def solve_b(lines):
                 continue
 
             frontier.append((step+1, ny, nx))
+
+    totalsteps = 500
+
+    
 
     # h, w = dimensions(lines)
     # sy, sx = parse(lines)
