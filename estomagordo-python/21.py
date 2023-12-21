@@ -56,7 +56,7 @@ def solve_b(lines):
     # parity = defaultdict(set)
 
     n = 100
-    maxsteps = 100
+    maxsteps = 200
 
     thisgen = [(sy, sx)]
     nextgen = set()
@@ -104,21 +104,33 @@ def solve_b(lines):
                         break
 
                 if valid:
-                    return skip, len(proposal)
+                    return skip, len(proposal), proposal
         
-    def series_analyzer(series, n):
-        skip, recurrence_length = find_recurrence(series)
+    def series_analyzer(series, n): # n = 100
+        skip, cycle_length, cycle = find_recurrence(series) # 0, 3, [6, 6, 10]
+        cycle_start = series[skip][0] # 10
+        cycle_span = sum(cycle) # 22
 
-        full_cycles = (n - skip) // recurrence_length
-        cycle_index = (n - skip) % recurrence_length
+        full_cycles = (n - cycle_start) // cycle_span # 4
+        skip_span = full_cycles * cycle_span # 88
+        cycle_index = 0 # 0
 
-        cumvalues = [s[2] for s in series[skip:len(series):recurrence_length]]
+        while cycle_index < cycle_length and skip_span + cycle[cycle_index] <= n - cycle_start:
+            cycle_index += 1        
 
-        basediff = cumvalues[1] - cumvalues[0]
-        secdiff = cumvalues[2] - cumvalues[1]
-        extradiff = secdiff - basediff
+        cumvalues = [s[2] for s in series[skip+cycle_index:len(series):cycle_length]] # [1, 9, 25, 49, 81]
 
-        return basediff + (full_cycles - 1) + extradiff
+        basediff = cumvalues[1] - cumvalues[0] # 8
+        secdiff = cumvalues[2] - cumvalues[1] # 16
+        extradiff = secdiff - basediff # 8
+        # skips = full_cycles * cycle_length # 12
+        extradiffcount = (full_cycles - 1 + (full_cycles-1)**2) // 2 # 6
+
+        val = cumvalues[0] + basediff * full_cycles + extradiff * extradiffcount # 81
+
+        actual_index = skip + cycle_length * full_cycles + cycle_index
+
+        return val
         
     cumcumsum = 0
     cumcumsum2 = 0
