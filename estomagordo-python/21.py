@@ -54,15 +54,19 @@ def solve_b(lines):
     }
 
     # parity = defaultdict(set)
-
-    n = 5000
-    maxsteps = 500
+    
+    maxsteps = 2719
+    n = 26501365
+            #26501365
 
     thisgen = [(sy, sx)]
+    totseen = set()
     nextgen = set()
     step = 0
 
     while step < maxsteps+1:
+        if step % 100 == 0:
+            print(step, maxsteps, len(totseen))
         for y, x in thisgen:
             # parity[(y, x)].add(step)
             wy, wx = y//h, x//w
@@ -77,8 +81,9 @@ def solve_b(lines):
                     continue
 
                 nextgen.add((ny, nx))
-
-        thisgen = list(nextgen)
+        
+        thisgen = list(nextgen-totseen)
+        totseen |= nextgen
         nextgen = set()
         step += 1
     
@@ -92,7 +97,7 @@ def solve_b(lines):
     def find_recurrence(series):
         firstdiffs = [series[i][0] - series[i-1][0] for i in range(1, len(series))]
 
-        for skip in range(1, len(firstdiffs)//2):
+        for skip in range(3, len(firstdiffs)//2):
             for cycle_length in range(1, len(firstdiffs)//2):
                 proposal = [d for d in firstdiffs[skip:cycle_length+skip]]
 
@@ -107,9 +112,12 @@ def solve_b(lines):
                     return skip, len(proposal), proposal
         
     def series_analyzer(series, n): # n = 100
-        skip, cycle_length, cycle = find_recurrence(series) # 0, 3, [6, 6, 10]
+        skip, cycle_length, cycle = find_recurrence(series) # 0, 3, [6, 6, 10]        
         cycle_start = series[skip][0] # 10
         cycle_span = sum(cycle) # 22
+
+        print(cycle_length, cycle_span, len(series), [s[0] for s in series], cycle)
+        print()
 
         full_cycles = (n - cycle_start) // cycle_span # 4
         skip_span = full_cycles * cycle_span # 88
@@ -164,8 +172,6 @@ def solve_b(lines):
 
         cumcumsum2 += series_analyzer(series, n)
 
-        print()
-        
         cumcumsum += cumsum
             
     return cumcumsum2
@@ -269,3 +275,5 @@ def main():
 
 if __name__ == '__main__':
     print(main())
+
+# 601113617554237 too low
