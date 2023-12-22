@@ -34,9 +34,7 @@ def fall(bricks):
                         break
 
             if not moveable:
-                break
-
-            anymoved = True                
+                break    
             
             brick[2] -= 1                
             brick[5] -= 1
