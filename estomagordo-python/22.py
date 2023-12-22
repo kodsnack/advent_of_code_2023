@@ -21,53 +21,75 @@ def solve_a(lines):
 
     occupied = {}
 
-    for i, brick in enumerate(bricks):
-        lowest = min(brick[2], brick[5])
+    while True:
+        anymoved = False
 
-        while lowest > 1:
-            moveable = True
-
-            for y in range(min(brick[1], brick[4]), max(brick[1], brick[4])+1):
-                if not moveable:
-                    break
-                for x in range(min(brick[0], brick[3]), max(brick[0], brick[3])+1):
-                    if (x, y, lowest-1) in occupied:
-                        moveable = False
-                        break
-
-            if not moveable:
-                break
-            
-            if brick[2] == lowest:
-                brick[2] -= 1
-
-            if brick[5] == lowest:
-                brick[5] -= 1
-
+        for i, brick in enumerate(bricks):
             lowest = min(brick[2], brick[5])
 
-        for y in range(min(brick[1], brick[4]), max(brick[1], brick[4])+1):                
-            for x in range(min(brick[0], brick[3]), max(brick[0], brick[3])+1):
-                for z in range(min(brick[2], brick[5]), max(brick[2], brick[5])+1):
-                    occupied[(x, y, z)] = i
+            while lowest > 1:
+                moveable = True
 
-        bricks[i] = brick
+                for y in range(min(brick[1], brick[4]), max(brick[1], brick[4])+1):
+                    if not moveable:
+                        break
+                    for x in range(min(brick[0], brick[3]), max(brick[0], brick[3])+1):
+                        if (x, y, lowest-1) in occupied:
+                            moveable = False
+                            break
 
-    supporting = defaultdict(list)
-    supported = defaultdict(list)
+                if not moveable:
+                    break
+
+                anymoved = True                
+                
+                brick[2] -= 1                
+                brick[5] -= 1
+                lowest -= 1
+
+            highest = max(brick[2], brick[5])
+
+            for y in range(min(brick[1], brick[4]), max(brick[1], brick[4])+1):                
+                for x in range(min(brick[0], brick[3]), max(brick[0], brick[3])+1):
+                    if (x, y, highest+1) in occupied and occupied[(x, y, highest+1)] == i:
+                        del occupied[(x, y, highest+1)]
+                    for z in range(min(brick[2], brick[5]), max(brick[2], brick[5])+1):
+                        occupied[(x, y, z)] = i
+
+            bricks[i] = brick
+
+        if not anymoved:
+            break
+
+    supporting = defaultdict(set)
+    supported = defaultdict(set)
 
     for i, brick in enumerate(bricks):
         for y in range(min(brick[1], brick[4]), max(brick[1], brick[4])+1):                
             for x in range(min(brick[0], brick[3]), max(brick[0], brick[3])+1):
                 if (x, y, max(brick[2], brick[5])+1) in occupied:
                     j = occupied[(x, y, max(brick[2], brick[5])+1)]
-                    supporting[i].append(j)
-                    supported[j].append(i)
+                    if i == j:
+                        print('panic')
+                    supporting[i].add(j)
+                    supported[j].add(i)
 
     count = 0
 
+    for i, brick in enumerate(bricks):
+        if min(brick[2], brick[5]) == 1 and i in supported:
+            print('panic')
+
+    # print(len(occupied))
+
+    # print(min(brick[2] for brick in bricks))
+    # print(min(brick[5] for brick in bricks))
+    # print(min(coord[2] for coord in occupied.keys()))
+
     for i in range(len(bricks)):
-        if i not in supporting or not supporting[i]:
+        if i not in supporting or not supporting[i] or len(supporting[i]) == 0: # fugly
+            if i not in supported and min(bricks[i][2], bricks[i][5]) > 1:
+                print('panic')
             count += 1
             continue
 
@@ -96,4 +118,4 @@ def main():
 if __name__ == '__main__':
     print(main())
 
-# a 709
+# a 709 731
