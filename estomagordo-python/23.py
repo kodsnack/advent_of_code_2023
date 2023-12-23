@@ -71,25 +71,33 @@ def solve_b(lines):
     h, w = dimensions(lines)
     sy, sx = parse(lines)
 
-    @cache
-    def walk(y, x, prevy, prevx):        
-        path = 0
+    # frontier = [(0, sy, sx)]
+    # seen = set()
+    # best = 0
 
-        neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny != prevy or nx != prevx)]
+    # for steps, y, x in frontier:
+    #     if (y, x) in seen:
 
-        while len(neighs) < 2:
-            if len(neighs) == 1:
-                path += 1
-                y, x, prevy, prevx = neighs[0][0], neighs[0][1], y, x
-                neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny != prevy or nx != prevx)]
-            elif y == h-1:
-                return path
-            else:
-                return - 10**10   
+
+    # @cache
+    # def walk(y, x, prevy, prevx):        
+    #     path = 0
+
+    #     neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny != prevy or nx != prevx)]
+
+    #     while len(neighs) < 2:
+    #         if len(neighs) == 1:
+    #             path += 1
+    #             y, x, prevy, prevx = neighs[0][0], neighs[0][1], y, x
+    #             neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny != prevy or nx != prevx)]
+    #         elif y == h-1:
+    #             return path
+    #         else:
+    #             return - 10**10   
         
-        return path + max(walk(ny, nx, y, x) for ny, nx in neighs)
+    #     return path + max(walk(ny, nx, y, x) for ny, nx in neighs)
             
-    return walk(sy, sx, 0, sx)
+    # return walk(sy, sx, 0, sx)
 
     # longest = [0]
 
@@ -99,17 +107,22 @@ def solve_b(lines):
     #             print(len(seen))
     #             longest[0] = len(seen)
     #         return
+        
+    #     steps = 0
+        
+    #     neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in seen]
 
-    #     for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1):
-    #         if (ny, nx) in seen:
-    #             continue
-
-    #         c = lines[ny][nx]
-
-    #         if c == '#':
-    #             continue
-
+    #     while len(neighs) < 2:
+    #         if len(neighs) == 0:
+    #             return 0
             
+    #         steps += 1
+    #         y = neighs[0][0]
+    #         x = neighs[0][1]
+
+    #         neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in seen]
+
+    #     for ny, nx in neighs:
     #         seen.add((ny, nx))
     #         walk(ny, nx, seen)
     #         seen.remove((ny, nx))
@@ -125,10 +138,35 @@ def solve_b(lines):
     #             seen.remove((ny, nx))
     #             seen.discard((ny+dy, nx+dx))
 
+    def walk(y, x, seen):        
+        steps = 0
+        
+        neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in seen]
 
-    # walk(sy, sx, {(sy, sx)})
+        while len(neighs) < 2:
+            if len(neighs) == 0:
+                if y == h-1:
+                    return steps
+                return -10**10            
+            
+            steps += 1
+            y = neighs[0][0]
+            x = neighs[0][1]
+            seen.add((y, x))
 
-    # return longest[0] - 1
+            neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in seen]
+
+        best = -10**10
+        
+        for ny, nx in neighs:
+            seen.add((ny, nx))
+            best = max(best, 1 + walk(ny, nx, seen))
+            seen.remove((ny, nx))
+
+        return steps + best
+
+
+    return walk(sy, sx, {(sy, sx)})
 
 
 def main():
@@ -145,3 +183,4 @@ if __name__ == '__main__':
     print(main())
 
 # 6102
+# 4922 too low
