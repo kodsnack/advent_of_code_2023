@@ -25,10 +25,6 @@ def solve_a(lines):
     h, w = dimensions(lines)
     sy, sx = parse(lines)
 
-    blockcount = sum(sum(c == '#' for c in row) for row in lines)
-
-    print(sy, sx, h * w, blockcount)
-
     longest = [0]
 
     def walk(y, x, seen):
@@ -138,35 +134,34 @@ def solve_b(lines):
     #             seen.remove((ny, nx))
     #             seen.discard((ny+dy, nx+dx))
 
-    def walk(y, x, seen):        
-        steps = 0
-        
+    def walk(y, x, seen, path):        
         neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in seen]
 
-        while len(neighs) < 2:
-            if len(neighs) == 0:
-                if y == h-1:
-                    return steps
-                return -10**10            
-            
-            steps += 1
+        while len(neighs) == 1:            
             y = neighs[0][0]
             x = neighs[0][1]
-            seen.add((y, x))
+            path.add((y, x))
 
-            neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in seen]
+            neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in path]        
+        
+        if len(neighs) == 0:
+            if y == h-1:
+                return len(path)
+            return -10**10
 
         best = -10**10
+        seen |= path
         
         for ny, nx in neighs:
-            seen.add((ny, nx))
-            best = max(best, 1 + walk(ny, nx, seen))
-            seen.remove((ny, nx))
+            newpath = {(ny, nx)}
+            best = max(best, walk(ny, nx, seen, newpath))
 
-        return steps + best
+        seen -= path
+
+        return len(path) + best
 
 
-    return walk(sy, sx, {(sy, sx)})
+    return walk(sy, sx, {(sy, sx)}, {(sy, sx)})
 
 
 def main():

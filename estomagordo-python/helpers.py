@@ -162,3 +162,20 @@ def rim(matrix):
     right = [(y, w-1, matrix[y][w-1]) for y in range(h)]
 
     return top + bottom + left + right
+
+
+def joins(matrix, open=None, closed=None):
+    h, w = dimensions(matrix)
+
+    def is_open(y, x):
+        if open:
+            return matrix[y][x] in open
+        
+        return matrix[y][x] not in closed
+    
+    def open_neighbour_count(y, x):
+        return sum(is_open(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1))
+
+    for y, x in product(range(h), range(w)):
+        if is_open(y, x) and open_neighbour_count(y, x) == 3:
+            yield (y, x)        
