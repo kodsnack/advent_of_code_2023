@@ -33,7 +33,6 @@ def solve_a(lines):
 
     def walk(y, x, seen):
         if y == h-1:
-            print(len(seen))
             longest[0] = max(longest[0], len(seen))
             return
 
@@ -72,48 +71,64 @@ def solve_b(lines):
     h, w = dimensions(lines)
     sy, sx = parse(lines)
 
-    blockcount = sum(sum(c == '#' for c in row) for row in lines)
+    @cache
+    def walk(y, x, prevy, prevx):        
+        path = 0
 
-    print(sy, sx, h * w, blockcount)
+        neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny != prevy or nx != prevx)]
 
-    longest = [0]
+        while len(neighs) < 2:
+            if len(neighs) == 1:
+                path += 1
+                y, x, prevy, prevx = neighs[0][0], neighs[0][1], y, x
+                neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny != prevy or nx != prevx)]
+            elif y == h-1:
+                return path
+            else:
+                return - 10**10   
+        
+        return path + max(walk(ny, nx, y, x) for ny, nx in neighs)
+            
+    return walk(sy, sx, 0, sx)
 
-    def walk(y, x, seen):
-        if y == h-1:
-            if len(seen) > longest[0]:
-                print(len(seen))
-                longest[0] = len(seen)
-            return
+    # longest = [0]
 
-        for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1):
-            if (ny, nx) in seen:
-                continue
+    # def walk(y, x, seen):
+    #     if y == h-1:
+    #         if len(seen) > longest[0]:
+    #             print(len(seen))
+    #             longest[0] = len(seen)
+    #         return
 
-            c = lines[ny][nx]
+    #     for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1):
+    #         if (ny, nx) in seen:
+    #             continue
 
-            if c == '#':
-                continue
+    #         c = lines[ny][nx]
+
+    #         if c == '#':
+    #             continue
 
             
-            seen.add((ny, nx))
-            walk(ny, nx, seen)
-            seen.remove((ny, nx))
-            continue
+    #         seen.add((ny, nx))
+    #         walk(ny, nx, seen)
+    #         seen.remove((ny, nx))
+    #         continue
 
-            dy = 1 if c == 'v' else -1 if c == '^' else 0
-            dx = 1 if c == '>' else -1 if c == '<' else 0
+    #         dy = 1 if c == 'v' else -1 if c == '^' else 0
+    #         dx = 1 if c == '>' else -1 if c == '<' else 0
             
-            if (ny+dy, nx+dx) not in seen:
-                seen.add((ny, nx))
-                seen.add((ny+dy, nx+dx))
-                walk(ny+dy, nx+dx, seen)
-                seen.remove((ny, nx))
-                seen.discard((ny+dy, nx+dx))
+    #         if (ny+dy, nx+dx) not in seen:
+    #             seen.add((ny, nx))
+    #             seen.add((ny+dy, nx+dx))
+    #             walk(ny+dy, nx+dx, seen)
+    #             seen.remove((ny, nx))
+    #             seen.discard((ny+dy, nx+dx))
 
 
-    walk(sy, sx, {(sy, sx)})
+    # walk(sy, sx, {(sy, sx)})
 
-    return longest[0] - 1
+    # return longest[0] - 1
 
 
 def main():
