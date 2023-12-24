@@ -6,8 +6,8 @@ from itertools import combinations, permutations, product
 from math import ceil, comb, factorial, gcd, isclose, lcm
 
 from algo import a_star, custsort, merge_ranges, sssp
-from constants import EPSILON, HUGE
-from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
+from constants import EPSILON, HUGE, UNHUGE
+from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, junctions, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
 
 from sys import setrecursionlimit
 
@@ -15,13 +15,49 @@ setrecursionlimit(10000)
 
 
 def parse(lines):
+    h, w = dimensions(lines)
+
+    sy = 0
+    sx = -1
+    gy = h-1
+    gx = -1
+
     for x in range(len(lines[0])):
         if lines[0][x] == '.':
-            return 0, x
+            sx = x
+        if lines[h-1][x] == '.':
+            gx = x
+
+    intersections = junctions(lines, '#')
         
+    nodes = intersections + [(sy, sx), (gy, gx)]
+    
+    graph = defaultdict(dict)
+
+    for ny, nx in nodes:
+        frontier = [(0, ny, nx)]
+        seen = {(ny, nx)}
+
+        for steps, y, x in frontier:
+            if (y, x) in nodes and (y != ny or x != nx):
+                graph[(ny, nx)][(y, x)] = steps
+                continue
+
+            for yy, xx in neighs_bounded(y, x, 0, h-1, 0, w-1):
+                if lines[yy][xx] == '#':
+                    continue
+
+                if (yy, xx) in seen:
+                    continue
+
+                seen.add((yy, xx))
+                frontier.append((steps+1, yy, xx))
+
+    return graph, sy, sx
     
 
 def solve_a(lines):
+    return 1
     h, w = dimensions(lines)
     sy, sx = parse(lines)
 
@@ -65,7 +101,27 @@ def solve_a(lines):
 
 def solve_b(lines):
     h, w = dimensions(lines)
-    sy, sx = parse(lines)
+    
+    graph, sy, sx = parse(lines)
+
+    def walk(node, seen):
+        if node[0] == h-1:
+            return 0
+        
+        val = UNHUGE
+
+        for next in graph[node]:
+            if next in seen:
+                continue
+
+            seen.add(next)
+            val = max(val, graph[node][next] + walk(next, seen))
+            seen.remove(next)
+
+        return val
+
+    return walk((sy, sx), {(sy, sx)})
+
 
     # frontier = [(0, sy, sx)]
     # seen = set()

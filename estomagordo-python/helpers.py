@@ -164,7 +164,7 @@ def rim(matrix):
     return top + bottom + left + right
 
 
-def joins(matrix, open=None, closed=None):
+def junctions(matrix, closed=None, open=None):
     h, w = dimensions(matrix)
 
     def is_open(y, x):
@@ -175,7 +175,11 @@ def joins(matrix, open=None, closed=None):
     
     def open_neighbour_count(y, x):
         return sum(is_open(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1))
+    
+    out = []
 
     for y, x in product(range(h), range(w)):
         if is_open(y, x) and open_neighbour_count(y, x) == 3:
-            yield (y, x)        
+            out.append((y, x))
+
+    return out
