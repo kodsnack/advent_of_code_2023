@@ -119,8 +119,9 @@ def collidesall(hailstones, rock):
 
 
 def are_parallel(dsx, dsy, dsz, drx, dry, drz):
+    return False
 
-    return dsx == drx and dsy == dry and dsz == drz
+    return dsx == drx or dsy == dry or dsz == drz
 
 
 def collides_in_future(stone, rock):    
@@ -128,29 +129,82 @@ def collides_in_future(stone, rock):
     sx, sy, sz, dsx, dsy, dsz = stone
     rx, ry, rz, drx, dry, drz = rock
 
+    stricttx = True
+    strictty = True
+    stricttz = True
+
     if are_parallel(dsx, dsy, dsz, drx, dry, drz):
         return False
     
-    if dsx > 0:
-        if drx > 0:
-            if sx > rx:
-                if dsx > drx:
-                    return False
-            elif drx > dsx:
-                return False
-        elif sx > rx:
+    match_x_const = sx - rx
+    match_x_vari = drx - dsx
+
+    if match_x_vari == 0:
+        if match_x_const != 0:
             return False
-    else:
-        if drx < 0:
-            if sx < rx:
-                if dsx < drx:
-                    return False
-            elif drx < dsx:
-                return False
-        elif sx < rx:
+        stricttx = False
+
+    tx = 1 if match_x_vari == 0 else match_x_const / match_x_vari
+
+    if tx < 0:
+        return False
+    
+    match_y_const = sy - ry
+    match_y_vari = dry - dsy
+
+    if match_y_vari == 0:
+        if match_y_const != 0:
             return False
-        
+        strictty = False
+
+    ty = 1 if match_y_vari == 0 else match_y_const / match_y_vari
+
+    if stricttx and strictty and ty != tx:
+        return False
+    
+    match_z_const = sz - rz
+    match_z_vari = drz - dsz
+
+    if match_z_vari == 0:
+        if match_z_const != 0:
+            return False
+        stricttz = False
+
+    tz = 1 if match_z_vari == 0 else match_z_const / match_z_vari
+
+    if not stricttz:
+        return True
+    
+    if stricttx:
+        return tz == tx
+    
+    if strictty:
+        return tz == ty
+    
     return True
+
+collides_in_future([19, 13, 30, -2, 1, -2], [Fraction(24), Fraction(13), Fraction(10), Fraction(-3), Fraction(1), Fraction(2)])
+    
+    # if dsx > 0:
+    #     if drx > 0:
+    #         if sx > rx:
+    #             if dsx > drx:
+    #                 return False
+    #         elif drx > dsx:
+    #             return False
+    #     elif sx > rx:
+    #         return False
+    # else:
+    #     if drx < 0:
+    #         if sx < rx:
+    #             if dsx < drx:
+    #                 return False
+    #         elif drx < dsx:
+    #             return False
+    #     elif sx < rx:
+    #         return False
+        
+    # return True
 
 
 def is_solution(hailstones, rock):
@@ -209,6 +263,8 @@ def solve_b(lines):
 
                     if is_solution(hailstones, (rockx, rocky, rockz, dx, dy, dz)):
                         return int(rockx) + int(rocky) + int(rockz)
+                    
+                    continue
 
                     if dx > 0 and rockx > maxxifplusx:
                         continue
