@@ -192,7 +192,7 @@ def collides_in_future(stone, rock):
     
     return True
 
-collides_in_future([19, 13, 30, -2, 1, -2], [Fraction(24), Fraction(13), Fraction(10), Fraction(-3), Fraction(1), Fraction(2)])
+# collides_in_future([19, 13, 30, -2, 1, -2], [Fraction(24), Fraction(13), Fraction(10), Fraction(-3), Fraction(1), Fraction(2)])
     
     # if dsx > 0:
     #     if drx > 0:
@@ -220,29 +220,130 @@ def is_solution(hailstones, rock):
     return all(collides_in_future(stone, rock) for stone in hailstones)
 
 
+def gauss_jordan(equations):
+    used = set()
+
+    for pos in range(4):
+        for i, equation in enumerate(equations):
+            val = equation[pos]
+
+            if i in used or val == Fraction(0):
+                continue
+
+            used.add(i)
+
+            for j in range(5):
+                equations[i][j] //= val
+
+            for j in range(4):
+                if j == i:
+                    continue
+
+                factor = -equations[j][pos]
+
+                for k in range(5):
+                    equations[j][k] += factor * equations[i][k]
+
+            break
+
+    return equations
+
+
+def find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2):
+    equations = [
+        [1, 0, dx - dx1, 0, x1],
+        [1, 0, 0, dx - dx2, x2],
+        [0, 1, dy - dy1, 0, y1],
+        [0, 1, 0, dy - dy2, y2]
+    ]
+
+    equations = [[Fraction(val) for val in row] for row in equations]
+
+    reduced = gauss_jordan(equations)
+
+    x = y = t1 = t2 = 0
+
+    for i in range(4):
+        if reduced[i][0] == Fraction(1):
+            x = reduced[i][4]
+        if reduced[i][1] == Fraction(1):
+            y = reduced[i][4]
+        if reduced[i][2] == Fraction(1):
+            t1 = reduced[i][4]
+        if reduced[i][3] == Fraction(1):
+            t2 = reduced[i][4]
+
+    return x, y, t1, t2
+                
+
+# print(find_solution())
+print(gauss_jordan([
+    [1, 0, -1, 0, 19],
+    [1, 0, 0, -2, 18],
+    [0, 1, 0, 0, 13],
+    [0, 1, 0, 2, 19]
+]))
+a = 22
 def solve_b(lines):
     hailstones = parse(lines)
 
-    maxxifplusx = HUGE
-    minxifnegx = UNHUGE
-    maxyifplusy = HUGE
-    minyifnegy = UNHUGE
-    maxzifplusz = HUGE
-    minzifnegz = UNHUGE
+    x1 = hailstones[0][0]
+    x2 = hailstones[1][0]
+    y1 = hailstones[0][1]
+    y2 = hailstones[1][1]
+    dx1 = hailstones[0][3]
+    dx2 = hailstones[1][3]
+    dy1 = hailstones[0][4]
+    dy2 = hailstones[1][4]
 
-    for x, y, z, dx, dy, dz in hailstones:
-        if dx > 0:
-            minxifnegx = max(minxifnegx, x)
-        else:
-            maxxifplusx = min(maxxifplusx, x)
-        if dy > 0:
-            minyifnegy = max(minyifnegy, y)
-        else:
-            maxyifplusy = min(maxyifplusy, y)
-        if dz > 0:
-            minzifnegz = max(minzifnegz, z)
-        else:
-            maxzifplusz = min(maxzifplusz, z)
+    span = 12000
+
+    for dx in range(-span, span):
+        print(dx)
+        for dy in range(-span, span):
+            x, y, t1, t2 = find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2)
+            z1 = hailstones[0][2] + hailstones[0][5] * t1
+            z2 = hailstones[1][2] + hailstones[1][5] * t2
+
+            z = dz = 0
+
+            if t1 == t2:
+                continue
+
+            if t2 > t1:
+                dz = (z2 - z1) / (t2 - t1)
+                z = z1 - dz * t1
+            else:
+                dz = (z1 - z2) / (t1 - t2)
+                z = z2 - dz * t2
+
+            if is_solution(hailstones, (x, y, z, dx, dy, dz)):
+                return x + y + z
+            
+    return
+
+    # maxxifplusx = HUGE
+    # minxifnegx = UNHUGE
+    # maxyifplusy = HUGE
+    # minyifnegy = UNHUGE
+    # maxzifplusz = HUGE
+    # minzifnegz = UNHUGE
+
+    # for x, y, z, dx, dy, dz in hailstones:
+    #     if dx > 0:
+    #         minxifnegx = max(minxifnegx, x)
+    #     else:
+    #         maxxifplusx = min(maxxifplusx, x)
+    #     if dy > 0:
+    #         minyifnegy = max(minyifnegy, y)
+    #     else:
+    #         maxyifplusy = min(maxyifplusy, y)
+    #     if dz > 0:
+    #         minzifnegz = max(minzifnegz, z)
+    #     else:
+    #         maxzifplusz = min(maxzifplusz, z)
+
+    closest = min(manhattan(a, b) for a, b in combinations(hailstones, 2))
 
     for i, j in combinations(range(len(hailstones)), 2):
         print('pair', i, j, len(hailstones))
@@ -251,9 +352,9 @@ def solve_b(lines):
 
         orderings = [[first, second], [second, first]]
 
-        for at in range(1, 15):
+        for at in range(1, 50):
             for a, b in orderings:
-                for bt in range(at+1, at+15):
+                for bt in range(at+1, at+50):
                     ax = a[0] + a[3] * at
                     ay = a[1] + a[4] * at
                     az = a[2] + a[5] * at
