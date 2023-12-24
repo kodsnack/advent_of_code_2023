@@ -118,6 +118,45 @@ def collidesall(hailstones, rock):
     return False
 
 
+def are_parallel(dsx, dsy, dsz, drx, dry, drz):
+
+    return dsx == drx and dsy == dry and dsz == drz
+
+
+def collides_in_future(stone, rock):    
+    stone = list(map(Fraction, stone))
+    sx, sy, sz, dsx, dsy, dsz = stone
+    rx, ry, rz, drx, dry, drz = rock
+
+    if are_parallel(dsx, dsy, dsz, drx, dry, drz):
+        return False
+    
+    if dsx > 0:
+        if drx > 0:
+            if sx > rx:
+                if dsx > drx:
+                    return False
+            elif drx > dsx:
+                return False
+        elif sx > rx:
+            return False
+    else:
+        if drx < 0:
+            if sx < rx:
+                if dsx < drx:
+                    return False
+            elif drx < dsx:
+                return False
+        elif sx < rx:
+            return False
+        
+    return True
+
+
+def is_solution(hailstones, rock):
+    return all(collides_in_future(stone, rock) for stone in hailstones)
+
+
 def solve_b(lines):
     hailstones = parse(lines)
 
@@ -168,6 +207,9 @@ def solve_b(lines):
                     rocky = Fraction(ay) - dy * at
                     rockz = Fraction(az) - dz * at
 
+                    if is_solution(hailstones, (rockx, rocky, rockz, dx, dy, dz)):
+                        return int(rockx) + int(rocky) + int(rockz)
+
                     if dx > 0 and rockx > maxxifplusx:
                         continue
                     if dx < 0 and rockx < minxifnegx:
@@ -206,3 +248,5 @@ def main():
 
 if __name__ == '__main__':
     print(main())
+
+# 806413550299304 too low
