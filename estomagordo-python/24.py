@@ -144,9 +144,9 @@ def collides_in_future(stone, rock):
             return False
         stricttx = False
 
-    tx = 1 if match_x_vari == 0 else match_x_const / match_x_vari
+    tx = Fraction(1) if not stricttx else match_x_const / match_x_vari
 
-    if tx < 0:
+    if stricttx and tx < 0:
         return False
     
     match_y_const = sy - ry
@@ -157,9 +157,12 @@ def collides_in_future(stone, rock):
             return False
         strictty = False
 
-    ty = 1 if match_y_vari == 0 else match_y_const / match_y_vari
+    ty = Fraction(1) if not strictty else match_y_const / match_y_vari
 
     if stricttx and strictty and ty != tx:
+        return False
+    
+    if strictty and ty < 0:
         return False
     
     match_z_const = sz - rz
@@ -170,7 +173,13 @@ def collides_in_future(stone, rock):
             return False
         stricttz = False
 
-    tz = 1 if match_z_vari == 0 else match_z_const / match_z_vari
+    tz = Fraction(1) if not stricttz else match_z_const / match_z_vari
+
+    if stricttz and tz < 0:
+        return False
+
+    if stricttx and strictty and stricttz:
+        return tx == ty == tz
 
     if not stricttz:
         return True
