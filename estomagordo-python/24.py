@@ -7,7 +7,7 @@ from itertools import combinations, permutations, product
 from math import ceil, comb, factorial, gcd, isclose, lcm
 
 from algo import a_star, custsort, merge_ranges, sssp
-from constants import EPSILON, HUGE
+from constants import EPSILON, HUGE, UNHUGE
 from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
 
 
@@ -121,7 +121,26 @@ def collidesall(hailstones, rock):
 def solve_b(lines):
     hailstones = parse(lines)
 
-    
+    maxxifplusx = HUGE
+    minxifnegx = UNHUGE
+    maxyifplusy = HUGE
+    minyifnegy = UNHUGE
+    maxzifplusz = HUGE
+    minzifnegz = UNHUGE
+
+    for x, y, z, dx, dy, dz in hailstones:
+        if dx > 0:
+            minxifnegx = max(minxifnegx, x)
+        else:
+            maxxifplusx = min(maxxifplusx, x)
+        if dy > 0:
+            minyifnegy = max(minyifnegy, y)
+        else:
+            maxyifplusy = min(maxyifplusy, y)
+        if dz > 0:
+            minzifnegz = max(minzifnegz, z)
+        else:
+            maxzifplusz = min(maxzifplusz, z)
 
     for i, j in combinations(range(len(hailstones)), 2):
         print('pair', i, j, len(hailstones))
@@ -143,18 +162,31 @@ def solve_b(lines):
 
                     dx = Fraction(bx-ax, bt-at)
                     dy = Fraction(by-ay, bt-at)
-                    dz = Fraction(bz-az, bt-at)
+                    dz = Fraction(bz-az, bt-at)                    
 
                     rockx = Fraction(ax) - dx * at
                     rocky = Fraction(ay) - dy * at
                     rockz = Fraction(az) - dz * at
 
+                    if dx > 0 and rockx > maxxifplusx:
+                        continue
+                    if dx < 0 and rockx < minxifnegx:
+                        continue
+                    if dy > 0 and rocky > maxyifplusy:
+                        continue
+                    if dy < 0 and rocky < minyifnegy:
+                        continue
+                    if dz > 0 and rockz > maxzifplusz:
+                        continue
+                    if dz < 0 and rockz < minzifnegz:
+                        continue
+
                     if rockx != int(rockx):
-                        break
+                        continue
                     if rocky != int(rocky):
-                        break
+                        continue
                     if rockz != int(rockz):
-                        break
+                        continue
 
                     if collidesall(hailstones, (rockx, rocky, rockz, dx, dy, dz)):
                         return int(rockx) + int(rocky) + int(rockz)
