@@ -12,7 +12,9 @@ from helpers import adjacent, between, chunks, chunks_with_overlap, columns, dig
 
 
 def parse(lines):
-    return [ints(line) for line in lines]
+    intlines = [ints(line) for line in lines]
+
+    return [[Fraction(num) for num in line] for line in intlines]
     
 
 def kmform(line):
@@ -124,8 +126,7 @@ def are_parallel(dsx, dsy, dsz, drx, dry, drz):
     return dsx == drx or dsy == dry or dsz == drz
 
 
-def collides_in_future(stone, rock):    
-    stone = list(map(Fraction, stone))
+def collides_in_future(stone, rock):
     sx, sy, sz, dsx, dsy, dsz = stone
     rx, ry, rz, drx, dry, drz = rock
 
@@ -221,9 +222,10 @@ def is_solution(hailstones, rock):
 
 
 def gauss_jordan(equations):
+    h, w = dimensions(equations)
     used = set()
 
-    for pos in range(4):
+    for pos in range(w-1):
         for i, equation in enumerate(equations):
             val = equation[pos]
 
@@ -232,16 +234,16 @@ def gauss_jordan(equations):
 
             used.add(i)
 
-            for j in range(5):
-                equations[i][j] //= val
+            for j in range(w):
+                equations[i][j] /= val
 
-            for j in range(4):
+            for j in range(h):
                 if j == i:
                     continue
 
                 factor = -equations[j][pos]
 
-                for k in range(5):
+                for k in range(w):
                     equations[j][k] += factor * equations[i][k]
 
             break
@@ -249,31 +251,35 @@ def gauss_jordan(equations):
     return equations
 
 
-def find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2):
+def find_solution(dx, dy, x1, x2, x3, y1, y2, y3, dx1, dx2, dx3, dy1, dy2, dy3):
     equations = [
-        [1, 0, dx - dx1, 0, x1],
-        [1, 0, 0, dx - dx2, x2],
-        [0, 1, dy - dy1, 0, y1],
-        [0, 1, 0, dy - dy2, y2]
+        [1, 0, dx - dx1, 0, 0, x1],
+        [1, 0, 0, dx - dx2, 0, x2],
+        [1, 0, 0, 0, dx - dx3, x3],
+        [0, 1, dy - dy1, 0, 0, y1],
+        [0, 1, 0, dy - dy2, 0, y2],        
+        [0, 1, 0, 0, dy - dy3, y3]
     ]
 
     equations = [[Fraction(val) for val in row] for row in equations]
 
     reduced = gauss_jordan(equations)
 
-    x = y = t1 = t2 = 0
+    x = y = t1 = t2 = t3 = 0
 
-    for i in range(4):
+    for i in range(len(reduced)):
         if reduced[i][0] == Fraction(1):
-            x = reduced[i][4]
+            x = reduced[i][5]
         if reduced[i][1] == Fraction(1):
-            y = reduced[i][4]
+            y = reduced[i][5]
         if reduced[i][2] == Fraction(1):
-            t1 = reduced[i][4]
+            t1 = reduced[i][5]
         if reduced[i][3] == Fraction(1):
-            t2 = reduced[i][4]
+            t2 = reduced[i][5]
+        if reduced[i][4] == Fraction(1):
+            t3 = reduced[i][5]
 
-    return x, y, t1, t2
+    return x, y, t1, t2, t3
                 
 
 # print(find_solution())
@@ -289,19 +295,23 @@ def solve_b(lines):
 
     x1 = hailstones[0][0]
     x2 = hailstones[1][0]
+    x3 = hailstones[2][0]
     y1 = hailstones[0][1]
     y2 = hailstones[1][1]
+    y3 = hailstones[2][1]
     dx1 = hailstones[0][3]
     dx2 = hailstones[1][3]
+    dx3 = hailstones[2][3]
     dy1 = hailstones[0][4]
     dy2 = hailstones[1][4]
+    dy3 = hailstones[2][4]
 
-    span = 100
+    span = 500
 
     for dx in range(-span, span):
-        # print(dx)
+        print(dx)
         for dy in range(-span, span):
-            x, y, t1, t2 = find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2)
+            x, y, t1, t2, t3 = find_solution(Fraction(dx), Fraction(dy), x1, x2, x3, y1, y2, y3, dx1, dx2, dx3, dy1, dy2, dy3)
 
             if t1 < 0 or t2 < 0:
                 continue
@@ -321,9 +331,17 @@ def solve_b(lines):
                 z = z1 - dz * t1
             else:
                 dz = (z1 - z2) / (t1 - t2)
+                
+                if dz != int(dz):
+                    continue
+
+                dz = int(dz)
+
                 z = z2 - dz * t2
 
-            if is_solution(hailstones, (x, y, z, dx, dy, dz)):
+            stone = [Fraction(num) for num in (x, y, z, dx, dy, dz)]
+
+            if is_solution(hailstones, stone):
                 return x + y + z
             
     return
