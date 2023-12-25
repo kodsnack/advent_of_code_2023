@@ -277,13 +277,13 @@ def find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2):
                 
 
 # print(find_solution())
-print(gauss_jordan([
-    [1, 0, -1, 0, 19],
-    [1, 0, 0, -2, 18],
-    [0, 1, 0, 0, 13],
-    [0, 1, 0, 2, 19]
-]))
-a = 22
+# print(gauss_jordan([
+#     [1, 0, -1, 0, 19],
+#     [1, 0, 0, -2, 18],
+#     [0, 1, 0, 0, 13],
+#     [0, 1, 0, 2, 19]
+# ]))
+# a = 22
 def solve_b(lines):
     hailstones = parse(lines)
 
@@ -296,19 +296,25 @@ def solve_b(lines):
     dy1 = hailstones[0][4]
     dy2 = hailstones[1][4]
 
-    span = 12000
+    span = 100
 
     for dx in range(-span, span):
-        print(dx)
+        # print(dx)
         for dy in range(-span, span):
             x, y, t1, t2 = find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2)
+
+            if t1 < 0 or t2 < 0:
+                continue
+
             z1 = hailstones[0][2] + hailstones[0][5] * t1
             z2 = hailstones[1][2] + hailstones[1][5] * t2
 
-            z = dz = 0
+            z = dz = Fraction(0)
 
             if t1 == t2:
                 continue
+
+            # print('yo')
 
             if t2 > t1:
                 dz = (z2 - z1) / (t2 - t1)
