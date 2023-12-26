@@ -1,2 +1,3 @@
 EPSILON = 10**-6
 HUGE = 10**20
+UNHUGE = -10**20

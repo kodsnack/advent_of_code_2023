@@ -1,5 +1,6 @@
 import re
 
+from fractions import Fraction
 from functools import reduce
 from itertools import product
 
@@ -158,7 +159,62 @@ def rim(matrix):
 
     top = [(0, x, matrix[0][x]) for x in range(w)]
     bottom = [(h-1, x, matrix[h-1][x]) for x in range(w)]
-    left = [(y, 0, matrix[y][0]) for y in range(h)]
-    right = [(y, w-1, matrix[y][w-1]) for y in range(h)]
+    left = [(y, 0, matrix[y][0]) for y in range(1, h-1)]
+    right = [(y, w-1, matrix[y][w-1]) for y in range(1, h-1)]
 
     return top + bottom + left + right
+
+
+def junctions(matrix, closed=None, open=None):
+    h, w = dimensions(matrix)
+
+    def is_open(y, x):
+        if open:    
+            return matrix[y][x] in open
+        
+        return matrix[y][x] not in closed
+    
+    def open_neighbour_count(y, x):
+        return sum(is_open(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1))
+    
+    out = []
+
+    for y, x in product(range(h), range(w)):
+        if is_open(y, x) and open_neighbour_count(y, x) > 2:
+            out.append((y, x))
+
+    return out
+
+
+def solve_system(equations):
+    h, w = dimensions(equations)
+    used_pivots = set()
+    equations = [[Fraction(val) for val in equation] for equation in equations]
+
+    for pos in range(w-1):
+        for i, equation in enumerate(equations):
+            val = equation[pos]
+
+            if i in used_pivots or val == Fraction(0):
+                continue
+
+            used_pivots.add(i)
+
+            for j in range(w):
+                equations[i][j] /= val
+
+            for j in range(h):
+                if j == i:
+                    continue
+
+                factor = -equations[j][pos]
+
+                for k in range(w):
+                    equations[j][k] += factor * equations[i][k]
+
+            break
+
+    if len(used_pivots) < w - 1:
+        return False, [-1 for _ in range(w-1)]
+
+    return True, [[equation for equation in equations if equation[j] == Fraction(1)][0][-1] for j in range(w-1)]
