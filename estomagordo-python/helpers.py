@@ -168,7 +168,7 @@ def junctions(matrix, closed=None, open=None):
     h, w = dimensions(matrix)
 
     def is_open(y, x):
-        if open:
+        if open:    
             return matrix[y][x] in open
         
         return matrix[y][x] not in closed
@@ -179,7 +179,7 @@ def junctions(matrix, closed=None, open=None):
     out = []
 
     for y, x in product(range(h), range(w)):
-        if is_open(y, x) and open_neighbour_count(y, x) == 3:
+        if is_open(y, x) and open_neighbour_count(y, x) > 2:
             out.append((y, x))
 
     return out
