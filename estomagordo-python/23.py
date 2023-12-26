@@ -9,10 +9,6 @@ from algo import a_star, custsort, merge_ranges, sssp
 from constants import EPSILON, HUGE, UNHUGE
 from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, junctions, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
 
-from sys import setrecursionlimit
-
-setrecursionlimit(10000)
-
 
 def parse(lines, abide_by_arrows=True):
     h, w = dimensions(lines)
