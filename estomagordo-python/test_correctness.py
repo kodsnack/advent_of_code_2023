@@ -20,9 +20,9 @@ day19 = __import__('19')
 day20 = __import__('20')
 day21 = __import__('21')
 day22 = __import__('22')
-day23 = __import__('22')
-day24 = __import__('22')
-day25 = __import__('22')
+day23 = __import__('23')
+day24 = __import__('24')
+day25 = __import__('25')
 
 
 def test_day1():
