@@ -22,45 +22,8 @@ def parse(lines):
             graph[a].append(part)
             graph[part].append(a)
 
-    # import graphviz
-
-    # g = graphviz.Graph('g')
-    # g.graph_attr['dpi'] = '1000'
-    # colors = ['red', 'green', 'blue', 'pink', 'orange', 'brown', 'yellow', 'purple', 'magenta', 'bisque', 'brown2', 'darkgreen', 'darkolivegreen', 'darkkhaki', 'gold']
-
-    # from random import choice
-
     left = ['dhl', 'xvp', 'nzn']
-    # right = []
-
-    # for k in left:
-    #     for e in graph[k]:
-    #         right.append(e)
-
     right = ['pbq', 'zpc', 'vfs']
-
-    # for k, v in graph.items():
-    #     for e in v:
-    #         if k < e:
-    #             if k in left and e in right:
-    #                 print(k, e)
-
-    # ans = []
-
-    for k in graph.keys():
-        color = 'red' if k in left else 'green' if k in right else 'blue'
-        # g.node(k, k, fillcolor=color, style='filled')
-
-    # for k, v in graph.items():
-    #     for e in v:
-    #         if k < e:
-    #             # color = 'red' if k in interesting or e in interesting else 'black'
-    #             # color = choice(colors)
-    #             # color = 'red' if (k[0] == 'n' and k[1] == 'z') else 'blue'
-    #             color = 'red' if k in left and e in right else 'blue'
-    #             g.edge(k, e, f'{k} <-> {e}', color=color)
-
-    # g.render('25', view=True)
     
     return graph, left, right
     
@@ -88,12 +51,6 @@ def solve_a(lines):
     return size(graph, left[0]) * size(graph, right[0])
 
 
-def solve_b(lines):
-    data = parse(lines)
-
-    return None
-
-
 def main():
     lines = []
 
@@ -101,7 +58,7 @@ def main():
         for line in f.readlines():
             lines.append(line)
             
-    return (solve_a(lines), solve_b(lines))
+    return solve_a(lines)
 
 
 if __name__ == '__main__':

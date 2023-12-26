@@ -24,6 +24,7 @@ def kmform(line):
 
     return k, m
 
+
 def intersect(a, b, minval, maxval):
     ak, am = kmform(a)
     bk, bm = kmform(b)
@@ -58,74 +59,6 @@ def solve_a(lines):
     return sum(intersect(a, b, minval, maxval) for a, b in combinations(hailstones, 2))
 
 
-def dimension_can_be_reached(stone, rock, dimension):
-    s, ds, r, dr = stone[dimension], stone[dimension+3], rock[dimension], rock[dimension + 3]
-
-    if ds > 0:
-        if dr > 0:
-            if ds > dr:
-                if s > r:
-                    return False
-            elif r > s:
-                return False
-        elif s > r:
-            return False
-    else:
-        if dr < 0:
-            if ds < dr:
-                if s < r:
-                    return False
-            elif r < s:
-                return False
-        elif s < r:
-            return False
-
-    return True
-
-
-def stone_can_be_reached(stone, rock):
-    return all(dimension_can_be_reached(stone, rock, dimension) for dimension in range(3))
-
-
-def collidesall(hailstones, rock):
-    if not all(stone_can_be_reached(stone, rock) for stone in hailstones):
-        return False
-    
-    collided = set()
-    maxsteps = 5000
-    breaker = 25
-    lastcollided = -1
-
-    for t in range(1, maxsteps):
-        if len(collided) == len(hailstones):
-            return True
-        
-        if t - lastcollided > breaker:
-            break
-        
-        rx = rock[0] + rock[3] * t
-        ry = rock[1] + rock[4] * t
-        rz = rock[2] + rock[5] * t
-
-        for i, hailstone in enumerate(hailstones):
-            sx = Fraction(hailstone[0]) + Fraction(hailstone[3]) * t
-            sy = Fraction(hailstone[1]) + Fraction(hailstone[4]) * t
-            sz = Fraction(hailstone[2]) + Fraction(hailstone[5]) * t
-
-            if rx == sx and ry == sy and rz == sz:
-                collided.add(i)
-                lastcollided = t
-
-    # print('attempt', len(collided), lastcollided, maxsteps)
-    return False
-
-
-def are_parallel(dsx, dsy, dsz, drx, dry, drz):
-    return False
-
-    return dsx == drx or dsy == dry or dsz == drz
-
-
 def collides_in_future(stone, rock):
     sx, sy, sz, dsx, dsy, dsz = stone
     rx, ry, rz, drx, dry, drz = rock
@@ -133,9 +66,6 @@ def collides_in_future(stone, rock):
     stricttx = True
     strictty = True
     stricttz = True
-
-    if are_parallel(dsx, dsy, dsz, drx, dry, drz):
-        return False
     
     match_x_const = sx - rx
     match_x_vari = drx - dsx
@@ -192,29 +122,6 @@ def collides_in_future(stone, rock):
         return tz == ty
     
     return True
-
-# collides_in_future([19, 13, 30, -2, 1, -2], [Fraction(24), Fraction(13), Fraction(10), Fraction(-3), Fraction(1), Fraction(2)])
-    
-    # if dsx > 0:
-    #     if drx > 0:
-    #         if sx > rx:
-    #             if dsx > drx:
-    #                 return False
-    #         elif drx > dsx:
-    #             return False
-    #     elif sx > rx:
-    #         return False
-    # else:
-    #     if drx < 0:
-    #         if sx < rx:
-    #             if dsx < drx:
-    #                 return False
-    #         elif drx < dsx:
-    #             return False
-    #     elif sx < rx:
-    #         return False
-        
-    # return True
 
 
 def is_solution(hailstones, rock):
@@ -276,16 +183,8 @@ def find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2):
             t2 = reduced[i][-1]
 
     return x, y, t1, t2
-                
 
-# print(find_solution())
-# print(gauss_jordan([
-#     [1, 0, -1, 0, 19],
-#     [1, 0, 0, -2, 18],
-#     [0, 1, 0, 0, 13],
-#     [0, 1, 0, 2, 19]
-# ]))
-# a = 22
+
 def solve_b(lines):
     hailstones = parse(lines)
 
@@ -315,8 +214,6 @@ def solve_b(lines):
             if t1 == t2:
                 continue
 
-            # print('yo')
-
             if t2 > t1:
                 dz = (z2 - z1) / (t2 - t1)
                 z = z1 - dz * t1
@@ -333,89 +230,7 @@ def solve_b(lines):
             stone = [Fraction(num) for num in (x, y, z, dx, dy, dz)]
 
             if is_solution(hailstones, stone):
-                print(x, y, z, dx, dy, dz, t1, t2)
-                return x + y + z
-            
-    return
-
-    # maxxifplusx = HUGE
-    # minxifnegx = UNHUGE
-    # maxyifplusy = HUGE
-    # minyifnegy = UNHUGE
-    # maxzifplusz = HUGE
-    # minzifnegz = UNHUGE
-
-    # for x, y, z, dx, dy, dz in hailstones:
-    #     if dx > 0:
-    #         minxifnegx = max(minxifnegx, x)
-    #     else:
-    #         maxxifplusx = min(maxxifplusx, x)
-    #     if dy > 0:
-    #         minyifnegy = max(minyifnegy, y)
-    #     else:
-    #         maxyifplusy = min(maxyifplusy, y)
-    #     if dz > 0:
-    #         minzifnegz = max(minzifnegz, z)
-    #     else:
-    #         maxzifplusz = min(maxzifplusz, z)
-
-    closest = min(manhattan(a, b) for a, b in combinations(hailstones, 2))
-
-    for i, j in combinations(range(len(hailstones)), 2):
-        print('pair', i, j, len(hailstones))
-        first = hailstones[i]
-        second = hailstones[j]
-
-        orderings = [[first, second], [second, first]]
-
-        for at in range(1, 50):
-            for a, b in orderings:
-                for bt in range(at+1, at+50):
-                    ax = a[0] + a[3] * at
-                    ay = a[1] + a[4] * at
-                    az = a[2] + a[5] * at
-
-                    bx = b[0] + b[3] * bt
-                    by = b[1] + b[4] * bt
-                    bz = b[2] + b[5] * bt
-
-                    dx = Fraction(bx-ax, bt-at)
-                    dy = Fraction(by-ay, bt-at)
-                    dz = Fraction(bz-az, bt-at)                    
-
-                    rockx = Fraction(ax) - dx * at
-                    rocky = Fraction(ay) - dy * at
-                    rockz = Fraction(az) - dz * at
-
-                    if is_solution(hailstones, (rockx, rocky, rockz, dx, dy, dz)):
-                        return int(rockx) + int(rocky) + int(rockz)
-                    
-                    continue
-
-                    if dx > 0 and rockx > maxxifplusx:
-                        continue
-                    if dx < 0 and rockx < minxifnegx:
-                        continue
-                    if dy > 0 and rocky > maxyifplusy:
-                        continue
-                    if dy < 0 and rocky < minyifnegy:
-                        continue
-                    if dz > 0 and rockz > maxzifplusz:
-                        continue
-                    if dz < 0 and rockz < minzifnegz:
-                        continue
-
-                    if rockx != int(rockx):
-                        continue
-                    if rocky != int(rocky):
-                        continue
-                    if rockz != int(rockz):
-                        continue
-
-                    if collidesall(hailstones, (rockx, rocky, rockz, dx, dy, dz)):
-                        return int(rockx) + int(rocky) + int(rockz)
-
-    return None
+                return int(x + y + z)
 
 
 def main():
@@ -430,6 +245,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# 806413550299304 too low
-# 856642398547748
