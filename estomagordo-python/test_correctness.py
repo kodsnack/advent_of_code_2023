@@ -20,6 +20,9 @@ day19 = __import__('19')
 day20 = __import__('20')
 day21 = __import__('21')
 day22 = __import__('22')
+day23 = __import__('22')
+day24 = __import__('22')
+day25 = __import__('22')
 
 
 def test_day1():
@@ -174,3 +177,23 @@ def test_day22():
     
     assert a == 512
     assert b == 98167
+
+
+def test_day23():
+    a, b = day23.main()
+    
+    assert a == 2030
+    assert b == 6390
+
+
+def test_day24():
+    a, b = day24.main()
+    
+    assert a == 15107
+    assert b == 856642398547748
+
+
+def test_day25():
+    a = day25.main()
+    
+    assert a == 562978
