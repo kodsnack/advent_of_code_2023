@@ -14,22 +14,15 @@ from sys import setrecursionlimit
 setrecursionlimit(10000)
 
 
-def parse(lines):
+def parse(lines, abide_by_arrows=True):
     h, w = dimensions(lines)
 
     sy = 0
-    sx = -1
+    sx = [x for x in range(w) if lines[0][x] == '.'][0]
     gy = h-1
-    gx = -1
-
-    for x in range(len(lines[0])):
-        if lines[0][x] == '.':
-            sx = x
-        if lines[h-1][x] == '.':
-            gx = x
+    gx = [x for x in range(w) if lines[h-1][x] == '.'][0]
 
     intersections = junctions(lines, '#')
-        
     nodes = intersections + [(sy, sx), (gy, gx)]
     
     graph = defaultdict(dict)
@@ -44,68 +37,36 @@ def parse(lines):
                 continue
 
             for yy, xx in neighs_bounded(y, x, 0, h-1, 0, w-1):
-                if lines[yy][xx] == '#':
+                c = lines[yy][xx]
+
+                if c == '#':
                     continue
 
                 if (yy, xx) in seen:
+                    continue
+
+                if abide_by_arrows and c != '.':
+                    dy = yy-y
+                    dx = xx-x
+
+                    matching = (dy == 1 and c == 'v') or (dy == -1 and c == '^') or (dx == 1 and c == '>') or (dx == -1 and c == '<')
+
+                    if matching:
+                        seen.add((yy, xx))
+                        seen.add((yy+dy, xx+dx))
+                        frontier.append((steps+2, yy+dy, xx+dx))
+
                     continue
 
                 seen.add((yy, xx))
                 frontier.append((steps+1, yy, xx))
 
     return graph, sy, sx
-    
-
-def solve_a(lines):
-    return 1
-    h, w = dimensions(lines)
-    sy, sx = parse(lines)
-
-    longest = [0]
-
-    def walk(y, x, seen):
-        if y == h-1:
-            longest[0] = max(longest[0], len(seen))
-            return
-
-        for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1):
-            if (ny, nx) in seen:
-                continue
-
-            c = lines[ny][nx]
-
-            if c == '#':
-                continue
-
-            if c == '.':
-                seen.add((ny, nx))
-                walk(ny, nx, seen)
-                seen.remove((ny, nx))
-                continue
-
-            dy = 1 if c == 'v' else -1 if c == '^' else 0
-            dx = 1 if c == '>' else -1 if c == '<' else 0
-            
-            if (ny+dy, nx+dx) not in seen:
-                seen.add((ny, nx))
-                seen.add((ny+dy, nx+dx))
-                walk(ny+dy, nx+dx, seen)
-                seen.remove((ny, nx))
-                seen.discard((ny+dy, nx+dx))
 
 
-    walk(sy, sx, {(sy, sx)})
-
-    return longest[0] - 1
-
-
-def solve_b(lines):
-    h, w = dimensions(lines)
-    
-    graph, sy, sx = parse(lines)
-
+def longest_walk(graph, sy, sx, gy):
     def walk(node, seen):
-        if node[0] == h-1:
+        if node[0] == gy:
             return 0
         
         val = UNHUGE
@@ -121,103 +82,20 @@ def solve_b(lines):
         return val
 
     return walk((sy, sx), {(sy, sx)})
+    
+
+def solve_a(lines):
+    h, _ = dimensions(lines)
+    graph, sy, sx = parse(lines)
+
+    return longest_walk(graph, sy, sx, h-1)
 
 
-    # frontier = [(0, sy, sx)]
-    # seen = set()
-    # best = 0
+def solve_b(lines):
+    h, _ = dimensions(lines)
+    graph, sy, sx = parse(lines, False)
 
-    # for steps, y, x in frontier:
-    #     if (y, x) in seen:
-
-
-    # @cache
-    # def walk(y, x, prevy, prevx):        
-    #     path = 0
-
-    #     neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny != prevy or nx != prevx)]
-
-    #     while len(neighs) < 2:
-    #         if len(neighs) == 1:
-    #             path += 1
-    #             y, x, prevy, prevx = neighs[0][0], neighs[0][1], y, x
-    #             neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny != prevy or nx != prevx)]
-    #         elif y == h-1:
-    #             return path
-    #         else:
-    #             return - 10**10   
-        
-    #     return path + max(walk(ny, nx, y, x) for ny, nx in neighs)
-            
-    # return walk(sy, sx, 0, sx)
-
-    # longest = [0]
-
-    # def walk(y, x, seen):
-    #     if y == h-1:
-    #         if len(seen) > longest[0]:
-    #             print(len(seen))
-    #             longest[0] = len(seen)
-    #         return
-        
-    #     steps = 0
-        
-    #     neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in seen]
-
-    #     while len(neighs) < 2:
-    #         if len(neighs) == 0:
-    #             return 0
-            
-    #         steps += 1
-    #         y = neighs[0][0]
-    #         x = neighs[0][1]
-
-    #         neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in seen]
-
-    #     for ny, nx in neighs:
-    #         seen.add((ny, nx))
-    #         walk(ny, nx, seen)
-    #         seen.remove((ny, nx))
-    #         continue
-
-    #         dy = 1 if c == 'v' else -1 if c == '^' else 0
-    #         dx = 1 if c == '>' else -1 if c == '<' else 0
-            
-    #         if (ny+dy, nx+dx) not in seen:
-    #             seen.add((ny, nx))
-    #             seen.add((ny+dy, nx+dx))
-    #             walk(ny+dy, nx+dx, seen)
-    #             seen.remove((ny, nx))
-    #             seen.discard((ny+dy, nx+dx))
-
-    def walk(y, x, seen, path):        
-        neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in seen]
-
-        while len(neighs) == 1:            
-            y = neighs[0][0]
-            x = neighs[0][1]
-            path.add((y, x))
-
-            neighs = [(ny, nx) for ny, nx in neighs_bounded(y, x, 0, h-1, 0, w-1) if lines[ny][nx] != '#' and (ny, nx) not in path]        
-        
-        if len(neighs) == 0:
-            if y == h-1:
-                return len(path)
-            return -10**10
-
-        best = -10**10
-        seen |= path
-        
-        for ny, nx in neighs:
-            newpath = {(ny, nx)}
-            best = max(best, walk(ny, nx, seen, newpath))
-
-        seen -= path
-
-        return len(path) + best
-
-
-    return walk(sy, sx, {(sy, sx)}, {(sy, sx)})
+    return longest_walk(graph, sy, sx, h-1)
 
 
 def main():
@@ -232,6 +110,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# 6102
-# 4922 too low
