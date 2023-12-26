@@ -17,48 +17,63 @@ Future<void> main(List<String> args) async {
   print(resultP1);
   print('${swP1.elapsedMilliseconds} ms');
 
-  // Stopwatch swP2 = Stopwatch();
-  // swP2.start();
-  // print('Part 2:');
-  // final resultP2 = calcResultP2(input);
-  // print(resultP2);
-  // print('${swP2.elapsedMilliseconds} ms');
+  Stopwatch swP2 = Stopwatch();
+  swP2.start();
+  print('Part 2:');
+  final resultP2 = calcResultP2(input);
+  print(resultP2);
+  print('${swP2.elapsedMilliseconds} ms');
 }
 
 int calcResultP1(String input) {
   final lines = input.split('\n');
   Space space = Space(lines);
-  space.dropCubes();
+  space.dropCubes(space.cubes);
   space.calculateSupport();
   int result = space.countDisintigratableBricks();
   return result;
 }
 
+int calcResultP2(String input) {
+  final lines = input.split('\n');
+  Space space = Space(lines);
+  space.dropCubes(space.cubes);
+  space.calculateSupport();
+  int result = space.calcChainReaction();
+  return result;
+}
+
 class Space {
-  List<Cube> cubes = [];
+  Map<String, Cube> cubes = {};
   Range range = Range();
   Space(List<String> lines) {
     for (final line in lines) {
       // Add all the cubes
-      cubes.add(Cube(line));
+      final cube = Cube(line);
+      cubes[cube.name] = cube;
     }
     // Then find out the range in x,y
-    for (final cube in cubes) {
+    for (final cube in cubes.values) {
       range.extend(Pos(cube.x1, cube.y1));
       range.extend(Pos(cube.x2, cube.y2));
     }
   }
 
-  void dropCubes() {
+  // Drop cubes. Return count of how many cubes has moved.
+  int dropCubes(Map<String, Cube> cubes) {
+    List<String> cubeNamesInOrder = cubes.keys.toList();
     // Sort cubes by z1. z1 is less than or equal to z2
-    cubes.sort(((a, b) => a.z1.compareTo(b.z1)));
+    cubeNamesInOrder.sort((a, b) => cubes[a]!.z1.compareTo(cubes[b]!.z1));
     Map<Pos, int> floorLevel = {};
     for (int x = range.xMin; x <= range.xMax; x++) {
       for (int y = range.yMin; y <= range.yMax; y++) {
         floorLevel[Pos(x, y)] = 1;
       }
     }
-    for (final cube in cubes) {
+
+    int count = 0;
+    for (final cubeName in cubeNamesInOrder) {
+      final cube = cubes[cubeName]!;
       int zHeight = cube.z2 - cube.z1 + 1;
       int highestLevelUnderCube = 0;
       for (int x = cube.x1; x <= cube.x2; x++) {
@@ -67,6 +82,7 @@ class Space {
               max(highestLevelUnderCube, floorLevel[Pos(x, y)]!);
         }
       }
+      if (cube.z1 != highestLevelUnderCube) count++;
       cube.z1 = highestLevelUnderCube;
       cube.z2 = highestLevelUnderCube + zHeight - 1;
       for (int x = cube.x1; x <= cube.x2; x++) {
@@ -75,6 +91,7 @@ class Space {
         }
       }
     }
+    return count;
     // printCubes();
   }
 
@@ -85,7 +102,7 @@ class Space {
         String printLine = '';
         for (int y = range.yMin; y <= range.yMax; y++) {
           String charToPrint = '.';
-          for (final cube in cubes) {
+          for (final cube in cubes.values) {
             if (cube.isOnPos(x, y, z)) {
               assert(charToPrint == '.');
               charToPrint = cube.name;
@@ -101,15 +118,15 @@ class Space {
 
   void calculateSupport() {
     // Go through each cube
-    for (final cube in cubes) {
+    for (final cube in cubes.values) {
       // Check which cube is under
       int z = cube.z1 - 1;
       for (int x = cube.x1; x <= cube.x2; x++) {
         for (int y = cube.y1; y <= cube.y2; y++) {
-          for (final maybeSupportingCube in cubes) {
+          for (final maybeSupportingCube in cubes.values) {
             if (maybeSupportingCube.isOnPos(x, y, z)) {
-              maybeSupportingCube.isSupporting.add(cube);
-              cube.isSupportedBy.add(maybeSupportingCube);
+              maybeSupportingCube.isSupporting.add(cube.name);
+              cube.isSupportedBy.add(maybeSupportingCube.name);
             }
           }
         }
@@ -121,14 +138,14 @@ class Space {
     // A brick is disintigratable if it supports no bricks or
     // if a brick it is supporting has another supporting brick
     int count = 0;
-    for (final cube in cubes) {
+    for (final cube in cubes.values) {
       if (cube.isSupporting.isEmpty) {
         count++;
         continue;
       }
       bool disintigratable = true;
-      for (final supportedCube in cube.isSupporting) {
-        if (supportedCube.isSupportedBy.length == 1) {
+      for (final supportedCubeName in cube.isSupporting) {
+        if (cubes[supportedCubeName]!.isSupportedBy.length == 1) {
           disintigratable = false;
           break;
         }
@@ -136,6 +153,27 @@ class Space {
       if (disintigratable) count++;
     }
     return count;
+  }
+
+  int calcChainReaction() {
+    int count = 0;
+    for (final cube in cubes.entries) {
+      final cubesCopy = copyCubesWithout(cube.key);
+      count += dropCubes(cubesCopy);
+    }
+    return count;
+  }
+
+  Map<String, Cube> copyCubesWithout(String cubeToRemove) {
+    Map<String, Cube> copy = {};
+    for (final cubeToCopy in cubes.keys) {
+      if (cubeToCopy != cubeToRemove) {
+        final cubeCopy = Cube.from(cubes[cubeToCopy]!);
+        cubeCopy.isSupportedBy.remove(cubeToRemove);
+        copy[cubeToCopy] = cubeCopy;
+      }
+    }
+    return copy;
   }
 }
 
@@ -145,8 +183,8 @@ class Cube {
   late String name;
   static String nextName = 'A';
 
-  Set<Cube> isSupporting = {};
-  Set<Cube> isSupportedBy = {};
+  Set<String> isSupporting = {};
+  Set<String> isSupportedBy = {};
 
   Cube(String line) {
     name = nextName;
@@ -172,5 +210,17 @@ class Cube {
       }
     }
     return false;
+  }
+
+  Cube.from(Cube cubeToCopy) {
+    name = cubeToCopy.name;
+    isSupportedBy = Set.from(cubeToCopy.isSupportedBy);
+    isSupporting = Set.from(cubeToCopy.isSupporting);
+    x1 = cubeToCopy.x1;
+    x2 = cubeToCopy.x2;
+    y1 = cubeToCopy.y1;
+    y2 = cubeToCopy.y2;
+    z1 = cubeToCopy.z1;
+    z2 = cubeToCopy.z2;
   }
 }
