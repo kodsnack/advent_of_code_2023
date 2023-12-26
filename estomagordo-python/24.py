@@ -251,35 +251,31 @@ def gauss_jordan(equations):
     return equations
 
 
-def find_solution(dx, dy, x1, x2, x3, y1, y2, y3, dx1, dx2, dx3, dy1, dy2, dy3):
+def find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2):
     equations = [
-        [1, 0, dx - dx1, 0, 0, x1],
-        [1, 0, 0, dx - dx2, 0, x2],
-        [1, 0, 0, 0, dx - dx3, x3],
-        [0, 1, dy - dy1, 0, 0, y1],
-        [0, 1, 0, dy - dy2, 0, y2],        
-        [0, 1, 0, 0, dy - dy3, y3]
+        [1, 0, dx - dx1, 0, x1],
+        [1, 0, 0, dx - dx2, x2],
+        [0, 1, dy - dy1, 0, y1],
+        [0, 1, 0, dy - dy2, y2]
     ]
 
     equations = [[Fraction(val) for val in row] for row in equations]
 
     reduced = gauss_jordan(equations)
 
-    x = y = t1 = t2 = t3 = 0
+    x = y = t1 = t2 = 0
 
     for i in range(len(reduced)):
         if reduced[i][0] == Fraction(1):
-            x = reduced[i][5]
+            x = reduced[i][-1]
         if reduced[i][1] == Fraction(1):
-            y = reduced[i][5]
+            y = reduced[i][-1]
         if reduced[i][2] == Fraction(1):
-            t1 = reduced[i][5]
+            t1 = reduced[i][-1]
         if reduced[i][3] == Fraction(1):
-            t2 = reduced[i][5]
-        if reduced[i][4] == Fraction(1):
-            t3 = reduced[i][5]
+            t2 = reduced[i][-1]
 
-    return x, y, t1, t2, t3
+    return x, y, t1, t2
                 
 
 # print(find_solution())
@@ -295,23 +291,18 @@ def solve_b(lines):
 
     x1 = hailstones[0][0]
     x2 = hailstones[1][0]
-    x3 = hailstones[2][0]
     y1 = hailstones[0][1]
     y2 = hailstones[1][1]
-    y3 = hailstones[2][1]
     dx1 = hailstones[0][3]
     dx2 = hailstones[1][3]
-    dx3 = hailstones[2][3]
     dy1 = hailstones[0][4]
     dy2 = hailstones[1][4]
-    dy3 = hailstones[2][4]
 
-    span = 500
+    span = 300
 
     for dx in range(-span, span):
-        print(dx)
         for dy in range(-span, span):
-            x, y, t1, t2, t3 = find_solution(Fraction(dx), Fraction(dy), x1, x2, x3, y1, y2, y3, dx1, dx2, dx3, dy1, dy2, dy3)
+            x, y, t1, t2 = find_solution(Fraction(dx), Fraction(dy), x1, x2, y1, y2, dx1, dx2, dy1, dy2)
 
             if t1 < 0 or t2 < 0:
                 continue
@@ -342,6 +333,7 @@ def solve_b(lines):
             stone = [Fraction(num) for num in (x, y, z, dx, dy, dz)]
 
             if is_solution(hailstones, stone):
+                print(x, y, z, dx, dy, dz, t1, t2)
                 return x + y + z
             
     return
@@ -440,3 +432,4 @@ if __name__ == '__main__':
     print(main())
 
 # 806413550299304 too low
+# 856642398547748
