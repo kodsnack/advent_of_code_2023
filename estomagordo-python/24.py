@@ -8,7 +8,7 @@ from math import ceil, comb, factorial, gcd, isclose, lcm
 
 from algo import a_star, custsort, merge_ranges, sssp
 from constants import EPSILON, HUGE, UNHUGE
-from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
+from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, solve_system, words
 
 
 def parse(lines):
@@ -49,6 +49,7 @@ def intersect(a, b, minval, maxval):
     y = a[1] + a[4] * ta
 
     return minval <= y <= maxval
+
 
 def solve_a(lines):
     minval = 200000000000000
@@ -128,36 +129,6 @@ def is_solution(hailstones, rock):
     return all(collides_in_future(stone, rock) for stone in hailstones)
 
 
-def gauss_jordan(equations):
-    h, w = dimensions(equations)
-    used = set()
-
-    for pos in range(w-1):
-        for i, equation in enumerate(equations):
-            val = equation[pos]
-
-            if i in used or val == Fraction(0):
-                continue
-
-            used.add(i)
-
-            for j in range(w):
-                equations[i][j] /= val
-
-            for j in range(h):
-                if j == i:
-                    continue
-
-                factor = -equations[j][pos]
-
-                for k in range(w):
-                    equations[j][k] += factor * equations[i][k]
-
-            break
-
-    return equations
-
-
 def find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2):
     equations = [
         [1, 0, dx - dx1, 0, x1],
@@ -168,21 +139,9 @@ def find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2):
 
     equations = [[Fraction(val) for val in row] for row in equations]
 
-    reduced = gauss_jordan(equations)
+    solves, reduced = solve_system(equations)
 
-    x = y = t1 = t2 = 0
-
-    for i in range(len(reduced)):
-        if reduced[i][0] == Fraction(1):
-            x = reduced[i][-1]
-        if reduced[i][1] == Fraction(1):
-            y = reduced[i][-1]
-        if reduced[i][2] == Fraction(1):
-            t1 = reduced[i][-1]
-        if reduced[i][3] == Fraction(1):
-            t2 = reduced[i][-1]
-
-    return x, y, t1, t2
+    return solves, reduced[0][-1], reduced[1][-1], reduced[2][-1], reduced[3][-1]
 
 
 def solve_b(lines):
@@ -197,11 +156,14 @@ def solve_b(lines):
     dy1 = hailstones[0][4]
     dy2 = hailstones[1][4]
 
-    span = 300
+    span = 500
 
     for dx in range(-span, span):
         for dy in range(-span, span):
-            x, y, t1, t2 = find_solution(Fraction(dx), Fraction(dy), x1, x2, y1, y2, dx1, dx2, dy1, dy2)
+            solves, x, y, t1, t2 = find_solution(Fraction(dx), Fraction(dy), x1, x2, y1, y2, dx1, dx2, dy1, dy2)
+
+            if not solves:
+                continue
 
             if t1 < 0 or t2 < 0:
                 continue

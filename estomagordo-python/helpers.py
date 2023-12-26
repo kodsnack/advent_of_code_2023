@@ -1,5 +1,6 @@
 import re
 
+from fractions import Fraction
 from functools import reduce
 from itertools import product
 
@@ -183,3 +184,36 @@ def junctions(matrix, closed=None, open=None):
             out.append((y, x))
 
     return out
+
+
+def solve_system(equations):
+    h, w = dimensions(equations)
+    used_pivots = set()
+
+    for pos in range(w-1):
+        for i, equation in enumerate(equations):
+            val = equation[pos]
+
+            if i in used_pivots or val == Fraction(0):
+                continue
+
+            used_pivots.add(i)
+
+            for j in range(w):
+                equations[i][j] /= val
+
+            for j in range(h):
+                if j == i:
+                    continue
+
+                factor = -equations[j][pos]
+
+                for k in range(w):
+                    equations[j][k] += factor * equations[i][k]
+
+            break
+
+    if len(used_pivots) < w - 1:
+        return False, equations
+
+    return True, [[equation for equation in equations if equation[j] == Fraction(1)][0] for j in range(w-1)]
