@@ -159,8 +159,8 @@ def rim(matrix):
 
     top = [(0, x, matrix[0][x]) for x in range(w)]
     bottom = [(h-1, x, matrix[h-1][x]) for x in range(w)]
-    left = [(y, 0, matrix[y][0]) for y in range(h)]
-    right = [(y, w-1, matrix[y][w-1]) for y in range(h)]
+    left = [(y, 0, matrix[y][0]) for y in range(1, h-1)]
+    right = [(y, w-1, matrix[y][w-1]) for y in range(1, h-1)]
 
     return top + bottom + left + right
 
@@ -189,6 +189,7 @@ def junctions(matrix, closed=None, open=None):
 def solve_system(equations):
     h, w = dimensions(equations)
     used_pivots = set()
+    equations = [[Fraction(val) for val in equation] for equation in equations]
 
     for pos in range(w-1):
         for i, equation in enumerate(equations):
@@ -214,6 +215,6 @@ def solve_system(equations):
             break
 
     if len(used_pivots) < w - 1:
-        return False, equations
+        return False, [-1 for _ in range(w-1)]
 
-    return True, [[equation for equation in equations if equation[j] == Fraction(1)][0] for j in range(w-1)]
+    return True, [[equation for equation in equations if equation[j] == Fraction(1)][0][-1] for j in range(w-1)]

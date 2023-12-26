@@ -141,7 +141,7 @@ def find_solution(dx, dy, x1, x2, y1, y2, dx1, dx2, dy1, dy2):
 
     solves, reduced = solve_system(equations)
 
-    return solves, reduced[0][-1], reduced[1][-1], reduced[2][-1], reduced[3][-1]
+    return solves, *reduced
 
 
 def solve_b(lines):
