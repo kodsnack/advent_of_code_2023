@@ -10,6 +10,33 @@ from constants import EPSILON, HUGE
 from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
 
 
+def find_critical_edges(graph):
+    edge_frequency = Counter()
+
+    for start in graph.keys():
+        preceeding = {}
+        frontier = [(start, None)]
+
+        for node, prev in frontier:
+            if node in preceeding:
+                continue
+
+            preceeding[node] = prev
+
+            for next in graph[node]:
+                if next not in preceeding:
+                    frontier.append((next, node))
+
+
+        for node in preceeding.keys():
+            while preceeding[node]:
+                prev = preceeding[node]
+                edge_frequency[(min(node, prev), max(node, prev))] += 1
+                node = prev
+
+    return {a: b for a, b in [p[0] for p in edge_frequency.most_common(3)]}
+
+
 def parse(lines):
     graph = defaultdict(list)
 
@@ -22,10 +49,9 @@ def parse(lines):
             graph[a].append(part)
             graph[part].append(a)
 
-    left = ['dhl', 'xvp', 'nzn']
-    right = ['pbq', 'zpc', 'vfs']
+    critical_edges = find_critical_edges(graph)
     
-    return graph, left, right
+    return graph, critical_edges
     
 
 def size(graph, start):
@@ -42,13 +68,14 @@ def size(graph, start):
     return len(seen)
 
 
-def solve_a(lines):
-    graph, left, right = parse(lines)
+def solve(lines):
+    graph, critical_edges = parse(lines)
+    critical_nodes = list(critical_edges.keys()) + list(critical_edges.values())
 
-    for key in left + right:
-        graph[key] = [node for node in graph[key] if node not in left + right]
+    for key in critical_nodes:
+        graph[key] = [node for node in graph[key] if node not in critical_nodes]
 
-    return size(graph, left[0]) * size(graph, right[0])
+    return size(graph, list(critical_edges.items())[0][0]) * size(graph, list(critical_edges.items())[0][1])
 
 
 def main():
@@ -58,7 +85,7 @@ def main():
         for line in f.readlines():
             lines.append(line)
             
-    return solve_a(lines)
+    return solve(lines)
 
 
 if __name__ == '__main__':
