@@ -1,4 +1,6 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap, words, between, dimensions, sum_of_differences, rim
+from fractions import Fraction
+
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap, positives, rays, rays_from_inside, adjacent, eight_neighs, eight_neighs_bounded, hexneighs, n_neighs, overlap, words, between, dimensions, sum_of_differences, rim, junctions, solve_system
 
 
 def test_distance():
@@ -446,6 +448,8 @@ def test_rim():
     ]
 
     matrim = rim(matrix)
+
+    assert 12 == len(matrim)
     
     assert (0, 0, 1) in matrim 
     assert (0, 1, 2) in matrim
@@ -459,3 +463,73 @@ def test_rim():
     assert (2, 0, 9) in matrim
     assert (1, 3, 8) in matrim
     assert (2, 3, 12) in matrim
+
+
+def test_junctions():
+    simple_matrix = [
+        '########',
+        '#.#..#.#',
+        '#.#.##.#',
+        '#...#..#',
+        '#.#.#.##',
+        '#.#...##',
+        '#.#.#..#',
+        '########',
+    ]
+
+    complex_matrix = [
+        '########',
+        '#m#0p#o#',
+        '#a#o##4#',
+        '#eed#12#',
+        '#f#1#4##',
+        '#f#2po##',
+        '#2#5#lk#',
+        '########',
+    ]
+
+    simple_intersections = junctions(simple_matrix, None, '.')
+    complex_intersections = junctions(complex_matrix, '#')
+
+    assert simple_intersections == complex_intersections
+
+    assert len(simple_intersections) == 4
+    assert (3, 1) in simple_intersections
+    assert (3, 3) in simple_intersections
+    assert (5, 3) in simple_intersections
+    assert (5, 5) in simple_intersections
+
+
+def test_solve_system():
+    system_a = [
+        [1, 2, 5],
+        [2, 4, 10]
+    ]
+
+    system_b = [
+        [1, 2, 5, 10],
+        [-2, 1, 3, 0],
+        [-1, 3, 8, 10]
+    ]
+
+    system_c = [
+        [1, 1, -3, 1, 2],
+        [-5, 3, -4, 1, 0],
+        [1, 0, 2, -1, 1],
+        [1, 2, 0, 0, 12]
+    ]
+
+    asolves, _ = solve_system(system_a)
+    bsolves, _ = solve_system(system_b)
+    csolves, csolved = solve_system(system_c)
+
+    assert not asolves
+    assert not bsolves
+    assert csolves
+
+    a, x, y, z = csolved
+
+    assert a == Fraction(22, 17)
+    assert x == Fraction(91, 17)
+    assert y == Fraction(84, 17)
+    assert z == Fraction(173, 17)
