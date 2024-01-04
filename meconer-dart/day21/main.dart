@@ -83,8 +83,6 @@ int calcResultP2(String input) {
 
   print('After $step steps. Board has $totalElfs reachable plots ');
 
-  int lengthOfElfPosSet = board.elfPos.length;
-
   // Analyzing data collected above shows that the boards starts to fill in
   // the following order:
 
