@@ -252,7 +252,6 @@ class Board {
       String startNodeName, String targetNodeName) {
     List<String> currentPath = [startNodeName];
     int maxDist = 0;
-    List<String> bestPath;
     Set<String> visited = {};
 
     void backtrack(
@@ -262,7 +261,6 @@ class Board {
       if (current == targetNodeName) {
         if (currentLength > maxDist) {
           maxDist = currentLength;
-          bestPath = List.from(currentPath);
           print('$maxDist - ${currentPath.length}');
           String lineToPrint = '';
           for (final n in currentPath) {

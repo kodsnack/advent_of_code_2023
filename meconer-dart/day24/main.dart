@@ -1,7 +1,7 @@
 import '../util/util.dart';
 
-// const String inputFile = 'day24/example.txt';
-const String inputFile = 'day24/input.txt';
+const String inputFile = 'day24/example.txt';
+// const String inputFile = 'day24/input.txt';
 
 Future<void> main(List<String> args) async {
   var input = await readInputAsString(inputFile);
@@ -13,12 +13,12 @@ Future<void> main(List<String> args) async {
   print(resultP1);
   print('${swP1.elapsedMilliseconds} ms');
 
-  // Stopwatch swP2 = Stopwatch();
-  // swP2.start();
-  // print('Part 2:');
-  // final resultP2 = calcResultP2(input);
-  // print(resultP2);
-  // print('${swP2.elapsedMilliseconds} ms');
+  Stopwatch swP2 = Stopwatch();
+  swP2.start();
+  print('Part 2:');
+  final resultP2 = calcResultP2(input);
+  print(resultP2);
+  print('${swP2.elapsedMilliseconds} ms');
 }
 
 int calcResultP1(String input) {
@@ -31,10 +31,10 @@ int calcResultP1(String input) {
     hailStones.add(HailStone(p, v));
   }
 
-  // int minXY = 7;
-  // int maxXY = 27;
-  int minXY = 200000000000000;
-  int maxXY = 400000000000000;
+  int minXY = 7;
+  int maxXY = 27;
+  // int minXY = 200000000000000;
+  // int maxXY = 400000000000000;
 
   int count = 0;
   for (int i = 0; i < hailStones.length - 1; i++) {
@@ -49,6 +49,22 @@ int calcResultP1(String input) {
     }
   }
   return count;
+}
+
+int calcResultP2(String input) {
+  final lines = input.split('\n');
+  List<HailStone> hailStones = [];
+  for (final line in lines) {
+    Point p;
+    Vector v;
+    (p, v) = getValsFromLine(line);
+    hailStones.add(HailStone(p, v));
+  }
+
+  Point pRock = Point(0, 0, 0);
+  Vector vRock = Vector(0, 0, 0);
+
+  return 0;
 }
 
 Point? getFutureXYIntersection(Point p1, Vector v1, Point p2, Vector v2) {
@@ -94,15 +110,27 @@ getValsFromLine(String line) {
 class Point {
   double px, py, pz;
   Point(this.px, this.py, this.pz);
+
+  Point add(Vector v) {
+    return Point(px + v.vx, py + v.vy, pz + v.vz);
+  }
 }
 
 class Vector {
   double vx, vy, vz;
   Vector(this.vx, this.vy, this.vz);
+
+  Vector mul(int s) {
+    return Vector(vx * s, vy * s, vz * s);
+  }
 }
 
 class HailStone {
   Point p;
   Vector v;
   HailStone(this.p, this.v);
+
+  Point getPointAt(int time) {
+    return p.add(v.mul(time));
+  }
 }
